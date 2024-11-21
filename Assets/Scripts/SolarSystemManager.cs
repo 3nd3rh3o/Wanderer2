@@ -6,6 +6,9 @@ public class SolarSystemManager : MonoBehaviour
     private Vector3 playerRotation = new();
     private SolarSystemsData solarSystemsData;
 
+    //Solar system
+    private Planet[] planets;
+
     void OnEnable()
     {
         solarSystemsData = GetComponent<SolarSystemsData>();
@@ -21,6 +24,7 @@ public class SolarSystemManager : MonoBehaviour
     {
         // spawn nearest solar system
         SolarSystemData currentSystem = solarSystemsData.GetCurrentFromPPos(playerPosition);
+        
     }
 
     void Update()
