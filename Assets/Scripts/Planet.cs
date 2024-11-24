@@ -59,7 +59,7 @@ public class Planet : MonoBehaviour
 
             this.gRad = gRad;
             this.center = center;
-            cachedMesh = SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size))));
+            cachedMesh = SubDivide(SubDivide(GenInitMesh(Dir, center, size)));
             this.size = size;
             this.LOD = LOD;
             this.DIR = Dir;
@@ -220,37 +220,37 @@ public class Planet : MonoBehaviour
                     res[4] = ei;
                     res[5] = gi;
                 }
-                if (((f+v[c])*0.5f).sqrMagnitude <= ((j+g)*0.5f).sqrMagnitude)
+                if (((f+h)*0.5f).sqrMagnitude <= ((j+v[c])*0.5f).sqrMagnitude)
                 {
                     res[6] = fi;
                     res[7] = ji;
-                    res[8] = gi;
-                    res[9] = c;
-                    res[10] = gi;
+                    res[8] = c;
+                    res[9] = hi;
+                    res[10] = c;
                     res[11] = ji;
                 } else {
                     res[6] = ji;
-                    res[7] = c;
+                    res[7] = hi;
                     res[8] = fi;
-                    res[9] = gi;
-                    res[10] = ji;
-                    res[11] = c;
+                    res[9] = c;
+                    res[10] = fi;
+                    res[11] = hi;
                 }
-                if (((j+h)*0.5f).sqrMagnitude <= ((g+v[d])*0.5f).sqrMagnitude)
+                if (((j+v[d])*0.5f).sqrMagnitude <= ((g+h)*0.5f).sqrMagnitude)
                 {
                     res[12] = ji;
                     res[13] = gi;
-                    res[14] = d;
-                    res[15] = hi;
-                    res[16] = d;
+                    res[14] = hi;
+                    res[15] = d;
+                    res[16] = hi;
                     res[17] = gi;
                 } else {
                     res[12] = gi;
-                    res[13] = hi;
+                    res[13] = d;
                     res[14] = ji;
-                    res[15] = d;
-                    res[16] = gi;
-                    res[17] = hi;
+                    res[15] = hi;
+                    res[16] = ji;
+                    res[17] = d;
                 }
                 t.AddRange(res);
             }
@@ -399,8 +399,8 @@ public class Planet : MonoBehaviour
 
     AB aejf => to tri => aj<=ef? (aef, jfe) : (eja, faj)
     CD ebgj => to tri => eg<=bj? (ebj, gjb) : (bge, jeg)
-    EF fjcg => to tri => fc<=jg? (fjg, cgj) : (jcf, gjc)
-    GH jghd => to tri => jh<=gd? (jgd, hdg) : (ghj, dgh)
+    EF fjhc => to tri => fh<=jc? (fjc, hcj) : (jhf, cfh)
+    GH jgdh => to tri => jd<=gh? (jgh, dhg) : (gdj, hjd)
 
         Y (Up)
         |
