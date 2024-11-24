@@ -129,54 +129,130 @@ public class Planet : MonoBehaviour
             List<int> t = mesh.GetTriangles(0).ToList();
             mesh.GetVertices(v);
             int mI = t.Count;
-            for (int i = 0; i < mI; i += 3)
+            for (int i = 0; i < mI; i += 6)
             {
                 int a = t[i];
                 int b = t[i + 1];
                 int c = t[i + 2];
+                int d = t[i + 3];
 
                 int vC = v.Count;
 
-                Vector3 ab = ((v[a] + v[b]) * 0.5f).normalized * gRad;
-                Vector3 bc = ((v[b] + v[c]) * 0.5f).normalized * gRad;
-                Vector3 ca = ((v[c] + v[a]) * 0.5f).normalized * gRad;
-                int abi;
-                int bci;
-                int cai;
-                if (v.Contains(ab))
+                Vector3 e = ((v[a] + v[b]) * 0.5f).normalized * gRad;
+                Vector3 f = ((v[a] + v[c]) * 0.5f).normalized * gRad;
+                Vector3 g = ((v[b] + v[d]) * 0.5f).normalized * gRad;
+                Vector3 h = ((v[c] + v[d]) * 0.5f).normalized * gRad;
+                Vector3 j = ((e + h) * 0.5f).normalized * gRad;
+                int ei, fi, gi, hi, ji;
+                if (v.Contains(e))
                 {
-                    abi = v.FindIndex(0, e => e.Equals(ab));
+                    ei = v.FindIndex(0, e => e.Equals(e));
                 }
                 else
                 {
-                    abi = vC;
-                    v.Add(ab);
+                    ei = vC;
+                    v.Add(e);
                     vC++;
                 }
-                if (v.Contains(bc))
+                if (v.Contains(f))
                 {
-                    bci = v.FindIndex(0, e => e.Equals(bc));
+                    fi = v.FindIndex(0, e => e.Equals(f));
                 }
                 else
                 {
-                    bci = vC;
-                    v.Add(bc);
+                    fi = vC;
+                    v.Add(f);
                     vC++;
                 }
-                if (v.Contains(ca))
+                if (v.Contains(g))
                 {
-                    cai = v.FindIndex(0, e => e.Equals(ca));
+                    gi = v.FindIndex(0, e => e.Equals(g));
                 }
                 else
                 {
-                    cai = vC;
-                    v.Add(ca);
+                    gi = vC;
+                    v.Add(g);
                     vC++;
                 }
-                t[i] = abi;
-                t[i + 1] = bci;
-                t[i + 2] = cai;
-                t.AddRange(new int[] { a, abi, cai, abi, b, bci, cai, bci, c });
+                if (v.Contains(h))
+                {
+                    hi = v.FindIndex(0, e => e.Equals(h));
+                }
+                else
+                {
+                    hi = vC;
+                    v.Add(h);
+                    vC++;
+                }
+                ji = vC;
+                v.Add(j);
+                vC++;
+                if (((v[a]+j)*0.5f).sqrMagnitude <= ((e+f)*0.5f).sqrMagnitude)
+                {
+                    t[i] = a;
+                    t[i + 1] = ei;
+                    t[i + 2] = fi;
+                    t[i + 3] = ji;
+                    t[i + 4] = fi;
+                    t[i + 5] = ei;
+                } else {
+                    t[i] = ei;
+                    t[i + 1] = ji;
+                    t[i + 2] = a;
+                    t[i + 3] = fi;
+                    t[i + 4] = a;
+                    t[i + 5] = ji;
+                }
+                int[] res = new int[18];
+                if (((e+g)*0.5f).sqrMagnitude <= ((v[b]+j)*0.5f).sqrMagnitude)
+                {
+                    res[0] = ei;
+                    res[1] = b;
+                    res[2] = ji;
+                    res[3] = gi;
+                    res[4] = ji;
+                    res[5] = b;
+                } else {
+                    res[0] = b;
+                    res[1] = gi;
+                    res[2] = ei;
+                    res[3] = ji;
+                    res[4] = ei;
+                    res[5] = gi;
+                }
+                if (((f+v[c])*0.5f).sqrMagnitude <= ((j+g)*0.5f).sqrMagnitude)
+                {
+                    res[6] = fi;
+                    res[7] = ji;
+                    res[8] = gi;
+                    res[9] = c;
+                    res[10] = gi;
+                    res[11] = ji;
+                } else {
+                    res[6] = ji;
+                    res[7] = c;
+                    res[8] = fi;
+                    res[9] = gi;
+                    res[10] = ji;
+                    res[11] = c;
+                }
+                if (((j+h)*0.5f).sqrMagnitude <= ((g+v[d])*0.5f).sqrMagnitude)
+                {
+                    res[12] = ji;
+                    res[13] = gi;
+                    res[14] = d;
+                    res[15] = hi;
+                    res[16] = d;
+                    res[17] = gi;
+                } else {
+                    res[12] = gi;
+                    res[13] = hi;
+                    res[14] = ji;
+                    res[15] = d;
+                    res[16] = gi;
+                    res[17] = hi;
+                }
+                t.AddRange(res);
             }
             mesh.SetVertices(v);
             mesh.SetTriangles(t, 0);
@@ -226,8 +302,10 @@ public class Planet : MonoBehaviour
                 },
                 _ => throw new System.NotImplementedException()
             });
-            
-            mesh.SetTriangles(new int[] { 0, 1, 2, 2, 1, 3 }, 0);
+            if (((mesh.vertices[1] + mesh.vertices[2])*0.5f).sqrMagnitude <= ((mesh.vertices[0] + mesh.vertices[3])*0.5f).sqrMagnitude)
+            mesh.SetTriangles(new int[] { 0, 1, 2, 3, 1, 2 }, 0);
+            else
+            mesh.SetTriangles(new int[] { 1, 3, 0, 2, 0, 3 }, 0);
             return mesh;
         }
     }
@@ -301,7 +379,7 @@ public class Planet : MonoBehaviour
     a --e-- b    b --g-- d
     |     / |    | \     |
     |    /  |    |  \    |
-    f   i   g :: e   i   h
+    f   j   g :: e   j   h
     |  /    |    |    \  |
     | /     |    |     \ |
     c --h-- d    a --f-- c
@@ -317,12 +395,12 @@ public class Planet : MonoBehaviour
     f = a+c*0.5
     g = b+d*0.5
     h = c+d*0.5
-    i = e+h*0.5
+    j = e+h*0.5
 
-    aeif => to tri => ai<=ef? (aei, fei) : (eif, aif)
-    ebgi => to tri => eg<=bi? (ebg, ibg) : (bgi, egi)
-    ficg => to tri => fc<=ig? (fic, gic) : (icg, fcg)
-    ighd => to tri => ih<=gd? (igh, dgh) : (ghd, ihd)
+    AB aejf => to tri => aj<=ef? (aef, jfe) : (eja, faj)
+    CD ebgj => to tri => eg<=bj? (ebj, gjb) : (bge, jeg)
+    EF fjcg => to tri => fc<=jg? (fjg, cgj) : (jcf, gjc)
+    GH jghd => to tri => jh<=gd? (jgd, hdg) : (ghj, dgh)
 
         Y (Up)
         |
