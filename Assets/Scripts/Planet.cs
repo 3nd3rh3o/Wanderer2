@@ -16,27 +16,23 @@ public class Planet : MonoBehaviour
 
     private void Build()
     {
-        List<Tuple<CombineInstance, Material>> combineInstances = new();
+        List<CombineInstance> combineInstances = new();
 
         // Parcourt les faces principales (chunks racines)
         foreach (var face in chunks)
         {
             face.CollectCombineData(combineInstances);
         }
-        Material[] m = new Material[combineInstances.Count];
-        CombineInstance[] c = new CombineInstance[combineInstances.Count];
-        for (int i = 0; i < combineInstances.Count; i++)
-        {
-            c[i] = combineInstances[i].Item1;
-            m[i] = combineInstances[i].Item2;
-        }
         // Crée un mesh global combiné
         Mesh combinedMesh = new Mesh();
-        combinedMesh.CombineMeshes(c, false, true);
+        combinedMesh.CombineMeshes(combineInstances.ToArray(), false, true);
         combinedMesh.RecalculateBounds();
+        Material[] m = new Material[combineInstances.Count];
+        for (int i = 0; i < combineInstances.Count; i++) m[i] = sharedMat;
         // Applique le mesh combiné au MeshFilter principal
         GetComponent<MeshRenderer>().SetMaterials(m.ToList());
         GetComponent<MeshFilter>().mesh = combinedMesh;
+        // TODO text => mat here
     }
 
     void Start()
@@ -48,12 +44,12 @@ public class Planet : MonoBehaviour
     {
         Mesh mesh = new();
         chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius, sharedMat),
-            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius, sharedMat),
-            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius, sharedMat),
-            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius, sharedMat),
-            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius, sharedMat),
-            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius, sharedMat)
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius),
+            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius),
+            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius),
+            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius),
+            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius),
+            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius)
         };
         Build();
         chunkTasks = new();
