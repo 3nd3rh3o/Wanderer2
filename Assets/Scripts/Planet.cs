@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Planet : MonoBehaviour
 {
+    public Material sharedMat;
     private Mesh mesh;
     private List<int> chunksReg;
     
@@ -14,6 +16,10 @@ public class Planet : MonoBehaviour
         {
             public Vector3[] vertices;
             public int[] faces;
+            /*
+            TODO uv (for nhmap)
+                 normals
+            */
 
             public QuadMesh(Vector3[] v, int[] f)
             {
@@ -30,8 +36,10 @@ public class Planet : MonoBehaviour
         private int DIR;
         private Chunk[] chunks;
         private float gRad;
+        private Material mat;
+        private Material hmat;
 
-        public void CollectCombineData(List<CombineInstance> combineInstances)
+        public void CollectCombineData(List<Tuple<CombineInstance, Material>> combineInstances)
         {
             if (chunks == null)
             {
@@ -43,7 +51,8 @@ public class Planet : MonoBehaviour
                         mesh = cachedMesh,
                         transform = Matrix4x4.identity // Identité si tout est en local space
                     };
-                    combineInstances.Add(combine);
+                    combineInstances.Add(new(combine, mat));
+
                 }
             }
             else
@@ -57,7 +66,7 @@ public class Planet : MonoBehaviour
         }
 
 
-        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad)
+        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, Material mat)
         {
 
             this.gRad = gRad;
@@ -65,7 +74,10 @@ public class Planet : MonoBehaviour
             cachedMesh = ToMesh(/*GenNHMap*/SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size)))));
             this.size = size;
             this.LOD = LOD;
-            this.DIR = Dir;
+            DIR = Dir;
+            hmat = mat; // reference. NEVER USED DIRECTLY!
+            this.mat = Instantiate(hmat);
+            
         }
 
 
@@ -91,6 +103,7 @@ public class Planet : MonoBehaviour
             }
             mesh.SetVertices(v);
             mesh.SetTriangles(t, 0);
+            mesh.RecalculateBounds();
             return mesh;
         }
 
@@ -111,6 +124,7 @@ public class Planet : MonoBehaviour
                 else
                 {
                     if (LOD <= 0) return false;
+                    if (mat != null) DestroyImmediate(mat);
                     chunks = GenChilds(center, DIR, LOD - 1, size, gRad);
                     return true;
                 }
@@ -120,6 +134,7 @@ public class Planet : MonoBehaviour
                 // need to be uncut
                 if (chunks != null)
                 {
+                    mat = Instantiate(hmat);
                     chunks.ToList().ForEach(c => c.Kill());
                     chunks = null;
 
@@ -131,23 +146,24 @@ public class Planet : MonoBehaviour
 
         public void Kill()
         {
+            if (mat != null) DestroyImmediate(mat);
             if (chunks != null) chunks.ToList().ForEach(c => c.Kill()); // Nettoie les enfants
-            if (cachedMesh != null) Object.DestroyImmediate(cachedMesh); // Libère la mémoire GPU
+            if (cachedMesh != null) DestroyImmediate(cachedMesh); // Libère la mémoire GPU
             cachedMesh = null;
         }
 
-        private static Chunk[] GenChilds(Vector3 center, int Dir, int LOD, float size, float gRad)
+        private Chunk[] GenChilds(Vector3 center, int Dir, int LOD, float size, float gRad)
         {
             float nS = size * 0.5f;
             float ofs = nS * 0.5f;
             Chunk[] chunks = Dir switch
             {
-                0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad) },
-                1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad) },
-                2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad) },
-                3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad) },
-                4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad) },
-                5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad) },
+                0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, hmat) },
+                1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, hmat) },
+                2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, hmat) },
+                3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, hmat) },
+                4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, hmat) },
+                5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, hmat), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, hmat) },
                 _ => throw new System.NotImplementedException()
             };
             return chunks;
@@ -279,43 +295,53 @@ public class Planet : MonoBehaviour
 
     private void Build()
     {
-        List<CombineInstance> combineInstances = new List<CombineInstance>();
+        List<Tuple<CombineInstance, Material>> combineInstances = new();
 
         // Parcourt les faces principales (chunks racines)
         foreach (var face in chunks)
         {
             face.CollectCombineData(combineInstances);
         }
-
+        Material[] m = new Material[combineInstances.Count];
+        CombineInstance[] c = new CombineInstance[combineInstances.Count];
+        for (int i = 0; i < combineInstances.Count; i++)
+        {
+            c[i] = combineInstances[i].Item1;
+            m[i] = combineInstances[i].Item2;
+        }
         // Crée un mesh global combiné
         Mesh combinedMesh = new Mesh();
-        combinedMesh.CombineMeshes(combineInstances.ToArray(), true, true);
-
+        combinedMesh.CombineMeshes(c, false, true);
+        combinedMesh.RecalculateBounds();
         // Applique le mesh combiné au MeshFilter principal
+        GetComponent<MeshRenderer>().SetMaterials(m.ToList());
         GetComponent<MeshFilter>().mesh = combinedMesh;
     }
 
     void Start()
     {
-
+        
     }
 
     void OnEnable()
     {
         Mesh mesh = new();
         chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius),
-            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius),
-            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius),
-            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius),
-            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius),
-            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius)
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius, sharedMat),
+            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius, sharedMat),
+            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius, sharedMat),
+            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius, sharedMat),
+            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius, sharedMat),
+            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius, sharedMat)
         };
+        Build();
     }
 
     void OnDisable()
     {
         chunks.ToList().ForEach(c => c.Kill());
+        GetComponent<MeshFilter>().mesh = null;
+        GetComponent<MeshRenderer>().SetMaterials(new());
     }
 
     void Update()
