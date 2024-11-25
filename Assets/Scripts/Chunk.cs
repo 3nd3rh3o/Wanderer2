@@ -38,6 +38,8 @@ public class Chunk
         private Chunk[] chunks;
         private float gRad;
 
+
+        //TODO get Texture here !
         public void CollectCombineData(List<CombineInstance> combineInstances)
         {
             if (chunks == null)

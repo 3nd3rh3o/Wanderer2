@@ -14,6 +14,8 @@ public class Planet : MonoBehaviour
     public float radius;
     public int mLOD;
 
+    //TODO get Texture here ! and feed it to the material ! one combine => one texture2D 
+    // iterate over the length of the list of tuple, and set material property block
     private void Build()
     {
         List<CombineInstance> combineInstances = new();
