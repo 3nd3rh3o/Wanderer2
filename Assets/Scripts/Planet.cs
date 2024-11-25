@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.SearchService;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -64,7 +62,7 @@ public class Planet : MonoBehaviour
 
             this.gRad = gRad;
             this.center = center;
-            cachedMesh = ToMesh(/*GenNHMap*/(SubDivide(SubDivide(GenInitMesh(Dir, center, size)))));
+            cachedMesh = ToMesh(/*GenNHMap*/SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size)))));
             this.size = size;
             this.LOD = LOD;
             this.DIR = Dir;
@@ -80,15 +78,16 @@ public class Planet : MonoBehaviour
         {
             Mesh mesh = new();
             int mF = qMesh.faces.Length;
+            int[] f = qMesh.faces;
             Vector3[] v = qMesh.vertices;
             List<int> t = new((int)(mF * 1.5f));
             for (int i = 0; i < mF; i+=4)
             {
-                Vector3 a = v[i];
-                Vector3 b = v[i + 1];
-                Vector3 c = v[i + 2];
-                Vector3 d = v[i + 3];
-                t.AddRange(((b+d)*0.5f).sqrMagnitude <= ((a+c) * 0.5f).sqrMagnitude ? new int[]{i, i+1, i+3, i+2, i+3, i+1} : new int[]{i, i+1, i+2, i+2, i+3, i});
+                int a = f[i];
+                int b = f[i + 1];
+                int c = f[i + 2];
+                int d = f[i + 3];
+                t.AddRange(((v[b]+v[d])*0.5f).sqrMagnitude <= ((v[a]+v[c]) * 0.5f).sqrMagnitude ? new int[]{a, b, d, c, d, b} : new int[]{a, b, c, c, d, a});
             }
             mesh.SetVertices(v);
             mesh.SetTriangles(t, 0);
@@ -170,12 +169,12 @@ public class Planet : MonoBehaviour
                 Vector3 e = ((v[ai] + v[bi]) * 0.5f).normalized * gRad;
                 Vector3 f = ((v[bi] + v[ci]) * 0.5f).normalized * gRad;
                 Vector3 g = ((v[ci] + v[di]) * 0.5f).normalized * gRad;
-                Vector3 h = ((v[ci] + v[ai]) * 0.5f).normalized * gRad;
+                Vector3 h = ((v[di] + v[ai]) * 0.5f).normalized * gRad;
                 Vector3 j = ((e + g) * 0.5f).normalized * gRad;
                 int ei, fi, gi, hi, ji;
                 if (v.Contains(e))
                 {
-                    ei = v.FindIndex(0, e => e.Equals(e));
+                    ei = v.FindIndex(0, m => m.Equals(e));
                 }
                 else
                 {
@@ -185,7 +184,7 @@ public class Planet : MonoBehaviour
                 }
                 if (v.Contains(f))
                 {
-                    fi = v.FindIndex(0, e => e.Equals(f));
+                    fi = v.FindIndex(0, m => m.Equals(f));
                 }
                 else
                 {
@@ -195,7 +194,7 @@ public class Planet : MonoBehaviour
                 }
                 if (v.Contains(g))
                 {
-                    gi = v.FindIndex(0, e => e.Equals(g));
+                    gi = v.FindIndex(0, m => m.Equals(g));
                 }
                 else
                 {
@@ -205,7 +204,7 @@ public class Planet : MonoBehaviour
                 }
                 if (v.Contains(h))
                 {
-                    hi = v.FindIndex(0, e => e.Equals(h));
+                    hi = v.FindIndex(0, m => m.Equals(h));
                 }
                 else
                 {
@@ -268,7 +267,7 @@ public class Planet : MonoBehaviour
                     (new Vector3(0, -s, -s) + center).normalized * gRad
                 },
                 _ => throw new System.NotImplementedException()
-            } , new int[] { 0, 1, 2, 3});
+            } , new int[] { 0, 1, 3, 2});
             return mesh;
         }
     }
@@ -346,7 +345,7 @@ public class Planet : MonoBehaviour
     |       |    |   |   |
     |       |    |   |   |
     d ----- c    d - g - c
-
+    TODO chunk id(hash of pos in qTree)
 
 
     a = t[0]
