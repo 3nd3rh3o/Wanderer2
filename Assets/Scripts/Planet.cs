@@ -9,15 +9,20 @@ public class Planet : MonoBehaviour
 {
     private Mesh mesh;
     private List<int> chunksReg;
-    private class Quads
-    {
-        List<Vector3> vector3s;
-        List<int> tris;
-        //lod 0 => Cube;
-        //lod 2 => minimal mesh;
-    }
+    
     private class Chunk
     {
+        private struct QuadMesh
+        {
+            public Vector3[] vertices;
+            public int[] faces;
+
+            public QuadMesh(Vector3[] v, int[] f)
+            {
+                vertices = v;
+                faces = f;
+            }
+        }
         private Vector3 center;
         private float size;
         private Mesh cachedMesh;
@@ -59,10 +64,35 @@ public class Planet : MonoBehaviour
 
             this.gRad = gRad;
             this.center = center;
-            cachedMesh = SubDivide(SubDivide(GenInitMesh(Dir, center, size)));
+            cachedMesh = ToMesh(/*GenNHMap*/(SubDivide(SubDivide(GenInitMesh(Dir, center, size)))));
             this.size = size;
             this.LOD = LOD;
             this.DIR = Dir;
+        }
+
+
+        private QuadMesh GenNHMap(QuadMesh iMesh)
+        {
+            return new();
+        }
+
+        private Mesh ToMesh(QuadMesh qMesh)
+        {
+            Mesh mesh = new();
+            int mF = qMesh.faces.Length;
+            Vector3[] v = qMesh.vertices;
+            List<int> t = new((int)(mF * 1.5f));
+            for (int i = 0; i < mF; i+=4)
+            {
+                Vector3 a = v[i];
+                Vector3 b = v[i + 1];
+                Vector3 c = v[i + 2];
+                Vector3 d = v[i + 3];
+                t.AddRange(((b+d)*0.5f).sqrMagnitude <= ((a+c) * 0.5f).sqrMagnitude ? new int[]{i, i+1, i+3, i+2, i+3, i+1} : new int[]{i, i+1, i+2, i+2, i+3, i});
+            }
+            mesh.SetVertices(v);
+            mesh.SetTriangles(t, 0);
+            return mesh;
         }
 
 
@@ -123,26 +153,25 @@ public class Planet : MonoBehaviour
             };
             return chunks;
         }
-        private Mesh SubDivide(Mesh mesh)
+        private QuadMesh SubDivide(QuadMesh mesh)
         {
-            List<Vector3> v = new();
-            List<int> t = mesh.GetTriangles(0).ToList();
-            mesh.GetVertices(v);
+            List<Vector3> v = mesh.vertices.ToList();
+            List<int> t = mesh.faces.ToList();
             int mI = t.Count;
-            for (int i = 0; i < mI; i += 6)
+            for (int i = 0; i < mI; i += 4)
             {
-                int a = t[i];
-                int b = t[i + 1];
-                int c = t[i + 2];
-                int d = t[i + 3];
+                int ai = t[i];
+                int bi = t[i + 1];
+                int ci = t[i + 2];
+                int di = t[i + 3];
 
                 int vC = v.Count;
 
-                Vector3 e = ((v[a] + v[b]) * 0.5f).normalized * gRad;
-                Vector3 f = ((v[a] + v[c]) * 0.5f).normalized * gRad;
-                Vector3 g = ((v[b] + v[d]) * 0.5f).normalized * gRad;
-                Vector3 h = ((v[c] + v[d]) * 0.5f).normalized * gRad;
-                Vector3 j = ((e + h) * 0.5f).normalized * gRad;
+                Vector3 e = ((v[ai] + v[bi]) * 0.5f).normalized * gRad;
+                Vector3 f = ((v[bi] + v[ci]) * 0.5f).normalized * gRad;
+                Vector3 g = ((v[ci] + v[di]) * 0.5f).normalized * gRad;
+                Vector3 h = ((v[ci] + v[ai]) * 0.5f).normalized * gRad;
+                Vector3 j = ((e + g) * 0.5f).normalized * gRad;
                 int ei, fi, gi, hi, ji;
                 if (v.Contains(e))
                 {
@@ -187,82 +216,20 @@ public class Planet : MonoBehaviour
                 ji = vC;
                 v.Add(j);
                 vC++;
-                if (((v[a]+j)*0.5f).sqrMagnitude <= ((e+f)*0.5f).sqrMagnitude)
-                {
-                    t[i] = a;
-                    t[i + 1] = ei;
-                    t[i + 2] = fi;
-                    t[i + 3] = ji;
-                    t[i + 4] = fi;
-                    t[i + 5] = ei;
-                } else {
-                    t[i] = ei;
-                    t[i + 1] = ji;
-                    t[i + 2] = a;
-                    t[i + 3] = fi;
-                    t[i + 4] = a;
-                    t[i + 5] = ji;
-                }
-                int[] res = new int[18];
-                if (((e+g)*0.5f).sqrMagnitude <= ((v[b]+j)*0.5f).sqrMagnitude)
-                {
-                    res[0] = ei;
-                    res[1] = b;
-                    res[2] = ji;
-                    res[3] = gi;
-                    res[4] = ji;
-                    res[5] = b;
-                } else {
-                    res[0] = b;
-                    res[1] = gi;
-                    res[2] = ei;
-                    res[3] = ji;
-                    res[4] = ei;
-                    res[5] = gi;
-                }
-                if (((f+h)*0.5f).sqrMagnitude <= ((j+v[c])*0.5f).sqrMagnitude)
-                {
-                    res[6] = fi;
-                    res[7] = ji;
-                    res[8] = c;
-                    res[9] = hi;
-                    res[10] = c;
-                    res[11] = ji;
-                } else {
-                    res[6] = ji;
-                    res[7] = hi;
-                    res[8] = fi;
-                    res[9] = c;
-                    res[10] = fi;
-                    res[11] = hi;
-                }
-                if (((j+v[d])*0.5f).sqrMagnitude <= ((g+h)*0.5f).sqrMagnitude)
-                {
-                    res[12] = ji;
-                    res[13] = gi;
-                    res[14] = hi;
-                    res[15] = d;
-                    res[16] = hi;
-                    res[17] = gi;
-                } else {
-                    res[12] = gi;
-                    res[13] = d;
-                    res[14] = ji;
-                    res[15] = hi;
-                    res[16] = ji;
-                    res[17] = d;
-                }
-                t.AddRange(res);
+                t[i] = ai;
+                t[i + 1] = ei;
+                t[i + 2] = ji;
+                t[i + 3] = hi;
+                t.AddRange(new int[]{ei, bi, fi, ji, hi, ji, gi, di, ji, fi, ci, gi});
             }
-            mesh.SetVertices(v);
-            mesh.SetTriangles(t, 0);
+            mesh.vertices = v.ToArray();
+            mesh.faces = t.ToArray();
             return mesh;
         }
-        private Mesh GenInitMesh(int Dir, Vector3 center, float size)
+        private QuadMesh GenInitMesh(int Dir, Vector3 center, float size)
         {
             float s = size * 0.5f;
-            Mesh mesh = new();
-            mesh.SetVertices(Dir switch
+            QuadMesh mesh = new(Dir switch
             {
                 0 => new Vector3[]{
                     (new Vector3(-s, 0, -s) + center).normalized * gRad,
@@ -301,11 +268,7 @@ public class Planet : MonoBehaviour
                     (new Vector3(0, -s, -s) + center).normalized * gRad
                 },
                 _ => throw new System.NotImplementedException()
-            });
-            if (((mesh.vertices[1] + mesh.vertices[2])*0.5f).sqrMagnitude <= ((mesh.vertices[0] + mesh.vertices[3])*0.5f).sqrMagnitude)
-            mesh.SetTriangles(new int[] { 0, 1, 2, 3, 1, 2 }, 0);
-            else
-            mesh.SetTriangles(new int[] { 1, 3, 0, 2, 0, 3 }, 0);
+            } , new int[] { 0, 1, 2, 3});
             return mesh;
         }
     }
@@ -376,13 +339,13 @@ public class Planet : MonoBehaviour
     | /           |C/
     2             2
 
-    a --e-- b    b --g-- d
-    |     / |    | \     |
-    |    /  |    |  \    |
-    f   j   g :: e   j   h
-    |  /    |    |    \  |
-    | /     |    |     \ |
-    c --h-- d    a --f-- c
+    a ----- b    a - e - b
+    |       |    |   |   |
+    |       |    |   |   |
+    |       | => h - j - f
+    |       |    |   |   |
+    |       |    |   |   |
+    d ----- c    d - g - c
 
 
 
