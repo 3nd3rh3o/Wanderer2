@@ -9,16 +9,23 @@ public class Chunk
         private struct QuadMesh
         {
             public Vector3[] vertices;
+            public Vector3[] normals;
+            public Vector2[] uvs;
             public int[] faces;
+
             /*
             TODO uv (for nhmap)
                  normals
             */
 
-            public QuadMesh(Vector3[] v, int[] f)
+            public QuadMesh(Vector3[] v, Vector2[] uv, int[] f)
             {
                 vertices = v;
+                uvs = uv;
                 faces = f;
+                Vector3[] n = new Vector3[v.Length];
+                for (int i = 0; i<v.Length; i++) n[i] = v[i].normalized;
+                normals = n;
             }
         }
         private Vector3 center;
@@ -71,7 +78,6 @@ public class Chunk
             DIR = Dir;
             hmat = mat; // reference. NEVER USED DIRECTLY!
             this.mat = MonoBehaviour.Instantiate(hmat);
-            
         }
 
 
@@ -86,6 +92,8 @@ public class Chunk
             int mF = qMesh.faces.Length;
             int[] f = qMesh.faces;
             Vector3[] v = qMesh.vertices;
+            Vector3[] n = qMesh.normals;
+            Vector2[] uv = qMesh.uvs;
             List<int> t = new((int)(mF * 1.5f));
             for (int i = 0; i < mF; i+=4)
             {
@@ -96,7 +104,9 @@ public class Chunk
                 t.AddRange(((v[b]+v[d])*0.5f).sqrMagnitude <= ((v[a]+v[c]) * 0.5f).sqrMagnitude ? new int[]{a, b, d, c, d, b} : new int[]{a, b, c, c, d, a});
             }
             mesh.SetVertices(v);
+            mesh.SetNormals(n);
             mesh.SetTriangles(t, 0);
+            mesh.SetUVs(0, uv);
             mesh.RecalculateBounds();
             return mesh;
         }
@@ -148,7 +158,7 @@ public class Chunk
         public void Kill()
         {
             if (mat != null) MonoBehaviour.DestroyImmediate(mat);
-            if (chunks != null) chunks.ToList().ForEach(c => c.Kill()); // Nettoie les enfants
+            chunks?.ToList().ForEach(c => c.Kill()); // Nettoie les enfants
             if (cachedMesh != null) MonoBehaviour.DestroyImmediate(cachedMesh); // Libère la mémoire GPU
             cachedMesh = null;
         }
@@ -172,7 +182,9 @@ public class Chunk
         private QuadMesh SubDivide(QuadMesh mesh)
         {
             List<Vector3> v = mesh.vertices.ToList();
+            List<Vector2> uv = mesh.uvs.ToList();
             List<int> t = mesh.faces.ToList();
+            List<Vector3> n = mesh.normals.ToList();
             int mI = t.Count;
             for (int i = 0; i < mI; i += 4)
             {
@@ -183,11 +195,26 @@ public class Chunk
 
                 int vC = v.Count;
 
-                Vector3 e = ((v[ai] + v[bi]) * 0.5f).normalized * gRad;
-                Vector3 f = ((v[bi] + v[ci]) * 0.5f).normalized * gRad;
-                Vector3 g = ((v[ci] + v[di]) * 0.5f).normalized * gRad;
-                Vector3 h = ((v[di] + v[ai]) * 0.5f).normalized * gRad;
-                Vector3 j = ((e + g) * 0.5f).normalized * gRad;
+                Vector3 en = ((v[ai] + v[bi]) * 0.5f).normalized;
+                Vector3 e = en * gRad;
+                Vector2 eUV = (uv[ai] + uv[bi]) * 0.5f;
+
+                Vector3 fn = ((v[bi] + v[ci]) * 0.5f).normalized;
+                Vector3 f = fn * gRad;
+                Vector2 fUV = (uv[bi] + uv[ci]) * 0.5f;
+
+                Vector3 gn = ((v[ci] + v[di]) * 0.5f).normalized;
+                Vector3 g = gn * gRad;
+                Vector2 gUV = (uv[ci] + uv[di]) * 0.5f;
+
+                Vector3 hn = ((v[di] + v[ai]) * 0.5f).normalized;
+                Vector3 h = hn * gRad;
+                Vector2 hUV = (uv[di] + uv[ai]) * 0.5f;
+
+                Vector3 jn = ((e + g) * 0.5f).normalized;
+                Vector3 j = jn * gRad;
+                Vector2 jUV = (eUV + gUV) * 0.5f;
+
                 int ei, fi, gi, hi, ji;
                 if (v.Contains(e))
                 {
@@ -197,6 +224,8 @@ public class Chunk
                 {
                     ei = vC;
                     v.Add(e);
+                    n.Add(en);
+                    uv.Add(eUV);
                     vC++;
                 }
                 if (v.Contains(f))
@@ -207,6 +236,8 @@ public class Chunk
                 {
                     fi = vC;
                     v.Add(f);
+                    n.Add(fn);
+                    uv.Add(fUV);
                     vC++;
                 }
                 if (v.Contains(g))
@@ -217,6 +248,8 @@ public class Chunk
                 {
                     gi = vC;
                     v.Add(g);
+                    n.Add(gn);
+                    uv.Add(gUV);
                     vC++;
                 }
                 if (v.Contains(h))
@@ -227,10 +260,14 @@ public class Chunk
                 {
                     hi = vC;
                     v.Add(h);
+                    n.Add(hn);
+                    uv.Add(hUV);
                     vC++;
                 }
                 ji = vC;
                 v.Add(j);
+                n.Add(jn);
+                uv.Add(jUV);
                 vC++;
                 t[i] = ai;
                 t[i + 1] = ei;
@@ -239,6 +276,8 @@ public class Chunk
                 t.AddRange(new int[]{ei, bi, fi, ji, hi, ji, gi, di, ji, fi, ci, gi});
             }
             mesh.vertices = v.ToArray();
+            mesh.normals = n.ToArray();
+            mesh.uvs = uv.ToArray();
             mesh.faces = t.ToArray();
             return mesh;
         }
@@ -284,7 +323,7 @@ public class Chunk
                     (new Vector3(0, -s, -s) + center).normalized * gRad
                 },
                 _ => throw new System.NotImplementedException()
-            } , new int[] { 0, 1, 3, 2});
+            }, new Vector2[] {new(0,0), new(1, 0), new(1, 0), new(1, 1)}, new int[] { 0, 1, 3, 2});
             return mesh;
         }
     }
