@@ -9,8 +9,8 @@ public class Planet : MonoBehaviour
     private Queue<ChunkTask> chunkTasks;
     private Chunk[] chunks;
     public Material sharedMat;
-    
-    
+
+
     public float radius;
     public int mLOD;
 
@@ -41,7 +41,7 @@ public class Planet : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
     void OnEnable()
@@ -64,12 +64,20 @@ public class Planet : MonoBehaviour
         chunks.ToList().ForEach(c => c.Kill());
         GetComponent<MeshFilter>().mesh = null;
         GetComponent<MeshRenderer>().SetMaterials(new());
+        chunkTasks = null;
     }
     //TODO queue empty -> update
     // else dequeue + build
     void Update()
     {
-        if (chunks.Any(c => c.Update(transform.position * -1f, chunkTasks))) Build();
+        if (chunks != null && chunkTasks.Count == 0)
+            chunks.ToList().ForEach(c => c.Update(transform.position * -1f, chunkTasks));
+        else
+        {
+            ChunkTask t = chunkTasks.Dequeue();
+            t.chunk.ConsumeChunkTask(t);
+            Build();
+        }
     }
 
     void LateUpdate()

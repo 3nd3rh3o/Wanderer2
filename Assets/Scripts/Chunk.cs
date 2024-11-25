@@ -103,7 +103,7 @@ public class Chunk
 
 
         //TODO remove return, make it void
-        public bool Update(Vector3 pPos, Queue<ChunkTask> queue)
+        public void Update(Vector3 pPos, Queue<ChunkTask> queue)
         {
             if ((pPos - center).sqrMagnitude <= 3f * size * size)
             {
@@ -111,16 +111,11 @@ public class Chunk
                 if (chunks != null)
                 {
                     // give potato to childs
-                    if (chunks.Any(c => c.Update(pPos, queue))) return true;
+                    chunks.ToList().ForEach(c => c.Update(pPos, queue));
                 }
                 else
                 {
-                    //TODO add to queue.
-                    // build after each dequeue if queue wasn't empty.
-                    if (LOD <= 0) return false;
-                    if (mat != null) MonoBehaviour.DestroyImmediate(mat);
-                    chunks = GenChilds(center, DIR, LOD - 1, size, gRad);
-                    return true;
+                    queue.Enqueue(new ChunkTask(ChunkTask.TYPE.ADDCHILD, this));
                 }
             }
             else
@@ -128,17 +123,28 @@ public class Chunk
                 // need to be uncut
                 if (chunks != null)
                 {
-                    // TODO add to queue
+                    queue.Enqueue(new ChunkTask(ChunkTask.TYPE.KILLCHILD, this));
+                }
+            }
+             // No changes needed for this chunk
+        }
+
+        public void ConsumeChunkTask(ChunkTask task)
+        {
+            switch (task.type)
+            {
+                case ChunkTask.TYPE.ADDCHILD:
+                    if (LOD <= 0) return;
+                    if (mat != null) MonoBehaviour.DestroyImmediate(mat);
+                    chunks = GenChilds(center, DIR, LOD - 1, size, gRad);
+                    return;
+                case ChunkTask.TYPE.KILLCHILD:
                     mat = MonoBehaviour.Instantiate(hmat);
                     chunks.ToList().ForEach(c => c.Kill());
                     chunks = null;
-
-                    return true;
-                }
+                    return;
             }
-            return false; // No changes needed for this chunk
         }
-
         public void Kill()
         {
             if (mat != null) MonoBehaviour.DestroyImmediate(mat);

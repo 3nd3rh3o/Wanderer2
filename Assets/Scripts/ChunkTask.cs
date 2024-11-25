@@ -1,13 +1,18 @@
 using System;
 using System.Numerics;
 
-public struct ChunkTask
+public class ChunkTask
 {
-    public Action action;
+    public enum TYPE
+    {
+        ADDCHILD,
+        KILLCHILD
+    }
+    public TYPE type;
     public Chunk chunk;
-    public Vector3 center;
-    public int DIR;
-    public int LOD;
-    public float size;
-    public float gRad;
+    public ChunkTask(TYPE type, Chunk chunk)
+    {
+        this.type = type;
+        this.chunk = chunk;
+    }
 }
