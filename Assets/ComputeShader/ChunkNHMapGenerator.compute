@@ -3,6 +3,8 @@
 
 
 RWTexture2D<float4> NHMap;
+RWStructuredBuffer<float3> vertices;
+uint vNum;
 float4x4 arg1;
 float4x4 arg2;
 
@@ -11,4 +13,6 @@ float4x4 arg2;
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
     NHMap[id.xy] = float4(1,0,0,1);
+
+    // kick op added to write height to vertice
 }

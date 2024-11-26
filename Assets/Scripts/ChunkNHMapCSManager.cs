@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -61,16 +62,31 @@ public class ChunkNHMapCSManager
         instr = instructions.UnPackInstr();
         args = instructions.UnPackArgs();
     }
-
-
-    public void GenMap(RenderTexture buffer)
+    struct float3
     {
-        
+        public float x;
+        public float y;
+        public float z;
+        public Vector3 ToVec()
+        {
+            return new Vector3(x, y, z);
+        }
+    }
+
+    public void GenMap(RenderTexture buffer, Vector3[] v)
+    {
+        cs.SetTexture(0, "NHMap", buffer);
         cs.SetMatrix("arg1", new Matrix4x4(args[0], args[1], args[2], args[3]).transpose);
         cs.SetMatrix("arg2", new Matrix4x4(args[4], args[5], args[6], args[7]).transpose);
-        cs.SetTexture(0, "NHMap", buffer);
-
-        cs.Dispatch(0, 100, 100, 1);
+        ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
+        float3[] f = new float3[v.Length];
+        for (int i = 0; i < v.Length; i++) f[i] = new(){x=v[i].x, y=v[i].y, z=v[i].z};
+        vBuff.SetData(f);
+        cs.SetBuffer(0, "vertices", vBuff);
+        cs.Dispatch(0, buffer.width/8, buffer.height/8, 1);
+        vBuff.GetData(f);
+        for (int i = 0; i < f.Length; i++) v[i] = f[i].ToVec();
+        vBuff.Release();
     }
 
     [Serializable]

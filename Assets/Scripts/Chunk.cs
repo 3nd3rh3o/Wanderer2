@@ -77,9 +77,9 @@ public class Chunk
             this.size = size;
             this.LOD = LOD;
             DIR = Dir;
-            NHMap = new(100, 100, 0);
+            this.csMan = csMan;
+            NHMap = new(256, 256, 0, RenderTextureFormat.ARGB32);
             NHMap.enableRandomWrite = true;
-            NHMap.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
             NHMap.Create();
             cachedMesh = ToMesh(GenNHMap(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size))))));
         }
@@ -89,7 +89,7 @@ public class Chunk
         {
             if (csMan!=null && NHMap != null)
             {
-                csMan.GenMap(NHMap);
+                csMan.GenMap(NHMap, iMesh.vertices);
             }
             return iMesh;
         }
