@@ -1,7 +1,7 @@
 using UnityEngine;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 
 public class Chunk
@@ -37,10 +37,12 @@ public class Chunk
         private int DIR;
         private Chunk[] chunks;
         private float gRad;
+        private RenderTexture NHMap;
+        private ChunkNHMapCSManager csMan;
 
 
         //TODO get Texture here !
-        public void CollectCombineData(List<CombineInstance> combineInstances)
+        public void CollectCombineData(List<Tuple<CombineInstance, RenderTexture>> combineInstances)
         {
             if (chunks == null)
             {
@@ -52,7 +54,7 @@ public class Chunk
                         mesh = cachedMesh,
                         transform = Matrix4x4.identity // Identité si tout est en local space
                     };
-                    combineInstances.Add(combine);
+                    combineInstances.Add(new(combine, NHMap));
 
                 }
             }
@@ -67,21 +69,29 @@ public class Chunk
         }
 
 
-        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad)
+        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan)
         {
 
             this.gRad = gRad;
             this.center = center;
-            cachedMesh = ToMesh(/*GenNHMap*/SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size)))));
             this.size = size;
             this.LOD = LOD;
             DIR = Dir;
+            NHMap = new(100, 100, 0);
+            NHMap.enableRandomWrite = true;
+            NHMap.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
+            NHMap.Create();
+            cachedMesh = ToMesh(GenNHMap(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size))))));
         }
 
 
         private QuadMesh GenNHMap(QuadMesh iMesh)
         {
-            return new();
+            if (csMan!=null && NHMap != null)
+            {
+                csMan.GenMap(NHMap);
+            }
+            return iMesh;
         }
 
         private Mesh ToMesh(QuadMesh qMesh)
@@ -153,6 +163,11 @@ public class Chunk
         }
         public void Kill()
         {
+            if (NHMap)
+            {
+                NHMap.Release();
+                NHMap = null;
+            }
             chunks?.ToList().ForEach(c => c.Kill()); // Nettoie les enfants
             if (cachedMesh != null) MonoBehaviour.DestroyImmediate(cachedMesh); // Libère la mémoire GPU
             cachedMesh = null;
@@ -164,12 +179,12 @@ public class Chunk
             float ofs = nS * 0.5f;
             Chunk[] chunks = Dir switch
             {
-                0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad) },
-                1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad) },
-                2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad) },
-                3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad) },
-                4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad) },
-                5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad) },
+                0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan) },
+                1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan) },
+                2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan) },
+                3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan) },
+                4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan) },
+                5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan) },
                 _ => throw new System.NotImplementedException()
             };
             return chunks;

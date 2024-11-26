@@ -9,6 +9,10 @@ public class Planet : MonoBehaviour
     private Queue<ChunkTask> chunkTasks;
     private Chunk[] chunks;
     public Material sharedMat;
+    public ComputeShader cs;
+    private ChunkNHMapCSManager csMan;
+    [SerializeField]
+    public ChunkNHMapCSManager.Instr[] instructions = new ChunkNHMapCSManager.Instr[0];
 
 
     public float radius;
@@ -18,21 +22,33 @@ public class Planet : MonoBehaviour
     // iterate over the length of the list of tuple, and set material property block
     private void Build()
     {
-        List<CombineInstance> combineInstances = new();
+        List<Tuple<CombineInstance, RenderTexture>> chunkData = new();
 
         // Parcourt les faces principales (chunks racines)
         foreach (var face in chunks)
         {
-            face.CollectCombineData(combineInstances);
+            face.CollectCombineData(chunkData);
         }
+        CombineInstance[] combines = new CombineInstance[chunkData.Count];
+        RenderTexture[] renderTextures = new RenderTexture[chunkData.Count];
+        for (int i = 0; i < chunkData.Count; i++) (combines[i], renderTextures[i]) = chunkData[i];
         // Crée un mesh global combiné
         Mesh combinedMesh = new Mesh();
-        combinedMesh.CombineMeshes(combineInstances.ToArray(), false, true);
+        combinedMesh.CombineMeshes(combines.ToArray(), false, true);
         combinedMesh.RecalculateBounds();
-        Material[] m = new Material[combineInstances.Count];
-        for (int i = 0; i < combineInstances.Count; i++) m[i] = sharedMat;
+
+
+        // ajuste le renderer
+        Material[] m = new Material[combines.Length];
+        for (int i = 0; i < combines.Length; i++) m[i] = sharedMat;
         // Applique le mesh combiné au MeshFilter principal
         GetComponent<MeshRenderer>().SetMaterials(m.ToList());
+        for (int i = 0; i < renderTextures.Length; i++)
+        {
+            MaterialPropertyBlock mpb = new();
+            mpb.SetTexture("_NHMap", renderTextures[i]);
+            GetComponent<MeshRenderer>().SetPropertyBlock(mpb, i);
+        }
         GetComponent<MeshFilter>().mesh = combinedMesh;
         // TODO text => mat here
     }
@@ -44,17 +60,18 @@ public class Planet : MonoBehaviour
 
     void OnEnable()
     {
+        if (cs) csMan = new(cs, instructions);
         Mesh mesh = new();
         chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius),
-            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius),
-            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius),
-            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius),
-            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius),
-            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius)
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius, csMan),
+            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius, csMan),
+            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius, csMan),
+            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius, csMan),
+            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius, csMan),
+            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius, csMan)
         };
-        Build();
         chunkTasks = new();
+        Build();
     }
 
     void OnDisable()
@@ -68,6 +85,7 @@ public class Planet : MonoBehaviour
     // else dequeue + build
     void Update()
     {
+        csMan?.UpdateSettings(instructions);
         if (chunks != null && chunkTasks.Count == 0)
             chunks.ToList().ForEach(c => c.Update(transform.position * -1f, chunkTasks));
         else
