@@ -44,8 +44,9 @@ Shader "Custom/PlanetSurface"
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D (_NHMap, IN.uv_NHMap);
+            fixed4 c = fixed4(mul(unity_ObjectToWorld, tex2D (_NHMap, IN.uv_NHMap).xyz * 2 - 1), 1);
             o.Albedo = c.rgb;
+            o.Normal = c.xyz
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
