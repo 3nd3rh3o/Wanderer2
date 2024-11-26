@@ -3,8 +3,16 @@
 
 
 RWTexture2D<float4> NHMap;
+//TODO remove this
 RWStructuredBuffer<float3> vertices;
 uint vNum;
+
+//NOTE un-normalized chunk bounds
+float3 origin;
+float3 mx;
+float3 my;
+
+
 float4x4 arg1;
 float4x4 arg2;
 
@@ -12,7 +20,14 @@ float4x4 arg2;
 [numthreads(8, 8, 1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    NHMap[id.xy] = float4(1,0,0,1);
+    float2 step = id / 256;
+    float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
+
+
+
+
+    NHMap[id.xy] = float4(samplePoint, 1);
+
 
     // kick op added to write height to vertice
 }
