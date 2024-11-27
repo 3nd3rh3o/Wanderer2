@@ -96,7 +96,7 @@ public class Chunk
         {
             if (csMan!=null && NHMap != null)
             {
-                csMan.GenMap(NHMap, iMesh.vertices, iMesh.origin, iMesh.mx, iMesh.my);
+                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.origin, iMesh.mx, iMesh.my);
             }
             return iMesh;
         }

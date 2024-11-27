@@ -73,7 +73,7 @@ public class ChunkNHMapCSManager
         }
     }
 
-    public void GenMap(RenderTexture buffer, Vector3[] v, Vector3 origin, Vector3 mx, Vector3 my)
+    public void GenMap(RenderTexture buffer, Vector3[] v, Vector3[] n, Vector3 origin, Vector3 mx, Vector3 my)
     {
         cs.SetTexture(0, "NHMap", buffer);
         cs.SetMatrix("arg1", new Matrix4x4(args[0], args[1], args[2], args[3]).transpose);
@@ -81,15 +81,34 @@ public class ChunkNHMapCSManager
         cs.SetVector("origin", origin);
         cs.SetVector("mx", mx);
         cs.SetVector("my", my);
+
         ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
-        float3[] f = new float3[v.Length];
-        for (int i = 0; i < v.Length; i++) f[i] = new(){x=v[i].x, y=v[i].y, z=v[i].z};
-        vBuff.SetData(f);
+        ComputeBuffer nBuff = new ComputeBuffer(n.Length, sizeof(float)*3);
+
+        float3[] vA = new float3[v.Length];
+        float3[] nA = new float3[n.Length];
+
+        for (int i = 0; i < v.Length; i++)
+        {
+            vA[i] = new(){x=v[i].x, y=v[i].y, z=v[i].z};
+            nA[i] = new(){x=n[i].x, y=n[i].y, z=n[i].z};
+        };
+
+        vBuff.SetData(vA);
+        nBuff.SetData(nA);
         cs.SetBuffer(0, "vertices", vBuff);
+        cs.SetBuffer(0, "normals", nBuff);
         cs.Dispatch(0, buffer.width/8, buffer.height/8, 1);
-        vBuff.GetData(f);
-        for (int i = 0; i < f.Length; i++) v[i] = f[i].ToVec();
+
+        vBuff.GetData(vA);
+        nBuff.GetData(nA);
+        for (int i = 0; i < vA.Length; i++) 
+        {
+            v[i] = vA[i].ToVec();
+            n[i] = nA[i].ToVec();
+        }
         vBuff.Release();
+        nBuff.Release();
     }
 
     [Serializable]

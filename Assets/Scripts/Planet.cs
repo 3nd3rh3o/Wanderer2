@@ -94,7 +94,6 @@ public class Planet : MonoBehaviour
         {
             ChunkTask t = chunkTasks.Dequeue();
             t.chunk.ConsumeChunkTask(t);
-            
         }
         Build();
     }

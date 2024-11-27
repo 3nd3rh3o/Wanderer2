@@ -5,6 +5,7 @@
 RWTexture2D<float4> NHMap;
 //TODO remove this
 RWStructuredBuffer<float3> vertices;
+RWStructuredBuffer<float3> normals;
 uint vNum;
 
 //NOTE un-normalized chunk bounds
@@ -16,18 +17,39 @@ float3 my;
 float4x4 arg1;
 float4x4 arg2;
 
+float sampleHeight(float3 sPoint)
+{
+    return 0.0;
+}
+
 
 [numthreads(8, 8, 1)]
-void CSMain (uint2 id : SV_DispatchThreadID)
+void CSMain(uint2 id : SV_DispatchThreadID)
 {
     float2 step = (float2(id.x, id.y)) * 1.0 / 256.0;
-    //float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
-
-
+    float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
+    float height = 0.0;
 
     //normal in tangent space good
     NHMap[id.xy] = half4(0, 0, 1, 1);
+    if (id.x == 0 && id.y == 0)
+    {
+        for (int i = 0; i < vNum; i++)
+        {
+
+            
+            const float2 offset = float2(1 / 256, 0.0);
+            float3 sP = normalize(vertices[i]);
+            vertices[i] *= (1.0 + height);
+            normals[i] = float3(
+                sampleHeight(sP + offset.xyy) - sampleHeight(sP - offset.xyy),
+                sampleHeight(sP + offset.yxy) - sampleHeight(sP - offset.yxy),
+                sampleHeight(sP + offset.yyx) - sampleHeight(sP - offset.yyx)
+            );
+        }
+    }
 
 
     // kick op added to write height to vertice
+
 }
