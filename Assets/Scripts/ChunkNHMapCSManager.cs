@@ -73,11 +73,14 @@ public class ChunkNHMapCSManager
         }
     }
 
-    public void GenMap(RenderTexture buffer, Vector3[] v)
+    public void GenMap(RenderTexture buffer, Vector3[] v, Vector3 origin, Vector3 mx, Vector3 my)
     {
         cs.SetTexture(0, "NHMap", buffer);
         cs.SetMatrix("arg1", new Matrix4x4(args[0], args[1], args[2], args[3]).transpose);
         cs.SetMatrix("arg2", new Matrix4x4(args[4], args[5], args[6], args[7]).transpose);
+        cs.SetVector("origin", origin);
+        cs.SetVector("mx", mx);
+        cs.SetVector("my", my);
         ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
         float3[] f = new float3[v.Length];
         for (int i = 0; i < v.Length; i++) f[i] = new(){x=v[i].x, y=v[i].y, z=v[i].z};

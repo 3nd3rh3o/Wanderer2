@@ -2,12 +2,16 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Unity.VisualScripting;
 
 
 public class Chunk
     {
         private struct QuadMesh
         {
+            public Vector3 origin;
+            public Vector3 mx;
+            public Vector3 my;
             public Vector3[] vertices;
             public Vector3[] normals;
             public Vector2[] uvs;
@@ -18,7 +22,7 @@ public class Chunk
                  normals
             */
 
-            public QuadMesh(Vector3[] v, Vector2[] uv, int[] f)
+            public QuadMesh(Vector3[] v, Vector2[] uv, int[] f, Vector3 origin, Vector3 mx, Vector3 my)
             {
                 vertices = v;
                 uvs = uv;
@@ -26,6 +30,9 @@ public class Chunk
                 Vector3[] n = new Vector3[v.Length];
                 for (int i = 0; i<v.Length; i++) n[i] = v[i].normalized;
                 normals = n;
+                this.origin = origin;
+                this.mx = mx;
+                this.my = my;
             }
         }
         private Vector3 center;
@@ -78,7 +85,7 @@ public class Chunk
             this.LOD = LOD;
             DIR = Dir;
             this.csMan = csMan;
-            NHMap = new(256, 256, 0, RenderTextureFormat.ARGB32);
+            NHMap = new(256, 256, 32, RenderTextureFormat.ARGB32);
             NHMap.enableRandomWrite = true;
             NHMap.Create();
             cachedMesh = ToMesh(GenNHMap(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size))))));
@@ -89,7 +96,7 @@ public class Chunk
         {
             if (csMan!=null && NHMap != null)
             {
-                csMan.GenMap(NHMap, iMesh.vertices);
+                csMan.GenMap(NHMap, iMesh.vertices, iMesh.origin, iMesh.mx, iMesh.my);
             }
             return iMesh;
         }
@@ -294,6 +301,40 @@ public class Chunk
         private QuadMesh GenInitMesh(int Dir, Vector3 center, float size)
         {
             float s = size * 0.5f;
+            Vector3[] oxy = Dir switch
+            {
+                0 => new Vector3[]{
+                    new Vector3(-s, 0, -s) + center,
+                    new Vector3(-s, 0, s) + center,
+                    new Vector3(s, 0, -s) + center
+                },
+                1 => new Vector3[]{
+                    new Vector3(-s, 0, s) + center,
+                    new Vector3(-s, 0, -s) + center,
+                    new Vector3(s, 0, s) + center
+                },
+                2 => new Vector3[]{
+                    new Vector3(s, s, 0) + center,
+                    new Vector3(-s, s, 0) + center,
+                    new Vector3(s, -s, 0) + center
+                },
+                3 => new Vector3[]{
+                    new Vector3(-s, s, 0) + center,
+                    new Vector3(s, s, 0) + center,
+                    new Vector3(-s, -s, 0) + center
+                },
+                4 => new Vector3[]{
+                    new Vector3(0, s, -s) + center,
+                    new Vector3(0, s, s) + center,
+                    new Vector3(0, -s, -s) + center
+                },
+                5 => new Vector3[]{
+                    new Vector3(0, s, s) + center,
+                    new Vector3(0, s, -s) + center,
+                    new Vector3(0, -s, s) + center
+                },
+                _ => throw new System.NotImplementedException()
+            };
             QuadMesh mesh = new(Dir switch
             {
                 0 => new Vector3[]{
@@ -333,7 +374,7 @@ public class Chunk
                     (new Vector3(0, -s, -s) + center).normalized * gRad
                 },
                 _ => throw new System.NotImplementedException()
-            }, new Vector2[] {new(0,0), new(1, 0), new(1, 0), new(1, 1)}, new int[] { 0, 1, 3, 2});
+            }, new Vector2[] {new(0, 0), new(1, 0), new(0, 1), new(1, 1)}, new int[] { 0, 1, 3, 2}, oxy[0], oxy[1], oxy[2]);
             return mesh;
         }
     }

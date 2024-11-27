@@ -35,6 +35,7 @@ public class Planet : MonoBehaviour
         // Crée un mesh global combiné
         Mesh combinedMesh = new Mesh();
         combinedMesh.CombineMeshes(combines.ToArray(), false, true);
+        combinedMesh.RecalculateTangents();
         combinedMesh.RecalculateBounds();
 
 
@@ -49,8 +50,9 @@ public class Planet : MonoBehaviour
             mpb.SetTexture("_NHMap", renderTextures[i]);
             GetComponent<MeshRenderer>().SetPropertyBlock(mpb, i);
         }
+
         GetComponent<MeshFilter>().mesh = combinedMesh;
-        // TODO text => mat here
+        sharedMat.SetTexture("_MainTex", renderTextures[0]);
     }
 
     void Start()

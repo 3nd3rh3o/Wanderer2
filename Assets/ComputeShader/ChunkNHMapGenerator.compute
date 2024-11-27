@@ -18,15 +18,15 @@ float4x4 arg2;
 
 
 [numthreads(8, 8, 1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void CSMain (uint2 id : SV_DispatchThreadID)
 {
-    float2 step = id / 256;
-    float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
+    float2 step = (float2(id.x, id.y)) * 1.0 / 256.0;
+    //float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
 
 
 
-
-    NHMap[id.xy] = float4(samplePoint, 1);
+    //normal in tangent space
+    NHMap[id.xy] = float4(0, 0, 1, 1);
 
 
     // kick op added to write height to vertice
