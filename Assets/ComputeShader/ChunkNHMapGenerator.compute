@@ -25,8 +25,8 @@ void CSMain (uint2 id : SV_DispatchThreadID)
 
 
 
-    //normal in tangent space
-    NHMap[id.xy] = float4(0, 0, 1, 1);
+    //normal in tangent space good
+    NHMap[id.xy] = half4(0, 0, 1, 1);
 
 
     // kick op added to write height to vertice

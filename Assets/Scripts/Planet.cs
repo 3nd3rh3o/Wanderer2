@@ -89,7 +89,7 @@ public class Planet : MonoBehaviour
     {
         csMan?.UpdateSettings(instructions);
         if (chunks != null && chunkTasks.Count == 0)
-            chunks.ToList().ForEach(c => c.Update(transform.position * -1f, chunkTasks));
+            chunks.ToList().ForEach(c => c.Update(Quaternion.Inverse(transform.localRotation) * transform.position * -1f, chunkTasks));
         else
         {
             ChunkTask t = chunkTasks.Dequeue();
