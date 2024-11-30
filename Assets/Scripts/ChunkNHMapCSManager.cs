@@ -73,9 +73,13 @@ public class ChunkNHMapCSManager
         }
     }
 
-    public void GenMap(RenderTexture buffer, Vector3[] v, Vector3[] n, Vector3 origin, Vector3 mx, Vector3 my)
+    public void GenMap(RenderTexture buffer, Vector3[] v, Vector3[] n, Vector3 origin, Vector3 mx, Vector3 my, float gRad)
     {
+        // VertexUpdate
+        
         cs.SetTexture(0, "NHMap", buffer);
+        cs.SetInt("vNum", v.Length);
+        cs.SetFloat("bRad", gRad);
         cs.SetMatrix("arg1", new Matrix4x4(args[0], args[1], args[2], args[3]).transpose);
         cs.SetMatrix("arg2", new Matrix4x4(args[4], args[5], args[6], args[7]).transpose);
         cs.SetVector("origin", origin);
@@ -96,9 +100,11 @@ public class ChunkNHMapCSManager
 
         vBuff.SetData(vA);
         nBuff.SetData(nA);
-        cs.SetBuffer(0, "vertices", vBuff);
-        cs.SetBuffer(0, "normals", nBuff);
+        cs.SetBuffer(1, "vertices", vBuff);
+        cs.SetBuffer(1, "normals", nBuff);
         cs.Dispatch(0, buffer.width/8, buffer.height/8, 1);
+        
+        cs.Dispatch(1, v.Length, 1, 1);
 
         vBuff.GetData(vA);
         nBuff.GetData(nA);

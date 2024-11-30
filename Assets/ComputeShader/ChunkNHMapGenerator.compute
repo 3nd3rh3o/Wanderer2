@@ -1,4 +1,7 @@
-#pragma kernel CSMain
+#pragma kernel NHMapGen
+#pragma kernel VertexRecompute
+
+#include "../Libs/FractalNoise.cginc"
 
 
 
@@ -7,6 +10,7 @@ RWTexture2D<float4> NHMap;
 RWStructuredBuffer<float3> vertices;
 RWStructuredBuffer<float3> normals;
 uint vNum;
+float bRad;
 
 //NOTE un-normalized chunk bounds
 float3 origin;
@@ -19,37 +23,81 @@ float4x4 arg2;
 
 float sampleHeight(float3 sPoint)
 {
-    return 0.0;
+    return simpleNoise(sPoint, 2, 0.04);
 }
 
 
 [numthreads(8, 8, 1)]
-void CSMain(uint2 id : SV_DispatchThreadID)
+void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
+    //TODO change that to only vertex
     float2 step = (float2(id.x, id.y)) * 1.0 / 256.0;
     float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
     float height = 0.0;
 
     //normal in tangent space good
-    NHMap[id.xy] = half4(0, 0, 1, 1);
-    if (id.x == 0 && id.y == 0)
+    NHMap[id.xy] = half4(0, 0, 1, 1);   
+}
+
+[numthreads(8, 1, 1)]
+void VertexRecompute(uint id : SV_DISPATCHTHREADID)
+{
+    const float offset = 0.002 * bRad; // Offset proportionnel à la taille de la planète
+
+    if (id < vNum)
     {
-        for (int i = 0; i < vNum; i++)
+        // Position actuelle du vertex
+        float3 vPos = normalize(vertices[id]);
+
+        // Hauteur actuelle
+        float height = sampleHeight(vPos);
+
+        // Position finale du vertex après déformation
+        float3 vFinalPos = vPos * (1.0 + height) * bRad;
+        vertices[id] = vFinalPos;
+        
+        // Calcul des positions déformées dans les trois directions
+        float3 posXPlus = normalize(vPos + float3(offset, 0.0, 0.0));
+        posXPlus = posXPlus * (1.0 + sampleHeight(posXPlus)) * bRad;
+
+        float3 posXMinus = normalize(vPos - float3(offset, 0.0, 0.0));
+        posXMinus = posXMinus * (1.0 + sampleHeight(posXMinus)) * bRad;
+
+        float3 posYPlus = normalize(vPos + float3(0.0, offset, 0.0));
+        posYPlus = posYPlus * (1.0 + sampleHeight(posYPlus)) * bRad;
+
+        float3 posYMinus = normalize(vPos - float3(0.0, offset, 0.0));
+        posYMinus = posYMinus * (1.0 + sampleHeight(posYMinus)) * bRad;
+
+        float3 posZPlus = normalize(vPos + float3(0.0, 0.0, offset));
+        posZPlus = posZPlus * (1.0 + sampleHeight(posZPlus)) * bRad;
+
+        float3 posZMinus = normalize(vPos - float3(0.0, 0.0, offset));
+        posZMinus = posZMinus * (1.0 + sampleHeight(posZMinus)) * bRad;
+
+        // Calcul des gradients dans chaque direction
+        float3 tangentX = posXPlus - posXMinus;
+        float3 tangentY = posYPlus - posYMinus;
+        float3 tangentZ = posZPlus - posZMinus;
+
+
+        
+        // Calcul de la normale en utilisant deux tangentes
+        float3 normal = cross(tangentX, tangentY);
+        
+        if (vPos.z <= 0.001 && vPos.z >= -0.001)
         {
-
             
-            const float2 offset = float2(1 / 256, 0.0);
-            float3 sP = normalize(vertices[i]);
-            vertices[i] *= (1.0 + height);
-            normals[i] = float3(
-                sampleHeight(sP + offset.xyy) - sampleHeight(sP - offset.xyy),
-                sampleHeight(sP + offset.yxy) - sampleHeight(sP - offset.yxy),
-                sampleHeight(sP + offset.yyx) - sampleHeight(sP - offset.yyx)
-            );
+            normal = cross(tangentY, tangentZ);
+            
         }
+        // Corriger les normales pour qu'elles pointent toujours vers l'extérieur
+        if (dot(normal, vFinalPos) < 0.0)
+        {
+            normal = -normal;
+        }
+
+        // Normalisation finale
+        normals[id] = normalize(normal);
     }
-
-
-    // kick op added to write height to vertice
-
 }

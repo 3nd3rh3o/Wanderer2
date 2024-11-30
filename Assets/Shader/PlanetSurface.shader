@@ -44,7 +44,6 @@ Shader "Custom/PlanetSurface"
             // Albedo comes from a texture tinted by color
             float3 c = tex2D(_NHMap, IN.uv_MainTex).xyz;
             o.Albedo = fixed3(1, 1, 1);
-            o.Normal = c;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
