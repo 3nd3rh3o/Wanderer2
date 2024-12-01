@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+#if UNITY_EDITOR
 [ExecuteInEditMode]
+#endif
 public class Planet : MonoBehaviour
 {
     private Queue<ChunkTask> chunkTasks;
@@ -18,7 +19,7 @@ public class Planet : MonoBehaviour
     public float radius;
     public int mLOD;
 
-    private void Build()
+    protected void Build()
     {
         List<Tuple<CombineInstance, RenderTexture>> chunkData = new();
 
