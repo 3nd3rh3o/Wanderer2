@@ -17,11 +17,6 @@ public class Chunk
             public Vector2[] uvs;
             public int[] faces;
 
-            /*
-            TODO uv (for nhmap)
-                 normals
-            */
-
             public QuadMesh(Vector3[] v, Vector2[] uv, int[] f, Vector3 origin, Vector3 mx, Vector3 my)
             {
                 vertices = v;
@@ -48,8 +43,6 @@ public class Chunk
         private ChunkNHMapCSManager csMan;
         private Vector3 geoCenter;
 
-
-        //TODO get Texture here !
         public void CollectCombineData(List<Tuple<CombineInstance, RenderTexture>> combineInstances)
         {
             if (chunks == null)
@@ -128,8 +121,6 @@ public class Chunk
             return mesh;
         }
 
-
-        //TODO remove return, make it void
         public void Update(Vector3 pPos, Queue<ChunkTask> queue)
         {
             if ((pPos - geoCenter).sqrMagnitude <= 3f * size * size)
