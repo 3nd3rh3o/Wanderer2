@@ -21,6 +21,8 @@ float3 my;
 float4x4 arg1;
 float4x4 arg2;
 
+
+// TODO Complete this.
 float sampleHeight(float3 sPoint)
 {
     return simpleNoise(sPoint, 2, 0.04);
@@ -30,12 +32,12 @@ float sampleHeight(float3 sPoint)
 [numthreads(8, 8, 1)]
 void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
-    //TODO change that to only vertex
+    //TODO surface detail computation, per biome?
     float2 step = (float2(id.x, id.y)) * 1.0 / 256.0;
     float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
     float height = 0.0;
 
-    //normal in tangent space good
+    //DONT TOUCH THIS ! correct lerping to squish the vec to color clamps.
     NHMap[id.xy] = (half4(0, 0, 1, 1) + 1.0) * 0.5;
 }
 
