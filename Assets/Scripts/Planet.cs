@@ -17,7 +17,8 @@ public class Planet : MonoBehaviour
 
 
     public float radius;
-    public int mLOD;
+    [SerializeField]
+    private int mLOD;
 
     protected void Build()
     {
