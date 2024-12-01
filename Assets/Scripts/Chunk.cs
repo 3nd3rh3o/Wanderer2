@@ -120,7 +120,24 @@ public class Chunk
             geoCenter = mesh.bounds.center;
             return mesh;
         }
-
+        public void Update(int LOD)
+        {
+            this.LOD = LOD;
+            if (LOD==0)
+            {
+                chunks?.ToList().ForEach(c => c.Kill());
+                chunks = null;
+            }
+            else
+            {
+                if (chunks == null)
+                {
+                    chunks = GenChilds(center, DIR, this.LOD - 1, size, gRad);
+                } else {
+                    chunks.ToList().ForEach(c => c.Update(LOD - 1));
+                }
+            }
+        }
         public void Update(Vector3 pPos, Queue<ChunkTask> queue)
         {
             if ((pPos - geoCenter).sqrMagnitude <= 3f * size * size)

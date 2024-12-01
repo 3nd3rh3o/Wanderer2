@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Linq;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -13,10 +14,11 @@ public class PlanetPrototype : Planet
     }
 
 
-    //
-    private new void Update()
+    // ONLY FOR FORCED LOD
+    void Update()
     {
-
+        csMan?.UpdateSettings(instructions);
+        chunks.ToList().ForEach(c => c.Update(LOD));
     }
 }
 #endif
