@@ -9,7 +9,11 @@ Shader "Wanderer/PlanetSurfaceLambert"
     }
     SubShader
     {
-        Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
+        Tags { 
+            "RenderType" = "Opaque"
+            "RenderPipeline" = "UniversalPipeline"
+            "UniversalMaterialType" = "Lit"
+        }
         Pass
         {
             HLSLPROGRAM
