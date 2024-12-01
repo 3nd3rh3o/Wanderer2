@@ -26,7 +26,7 @@ float sampleHeight(float3 sPoint)
     return simpleNoise(sPoint, 2, 0.04);
 }
 
-
+// FOR FRAGMENT
 [numthreads(8, 8, 1)]
 void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
@@ -36,9 +36,12 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
     float height = 0.0;
 
     //normal in tangent space good
-    NHMap[id.xy] = half4(0, 0, 1, 1);   
+    NHMap[id.xy] = (half4(0, 0, 1, 1) + 1.0) * 0.5;
 }
 
+
+
+// PER VERTEX
 [numthreads(8, 1, 1)]
 void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 {
@@ -50,11 +53,13 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         float3 vPos = normalize(vertices[id]);
 
         // Hauteur actuelle
+        // FIXME?
         float height = sampleHeight(vPos);
 
         // Position finale du vertex après déformation
         float3 vFinalPos = vPos * (1.0 + height) * bRad;
         vertices[id] = vFinalPos;
+
         
         // Calcul des positions déformées dans les trois directions
         float3 posXPlus = normalize(vPos + float3(offset, 0.0, 0.0));
@@ -80,22 +85,26 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         float3 tangentY = posYPlus - posYMinus;
         float3 tangentZ = posZPlus - posZMinus;
 
-
-        
-        // Calcul de la normale en utilisant deux tangentes
-        float3 normal = cross(tangentX, tangentY);
-        
-        if (vPos.z <= 0.001 && vPos.z >= -0.001)
+        // X => YZ||ZY
+        // Y => XZ||ZX
+        // Z => XY||YX
+        float3 normal;
+        if (abs(vPos.x) >= abs(vPos.y) && abs(vPos.x) >= abs(vPos.z))
         {
-            
-            normal = cross(tangentY, tangentZ);
-            
+            if (vPos.x >= 0.0) normal = cross(tangentY, tangentZ);
+            else normal = cross(tangentZ, tangentY);
         }
-        // Corriger les normales pour qu'elles pointent toujours vers l'extérieur
-        if (dot(normal, vFinalPos) < 0.0)
+        else if (abs(vPos.y) >= abs(vPos.x) && abs(vPos.y) >= abs(vPos.z))
         {
-            normal = -normal;
+            if (vPos.y >= 0.0) normal = cross(tangentZ, tangentX);
+            else normal = cross(tangentX, tangentZ);
         }
+        else
+        {
+            if (vPos.z >= 0.0) normal = cross(tangentX, tangentY);
+            else normal = cross(tangentY, tangentX);
+        }
+        
 
         // Normalisation finale
         normals[id] = normalize(normal);

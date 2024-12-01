@@ -46,6 +46,7 @@ public class Chunk
         private float gRad;
         private RenderTexture NHMap;
         private ChunkNHMapCSManager csMan;
+        private Vector3 geoCenter;
 
 
         //TODO get Texture here !
@@ -123,6 +124,7 @@ public class Chunk
             mesh.SetTriangles(t, 0);
             mesh.SetUVs(0, uv);
             mesh.RecalculateBounds();
+            geoCenter = mesh.bounds.center;
             return mesh;
         }
 
@@ -130,7 +132,7 @@ public class Chunk
         //TODO remove return, make it void
         public void Update(Vector3 pPos, Queue<ChunkTask> queue)
         {
-            if ((pPos - center).sqrMagnitude <= 3f * size * size)
+            if ((pPos - geoCenter).sqrMagnitude <= 3f * size * size)
             {
                 // need to be cut;
                 if (chunks != null)
