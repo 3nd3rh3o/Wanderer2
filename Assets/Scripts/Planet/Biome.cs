@@ -29,6 +29,7 @@ public class Biome
 [Serializable]
 public class BiomePredicate
 {
+    //TODO add default => U(the 4 params, with their names)
     public PredicateOperation predicate;
 }
 
