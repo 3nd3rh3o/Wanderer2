@@ -16,6 +16,7 @@ public class Planet : MonoBehaviour
     public ChunkNHMapCSManager.Instr[] instructions = new ChunkNHMapCSManager.Instr[0];
 
 
+
     public float radius;
     [SerializeField]
     private int mLOD;
