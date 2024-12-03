@@ -48,6 +48,8 @@ public class Chunk
         private float BMul;
         private Vector3 BOff;
 
+        private Biome[] biomes;
+
         public void CollectCombineData(List<Tuple<CombineInstance, RenderTexture>> combineInstances)
         {
             if (chunks == null)
@@ -75,7 +77,7 @@ public class Chunk
         }
 
 
-        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff)
+        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, Biome[] biomes)
         {
 
             this.gRad = gRad;
@@ -87,7 +89,7 @@ public class Chunk
             this.BOff = BOff;
             this.BSca = BSca;
             this.BMul = BMul;
-
+            this.biomes = biomes;
 
             NHMap = new(256, 256, 32, RenderTextureFormat.ARGB32);
             NHMap.enableRandomWrite = true;
@@ -101,7 +103,7 @@ public class Chunk
             iMesh.colors=new Color[iMesh.vertices.Length];
             if (csMan!=null && NHMap != null)
             {
-                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, biomeScale, biomeMultiplier);
+                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes);
             }
             return iMesh;
         }
@@ -208,12 +210,12 @@ public class Chunk
             float ofs = nS * 0.5f;
             Chunk[] chunks = Dir switch
             {
-                0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan) },
-                1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan) },
-                2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan) },
-                3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan) },
-                4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan) },
-                5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan) },
+                0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes) },
+                1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes) },
+                2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes) },
+                3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes) },
+                4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes) },
+                5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes) },
                 _ => throw new System.NotImplementedException()
             };
             return chunks;

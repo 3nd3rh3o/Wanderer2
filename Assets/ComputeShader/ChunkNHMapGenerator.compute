@@ -6,33 +6,34 @@
 
 
 //kernel 0
-RWTexture2D<float4> NHMap;
+RWTexture2D<float4> _NHMap;
 //kernel 1, per vertex
-RWStructuredBuffer<float3> vertices;
-RWStructuredBuffer<float3> normals;
+RWStructuredBuffer<float3> _vertices;
+RWStructuredBuffer<float3> _normals;
 //encode biome map for debug
-RWStructuredBuffer<float4> color;
+RWStructuredBuffer<float4> _color;
 
 
 //all ker
-uint vNum;
-float bRad;
+uint _vNum;
+float _bRad;
 //NOTE un-normalized chunk bounds
-float3 origin;
-float3 mx;
-float3 my;
+float3 _origin;
+float3 _mx;
+float3 _my;
 
 //Biome driver
-float scale;
-float multiplier;
-float3 offset;
+float _scale;
+float _multiplier;
+float3 _offset;
 
 
 // Per biomes
-uint numBiomes;
-StructuredBuffer<float4> predicates;
-StructuredBuffer<uint> genToUse;
-StructuredBuffer<float4x4> paramsOfGen;
+int _numBiomes;
+StructuredBuffer<float4> _predicates;
+StructuredBuffer<uint> _genToUse;
+StructuredBuffer<float4x4> _paramsOfGen;
+StructuredBuffer<float> _blendingFactor;
 
 
 
@@ -44,9 +45,9 @@ float simpleNoise(float3 pos, float scale, float multiplier, float3 offset)
 {
     float4 params[3];
     params[0] = float4(offset, 4);
-    params[1] = float4(.5, 2, 1, 1);
+    params[1] = float4(.5, 2, scale, multiplier);
     params[2] = float4(0, 0, 0, 0);
-    return simpleNoise(pos, params) * .5 + 1.;
+    return simpleNoise(pos, params);
 }
 
 
@@ -55,66 +56,24 @@ float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset
 {
     //TODO 4 dim noise map
     return float4(
-        simpleNoise(pos, scale, multiplier, offset+float3(0, 0, 0)), 
-        simpleNoise(pos, scale, multiplier, offset+float3(2, 0, 0)), 
-        simpleNoise(pos, scale, multiplier, offset+float3(0, 0, 2)), 
+        simpleNoise(pos, scale, multiplier, offset + float3(0, 0, 0)),
+        simpleNoise(pos, scale, multiplier, offset + float3(2, 0, 0)),
+        simpleNoise(pos, scale, multiplier, offset + float3(0, 0, 2)),
         dot(pos, float3(0, 1, 0))
     );
 }
 
 // TODO Replace matching then smoothing of the biomes to return the final height
-float sampleHeight(float3 sPoint)
+float sampleHeight(float3 sPoint, int i)
 {
-    return simpleNoise(sPoint, 2, 0.04);
-}
 
-float3 normalFromHeight(float3 vPos)
-{
-    const float offset = 0.002;
-    // Calcul des positions déformées dans les trois directions
-    float3 posXPlus = normalize(vPos + float3(offset, 0.0, 0.0));
-    posXPlus = posXPlus * (1.0 + sampleHeight(posXPlus)) * bRad;
-
-    float3 posXMinus = normalize(vPos - float3(offset, 0.0, 0.0));
-    posXMinus = posXMinus * (1.0 + sampleHeight(posXMinus)) * bRad;
-
-    float3 posYPlus = normalize(vPos + float3(0.0, offset, 0.0));
-    posYPlus = posYPlus * (1.0 + sampleHeight(posYPlus)) * bRad;
-
-    float3 posYMinus = normalize(vPos - float3(0.0, offset, 0.0));
-    posYMinus = posYMinus * (1.0 + sampleHeight(posYMinus)) * bRad;
-
-    float3 posZPlus = normalize(vPos + float3(0.0, 0.0, offset));
-    posZPlus = posZPlus * (1.0 + sampleHeight(posZPlus)) * bRad;
-
-    float3 posZMinus = normalize(vPos - float3(0.0, 0.0, offset));
-    posZMinus = posZMinus * (1.0 + sampleHeight(posZMinus)) * bRad;
-
-    // Calcul des gradients dans chaque direction
-    float3 tangentX = posXPlus - posXMinus;
-    float3 tangentY = posYPlus - posYMinus;
-    float3 tangentZ = posZPlus - posZMinus;
-
-    // X => YZ||ZY
-    // Y => XZ||ZX
-    // Z => XY||YX
-    float3 normal;
-    if (abs(vPos.x) >= abs(vPos.y) && abs(vPos.x) >= abs(vPos.z))
+    if (i == 1) 
     {
-        if (vPos.x >= 0.0) normal = cross(tangentY, tangentZ);
-        else normal = cross(tangentZ, tangentY);
+        float4 args0 = _paramsOfGen[i][0];
+        float4 args1 = _paramsOfGen[i][1];
+        return simpleNoise(sPoint, args0.x, args0.y, float3(args0.zw, args1.x));
     }
-    else if (abs(vPos.y) >= abs(vPos.x) && abs(vPos.y) >= abs(vPos.z))
-    {
-        if (vPos.y >= 0.0) normal = cross(tangentZ, tangentX);
-        else normal = cross(tangentX, tangentZ);
-    }
-    else
-    {
-        if (vPos.z >= 0.0) normal = cross(tangentX, tangentY);
-        else normal = cross(tangentY, tangentX);
-    }
-    return normalize(normal);
+    else return 0.0;
 }
 
 // FOR FRAGMENT
@@ -123,11 +82,11 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
     //TODO surface detail computation, per biome?
     float2 step = (float2(id.x, id.y)) * 1.0 / 256.0;
-    float3 samplePoint = normalize(origin + ((mx - origin) * step.x) + ((my - origin) * step.y));
+    float3 samplePoint = normalize(_origin + ((_mx - _origin) * step.x) + ((_my - _origin) * step.y));
     float height = 0.0;
 
     //DONT TOUCH THIS ! correct lerping to squish the vec to color clamps.
-    NHMap[id.xy] = (half4(0, 0, 1, 1) + 1.0) * 0.5;
+    _NHMap[id.xy] = (half4(0, 0, 1, 1) + 1.0) * 0.5;
 }
 
 
@@ -136,28 +95,110 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
 [numthreads(8, 1, 1)]
 void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 {
-    if (id < vNum)
+    if (id < _vNum)
     {
-        // get only the predicates matching => send them to sampleHeight as additional params => final position is the lerped sum of biome layers.
-
-
-
         // Position actuelle du vertex
-        float3 vPos = normalize(vertices[id]);
+        float3 vPos = normalize(_vertices[id]);
 
-        // Hauteur actuelle
+        const float offset = 0.002;
+        
+        float3 posXPlus = normalize(vPos + float3(offset, 0.0, 0.0));
+        float3 posXMinus = normalize(vPos - float3(offset, 0.0, 0.0));
+        float3 posYPlus = normalize(vPos + float3(0.0, offset, 0.0));
+        float3 posYMinus = normalize(vPos - float3(0.0, offset, 0.0));
+        float3 posZPlus = normalize(vPos + float3(0.0, 0.0, offset));
+        float3 posZMinus = normalize(vPos - float3(0.0, 0.0, offset));
 
-        float height = sampleHeight(vPos);
+        float res = 0.0;
+        float resXP = 0.0;
+        float resXM = 0.0;
+        float resYP = 0.0;
+        float resYM = 0.0;
+        float resZP = 0.0;
+        float resZM = 0.0;
+
+        float4 bChan = getBiomeChannels(vPos, _scale, _multiplier, _offset);
+        // get only the predicates matching => send them to sampleHeight as additional params => final position is the lerped sum of biome layers.
+        for (int i = 0; i < _numBiomes; i++)
+        {
+            float4 p = _predicates[i];
+
+            if (p.x <= bChan.x && p.y <= bChan.y && p.z <= bChan.z && p.w <= bChan.w)
+            {
+                
+                float4 d = bChan - p;
+                float s = min(d.x, min(d.y, min(d.z, d.w)));
+                float lS = _blendingFactor[i] - s;
+                if (s < _blendingFactor[i])
+                {
+                    res += lerp(res, sampleHeight(vPos, i), lS);
+                    resXP += lerp(0.0, sampleHeight(posXPlus, i), lS);
+                    resXM += lerp(0.0, sampleHeight(posXMinus, i), lS);
+                    resYM += lerp(0.0, sampleHeight(posYPlus, i), lS);
+                    resYM += lerp(0.0, sampleHeight(posYMinus, i), lS);
+                    resZM += lerp(0.0, sampleHeight(posZPlus, i), lS);
+                    resZM += lerp(0.0, sampleHeight(posZMinus, i), lS);
+                
+                }
+                else
+                {
+                    res+=sampleHeight(vPos, i);
+                    resXP+=sampleHeight(posXPlus, i);
+                    resXM+=sampleHeight(posXMinus, i);
+                    resYP+=sampleHeight(posYPlus, i);
+                    resYM+=sampleHeight(posYMinus, i);
+                    resZP+=sampleHeight(posZPlus, i);
+                    resZM+=sampleHeight(posZMinus, i);
+                }
+            }
+        }
+    
 
         // Position finale du vertex après déformation
-        float3 vFinalPos = vPos * (1.0 + height) * bRad;
-        vertices[id] = vFinalPos;
+        float3 vFinalPos = vPos * (1.0 + res) * _bRad;
+        _vertices[id] = vFinalPos;
 
 
+        // Calcul des positions déformées dans les trois directions
+        posXPlus = posXPlus * (1.0 + resXP) * _bRad;
 
+        posXMinus = posXMinus * (1.0 + resXM) * _bRad;
+
+        posYPlus = posYPlus * (1.0 + resYP) * _bRad;
+
+        posYMinus = posYMinus * (1.0 + resYM) * _bRad;
+
+        posZPlus = posZPlus * (1.0 + resZP) * _bRad;
+
+        posZMinus = posZMinus * (1.0 + resZM) * _bRad;
+
+        // Calcul des gradients dans chaque direction
+        float3 tangentX = posXPlus - posXMinus;
+        float3 tangentY = posYPlus - posYMinus;
+        float3 tangentZ = posZPlus - posZMinus;
+
+        // X => YZ||ZY
+        // Y => XZ||ZX
+        // Z => XY||YX
+        float3 normal;
+        if (abs(vPos.x) >= abs(vPos.y) && abs(vPos.x) >= abs(vPos.z))
+        {
+            if (vPos.x >= 0.0) normal = cross(tangentY, tangentZ);
+            else normal = cross(tangentZ, tangentY);
+        }
+        else if (abs(vPos.y) >= abs(vPos.x) && abs(vPos.y) >= abs(vPos.z))
+        {
+            if (vPos.y >= 0.0) normal = cross(tangentZ, tangentX);
+            else normal = cross(tangentX, tangentZ);
+        }
+        else
+        {
+            if (vPos.z >= 0.0) normal = cross(tangentX, tangentY);
+            else normal = cross(tangentY, tangentX);
+        }
 
         // Normalisation finale
-        normals[id] = normalFromHeight(vPos);
-        color[id] = getBiomeChannels(vPos, scale, multiplier, offset);
+        _normals[id] = normalize(normal);
+        _color[id] = bChan * .5 + 1.;
     }
 }

@@ -62,28 +62,28 @@ public class PlanetPrototype : MonoBehaviour
         if (cs) csMan = new(cs);
         Mesh mesh = new();
         chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan),
-            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, LOD, radius, csMan),
-            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, LOD, radius, csMan),
-            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, LOD, radius, csMan),
-            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan),
-            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan)
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
+            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
+            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
+            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
+            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
+            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes)
         };
+        chunks?.ToList().ForEach(c => c.Update(LOD));
         Build();
     }
 
     void OnDisable()
     {
-        chunks.ToList().ForEach(c => c.Kill());
+        chunks?.ToList().ForEach(c => c.Kill());
         GetComponent<MeshFilter>().mesh = null;
         GetComponent<MeshRenderer>().SetMaterials(new());
     }
 
     void Update()
     {
-        csMan?.UpdateSettings(instructions);
-        chunks?.ToList().ForEach(c => c.Update(LOD));
-        Build();
+        OnDisable();
+        OnEnable();
     }
 
     void LateUpdate()

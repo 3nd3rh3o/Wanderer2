@@ -1,6 +1,7 @@
 using System;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 [Serializable]
 public class Biome
 {
@@ -11,8 +12,11 @@ public class Biome
     
     [Tooltip("What material to use, and when we use them in this biome(normals, color....)")]
     public BiomeMaterial[] biomeMaterials;
+    [FormerlySerializedAs("Carver")]
+    [SerializeField]
+    private BiomeCarver carver;
     [Tooltip("How do we build the topology of this biome")]
-    public BiomeCarver carver
+    public BiomeCarver Carver
     {
         get
         {
@@ -20,17 +24,15 @@ public class Biome
         }
         set
         {
-            carverArguments = value switch
-            {
-                BiomeCarver.NONE => new float[0],
-                BiomeCarver.FRAC_SIMPLEX => new float[8],
-                _ => new float[0]
-            };
             carver = value;
         }
     }
     [Tooltip("arguments given to the driver")]
-    public float[] carverArguments;
+    public float[] carverArguments = new float[0];
+    [Range(0f, 1f)]
+    public float blendingFactor = 0f;
+
+    
 
     internal float4 GetPreds()
     {

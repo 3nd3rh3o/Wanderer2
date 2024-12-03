@@ -86,6 +86,7 @@ public class ChunkNHMapCSManager
         ComputeBuffer bPredsBuff = new ComputeBuffer(biomes.Length, sizeof(float)*4);
         ComputeBuffer genToUseBuff = new ComputeBuffer(biomes.Length, sizeof(int));
         ComputeBuffer paramsOfGenBuff = new ComputeBuffer(biomes.Length, sizeof(float)*16);
+        ComputeBuffer bBlendBuff = new ComputeBuffer(biomes.Length, sizeof(float));
 
 
 
@@ -96,6 +97,7 @@ public class ChunkNHMapCSManager
         float4[] bPreds = new float4[biomes.Length];
         int[] bGen = new int[biomes.Length];
         float4x4[] bGenP = new float4x4[biomes.Length];
+        float[] bBlend = new float[biomes.Length];
 
         for (int i = 0; i < v.Length; i++)
         {
@@ -109,6 +111,7 @@ public class ChunkNHMapCSManager
             bPreds[i] = biomes[i].GetPreds();
             bGen[i] = biomes[i].GetGenToUse();
             bGenP[i] = biomes[i].GetGenParams();
+            bBlend[i] = biomes[i].blendingFactor;
         }
 
         vBuff.SetData(vA);
@@ -116,27 +119,33 @@ public class ChunkNHMapCSManager
         bPredsBuff.SetData(bPreds);
         genToUseBuff.SetData(bGen);
         paramsOfGenBuff.SetData(bGenP);
+        bBlendBuff.SetData(bBlend);
 
-        cs.SetTexture(0, "NHMap", buffer);
+        cs.SetTexture(0, "_NHMap", buffer);
 
-        cs.SetBuffer(1, "vertices", vBuff);
-        cs.SetBuffer(1, "normals", nBuff);
+        cs.SetBuffer(1, "_vertices", vBuff);
+        cs.SetBuffer(1, "_normals", nBuff);
 
-        cs.SetBuffer(1, "color", cBuff);
+        cs.SetBuffer(1, "_color", cBuff);
 
-        cs.SetInt("vNum", v.Length);
-        cs.SetFloat("bRad", gRad);
+        cs.SetInt("_vNum", v.Length);
+        cs.SetFloat("_bRad", gRad);
 
-        cs.SetVector("origin", origin);
-        cs.SetVector("mx", mx);
-        cs.SetVector("my", my);
+        cs.SetVector("_origin", origin);
+        cs.SetVector("_mx", mx);
+        cs.SetVector("_my", my);
 
-        cs.SetFloat("scale", scale);
-        cs.SetFloat("multiplier", multiplier);
-        cs.SetVector("offset", new Vector4(offset.x, offset.y, offset.z, 0));
+        cs.SetFloat("_scale", scale);
+        cs.SetFloat("_multiplier", multiplier);
+        cs.SetVector("_offset", new Vector4(offset.x, offset.y, offset.z, 0));
 
 
-        cs.SetInt("numBiomes", biomes.Length);
+        cs.SetInt("_numBiomes", biomes.Length);
+
+        cs.SetBuffer(1, "_predicates", bPredsBuff);
+        cs.SetBuffer(1, "_genToUse", genToUseBuff);
+        cs.SetBuffer(1, "_paramsOfGen", paramsOfGenBuff);
+        cs.SetBuffer(1, "_blendingFactor", bBlendBuff);
     
 
 
@@ -160,6 +169,7 @@ public class ChunkNHMapCSManager
         bPredsBuff.Release();
         genToUseBuff.Release();
         paramsOfGenBuff.Release();
+        bBlendBuff.Release();
     }
 
     [Serializable]
