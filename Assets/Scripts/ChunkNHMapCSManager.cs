@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -73,7 +74,7 @@ public class ChunkNHMapCSManager
         }
     }
 
-    public void GenMap(RenderTexture buffer, Vector3[] v, Vector3[] n, Vector3 origin, Vector3 mx, Vector3 my, float gRad)
+    public void GenMap(RenderTexture buffer, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad)
     {
         // VertexUpdate
         
@@ -88,33 +89,41 @@ public class ChunkNHMapCSManager
 
         ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
         ComputeBuffer nBuff = new ComputeBuffer(n.Length, sizeof(float)*3);
+        ComputeBuffer cBuff = new ComputeBuffer(c.Length, sizeof(float)*4);
 
         float3[] vA = new float3[v.Length];
         float3[] nA = new float3[n.Length];
+        float4[] cA = new float4[c.Length];
 
         for (int i = 0; i < v.Length; i++)
         {
             vA[i] = new(){x=v[i].x, y=v[i].y, z=v[i].z};
             nA[i] = new(){x=n[i].x, y=n[i].y, z=n[i].z};
+            cA[i] = new float4(c[i].r * 2f - 1f, c[i].g * 2f - 1f, c[i].b * 2f - 1f, c[i].a * 2f - 1f);
         };
 
         vBuff.SetData(vA);
         nBuff.SetData(nA);
         cs.SetBuffer(1, "vertices", vBuff);
         cs.SetBuffer(1, "normals", nBuff);
+        cs.SetBuffer(1, "color", cBuff);
         cs.Dispatch(0, buffer.width/8, buffer.height/8, 1);
         
         cs.Dispatch(1, v.Length, 1, 1);
 
         vBuff.GetData(vA);
         nBuff.GetData(nA);
+        cBuff.GetData(cA);
         for (int i = 0; i < vA.Length; i++) 
         {
             v[i] = vA[i].ToVec();
             n[i] = nA[i].ToVec();
+            c[i] = new Color(cA[i].x, cA[i].y, cA[i].z, cA[i].w);
+            
         }
         vBuff.Release();
         nBuff.Release();
+        cBuff.Release();
     }
 
     [Serializable]

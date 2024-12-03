@@ -4,11 +4,13 @@
 #include "../Libs/FractalNoise.cginc"
 
 
-
+//kernel 0
 RWTexture2D<float4> NHMap;
-//TODO remove this
+//kernel 1
 RWStructuredBuffer<float3> vertices;
 RWStructuredBuffer<float3> normals;
+//encode biome map for debug
+RWStructuredBuffer<float4> color;
 uint vNum;
 float bRad;
 
@@ -34,7 +36,7 @@ float simpleNoise(float3 pos, float scale, float multiplier, float3 offset)
 float4 getBiomeChannels(float3 pos, float scale, float multiplier)
 {
     //TODO 4 dim noise map
-    return float4(simpleNoise(pos, scale, multiplier, float3(0, 0, 0)), 0, 0, 0);
+    return float4(simpleNoise(pos, scale, multiplier, float3(0, 0, 0)), simpleNoise(pos, scale, multiplier, float3(2, 0, 0)), simpleNoise(pos, scale, multiplier, float3(0, 0, 2)), 1);
 }
 
 // TODO Replace by call from biome.
@@ -125,5 +127,6 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 
         // Normalisation finale
         normals[id] = normalize(normal);
+        color[id] = getBiomeChannels(vPos, 1.0, 1.0);
     }
 }

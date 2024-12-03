@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Unity.VisualScripting;
+using Unity.Mathematics;
 
 
 public class Chunk
@@ -15,6 +16,7 @@ public class Chunk
             public Vector3[] vertices;
             public Vector3[] normals;
             public Vector2[] uvs;
+            public Color[] colors;
             public int[] faces;
 
             public QuadMesh(Vector3[] v, Vector2[] uv, int[] f, Vector3 origin, Vector3 mx, Vector3 my)
@@ -28,6 +30,7 @@ public class Chunk
                 this.origin = origin;
                 this.mx = mx;
                 this.my = my;
+                colors = null;
             }
         }
         private Vector3 center;
@@ -88,9 +91,10 @@ public class Chunk
 
         private QuadMesh GenNHMap(QuadMesh iMesh)
         {
+            iMesh.colors=new Color[iMesh.vertices.Length];
             if (csMan!=null && NHMap != null)
             {
-                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.origin, iMesh.mx, iMesh.my, gRad);
+                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, biomeScale, biomeMultiplier);
             }
             return iMesh;
         }
@@ -116,6 +120,7 @@ public class Chunk
             mesh.SetNormals(n);
             mesh.SetTriangles(t, 0);
             mesh.SetUVs(0, uv);
+            mesh.SetColors(qMesh.colors);
             mesh.RecalculateBounds();
             geoCenter = mesh.bounds.center;
             return mesh;
