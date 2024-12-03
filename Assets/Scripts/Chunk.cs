@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Unity.VisualScripting;
-using Unity.Mathematics;
 
 
 public class Chunk
@@ -46,6 +44,10 @@ public class Chunk
         private ChunkNHMapCSManager csMan;
         private Vector3 geoCenter;
 
+        private float BSca;
+        private float BMul;
+        private Vector3 BOff;
+
         public void CollectCombineData(List<Tuple<CombineInstance, RenderTexture>> combineInstances)
         {
             if (chunks == null)
@@ -73,7 +75,7 @@ public class Chunk
         }
 
 
-        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan)
+        public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff)
         {
 
             this.gRad = gRad;
@@ -82,6 +84,11 @@ public class Chunk
             this.LOD = LOD;
             DIR = Dir;
             this.csMan = csMan;
+            this.BOff = BOff;
+            this.BSca = BSca;
+            this.BMul = BMul;
+
+
             NHMap = new(256, 256, 32, RenderTextureFormat.ARGB32);
             NHMap.enableRandomWrite = true;
             NHMap.Create();
@@ -94,7 +101,7 @@ public class Chunk
             iMesh.colors=new Color[iMesh.vertices.Length];
             if (csMan!=null && NHMap != null)
             {
-                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad/*, biomeScale, biomeMultiplier*/);
+                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, biomeScale, biomeMultiplier);
             }
             return iMesh;
         }

@@ -11,10 +11,9 @@ public class PlanetPrototype : MonoBehaviour
     public Material sharedMat;
     public ComputeShader cs;
     private ChunkNHMapCSManager csMan;
-    [SerializeField]
-    public ChunkNHMapCSManager.Instr[] instructions = new ChunkNHMapCSManager.Instr[0];
     public float BiomeScale = 1f;
     public float BiomeMultiplier = 1f;
+    public Vector3 BiomeOffset = new();
     public Biome[] biomes = new Biome[0];
 
 
@@ -60,7 +59,7 @@ public class PlanetPrototype : MonoBehaviour
 
     void OnEnable()
     {
-        if (cs) csMan = new(cs, instructions);
+        if (cs) csMan = new(cs);
         Mesh mesh = new();
         chunks = new Chunk[]{
             new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan),

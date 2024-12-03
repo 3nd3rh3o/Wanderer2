@@ -4,24 +4,40 @@
 #include "../Libs/FractalNoise.cginc"
 
 
+
 //kernel 0
 RWTexture2D<float4> NHMap;
-//kernel 1
+//kernel 1, per vertex
 RWStructuredBuffer<float3> vertices;
 RWStructuredBuffer<float3> normals;
 //encode biome map for debug
 RWStructuredBuffer<float4> color;
+
+
+//all ker
 uint vNum;
 float bRad;
-
 //NOTE un-normalized chunk bounds
 float3 origin;
 float3 mx;
 float3 my;
 
+//Biome driver
+float scale;
+float multiplier;
+float3 offset;
 
-float4x4 arg1;
-float4x4 arg2;
+
+// Per biomes
+uint numBiomes;
+StructuredBuffer<float4> predicates;
+StructuredBuffer<uint> genToUse;
+StructuredBuffer<float4x4> paramsOfGen;
+
+
+
+
+
 
 // helper for simplexNoise generator
 float simpleNoise(float3 pos, float scale, float multiplier, float3 offset)
@@ -35,14 +51,14 @@ float simpleNoise(float3 pos, float scale, float multiplier, float3 offset)
 
 
 
-float4 getBiomeChannels(float3 pos, float scale, float multiplier)
+float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset)
 {
     //TODO 4 dim noise map
     return float4(
-        simpleNoise(pos, scale, multiplier, float3(0, 0, 0)), 
-        simpleNoise(pos, scale, multiplier, float3(2, 0, 0)), 
-        simpleNoise(pos, scale, multiplier, float3(0, 0, 2)), 
-        1
+        simpleNoise(pos, scale, multiplier, offset+float3(0, 0, 0)), 
+        simpleNoise(pos, scale, multiplier, offset+float3(2, 0, 0)), 
+        simpleNoise(pos, scale, multiplier, offset+float3(0, 0, 2)), 
+        dot(pos, float3(0, 1, 0))
     );
 }
 
@@ -142,6 +158,6 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 
         // Normalisation finale
         normals[id] = normalFromHeight(vPos);
-        color[id] = getBiomeChannels(vPos, 1.0, 1.0);
+        color[id] = getBiomeChannels(vPos, scale, multiplier, offset);
     }
 }
