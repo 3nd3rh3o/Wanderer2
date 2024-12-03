@@ -21,8 +21,23 @@ float3 my;
 float4x4 arg1;
 float4x4 arg2;
 
+// helper for simplexNoise generator
+float simpleNoise(float3 pos, float scale, float multiplier, float3 offset)
+{
+    float4 params[3];
+    params[0] = float4(offset, 4);
+    params[1] = float4(.5, 2, 1, 1);
+    params[2] = float4(0, 0, 0, 0);
+    return simpleNoise(pos, params);
+}
 
-// TODO Complete this.
+float4 getBiomeChannels(float3 pos, float scale, float multiplier)
+{
+    //TODO 4 dim noise map
+    return float4(simpleNoise(pos, scale, multiplier, float3(0, 0, 0)), 0, 0, 0);
+}
+
+// TODO Replace by call from biome.
 float sampleHeight(float3 sPoint)
 {
     return simpleNoise(sPoint, 2, 0.04);

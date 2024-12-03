@@ -13,6 +13,8 @@ public class PlanetPrototype : MonoBehaviour
     private ChunkNHMapCSManager csMan;
     [SerializeField]
     public ChunkNHMapCSManager.Instr[] instructions = new ChunkNHMapCSManager.Instr[0];
+    public float BiomeScale = 1f;
+    public float BiomeMultiplier = 1f;
     public Biome[] biomes = new Biome[0];
 
 
