@@ -59,8 +59,7 @@ public class BiomePredicate
 public enum BiomeCarver
 {
     NONE,
-    FRAC_SIMPLEX,
-
+    FRAC_SIMPLEX
 }
 
 public class BiomeMaterial

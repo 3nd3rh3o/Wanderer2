@@ -94,7 +94,7 @@ public class Chunk
             iMesh.colors=new Color[iMesh.vertices.Length];
             if (csMan!=null && NHMap != null)
             {
-                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, biomeScale, biomeMultiplier);
+                csMan.GenMap(NHMap, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad/*, biomeScale, biomeMultiplier*/);
             }
             return iMesh;
         }
