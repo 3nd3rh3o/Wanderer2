@@ -18,7 +18,7 @@ public class PlanetPrototype : MonoBehaviour
 
 
     public float radius;
-    [Range(0, 3)]
+    [Range(0, 10)]
     public int LOD;
 
     protected void Build()
@@ -34,7 +34,7 @@ public class PlanetPrototype : MonoBehaviour
         RenderTexture[] renderTextures = new RenderTexture[chunkData.Count];
         for (int i = 0; i < chunkData.Count; i++) (combines[i], renderTextures[i]) = chunkData[i];
         // Crée un mesh global combiné
-        Mesh combinedMesh = new Mesh();
+        Mesh combinedMesh = new Mesh(){indexFormat = UnityEngine.Rendering.IndexFormat.UInt32};
         combinedMesh.CombineMeshes(combines.ToArray(), false, true);
 
 
@@ -69,8 +69,8 @@ public class PlanetPrototype : MonoBehaviour
             new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
             new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes)
         };
-        chunks?.ToList().ForEach(c => c.Update(LOD));
         Build();
+        
     }
 
     void OnDisable()
@@ -84,6 +84,8 @@ public class PlanetPrototype : MonoBehaviour
     {
         OnDisable();
         OnEnable();
+        for (int i = 0; i <= LOD; i++) chunks?.ToList().ForEach(c => c.Update(LOD));
+        Build();
     }
 
     void LateUpdate()
