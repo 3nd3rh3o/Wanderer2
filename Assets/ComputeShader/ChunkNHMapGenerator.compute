@@ -30,7 +30,8 @@ float3 _offset;
 
 // Per biomes
 int _numBiomes;
-StructuredBuffer<float4> _predicates;
+StructuredBuffer<float4> _minPredicates;
+StructuredBuffer<float4> _maxPredicates;
 StructuredBuffer<uint> _genToUse;
 StructuredBuffer<float4x4> _paramsOfGen;
 StructuredBuffer<float> _blendingFactor;
@@ -80,19 +81,17 @@ float smoothMax(float d1, float d2, float k)
 	return lerp(d2, -d1, h) + k*h*(1.0 - h);
 }
 
-float processBiomes(float3 sPoint, float4 chann, float4 p, uint genToUse, float4x4 params, float lf, float ph)
+float processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint genToUse, float4x4 params, float lf, float ph)
 {
-    // TODO ADD A MAX LIMIT 
     float h = 0.0;
-    if (p.x <= chann.x && p.y <= chann.y && p.z <= chann.z && p.w <= chann.w) h = sampleHeight(sPoint, genToUse, params);
-    return h!=0.0?smoothMax(h, ph, lf):ph;
+    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) h = sampleHeight(sPoint, genToUse, params);
+    return h!=0.0? ph != 0? smoothMax(h, ph, lf): h :ph;
 }
 
 // FOR FRAGMENT
 [numthreads(8, 8, 1)]
 void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
-    //TODO surface detail computation, per biome?
     float2 step = (float2(id.x, id.y)) * 1.0 / 256.0;
     float3 samplePoint = normalize(_origin + ((_mx - _origin) * step.x) + ((_my - _origin) * step.y));
     float height = 0.0;
@@ -121,13 +120,13 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         float3 posZPlus = normalize(vPos + float3(0.0, 0.0, Noffset));
         float3 posZMinus = normalize(vPos - float3(0.0, 0.0, Noffset));
 
-        float4 bChan = getBiomeChannels(vPos, _scale, 0.99, _offset);
-        float4 bChanXP = getBiomeChannels(posXPlus, _scale, 0.99, _offset);
-        float4 bChanXM = getBiomeChannels(posXMinus, _scale, 0.99, _offset);
-        float4 bChanYP = getBiomeChannels(posYPlus, _scale, 0.99, _offset);
-        float4 bChanYM = getBiomeChannels(posYMinus, _scale, 0.99, _offset);
-        float4 bChanZP = getBiomeChannels(posZPlus, _scale, 0.99, _offset);
-        float4 bChanZM = getBiomeChannels(posZMinus, _scale, 0.99, _offset);
+        float4 bChan = getBiomeChannels(vPos, _scale, 0.75, _offset);
+        float4 bChanXP = getBiomeChannels(posXPlus, _scale, 0.75, _offset);
+        float4 bChanXM = getBiomeChannels(posXMinus, _scale, 0.75, _offset);
+        float4 bChanYP = getBiomeChannels(posYPlus, _scale, 0.75, _offset);
+        float4 bChanYM = getBiomeChannels(posYMinus, _scale, 0.75, _offset);
+        float4 bChanZP = getBiomeChannels(posZPlus, _scale, 0.75, _offset);
+        float4 bChanZM = getBiomeChannels(posZMinus, _scale, 0.75, _offset);
 
         float res = 0.0;
         float resXP = 0.0;
@@ -141,14 +140,15 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         // get only the predicates matching => send them to sampleHeight as additional params => final position is the lerped sum of biome layers.
         for (int i = 0; i < _numBiomes; i++)
         {
-            float4 p = float4(_predicates[i][0], _predicates[i][1], _predicates[i][2], _predicates[i][3]);
-            res = processBiomes(vPos, bChan, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], res);
-            resXP = processBiomes(posXPlus, bChanXP, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXP);
-            resXM = processBiomes(posXMinus, bChanXM, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXM);
-            resYP = processBiomes(posYPlus, bChanYP, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYP);
-            resYM = processBiomes(posYMinus, bChanYM, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYM);
-            resZP = processBiomes(posZPlus, bChanZP, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZP);
-            resZM = processBiomes(posZMinus, bChanZM, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM);
+            float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
+            float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
+            res = processBiomes(vPos, bChan, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], res);
+            resXP = processBiomes(posXPlus, bChanXP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXP);
+            resXM = processBiomes(posXMinus, bChanXM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXM);
+            resYP = processBiomes(posYPlus, bChanYP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYP);
+            resYM = processBiomes(posYMinus, bChanYM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYM);
+            resZP = processBiomes(posZPlus, bChanZP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZP);
+            resZM = processBiomes(posZMinus, bChanZM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM);
         }
 
         res+=bChan.x * _multiplier;

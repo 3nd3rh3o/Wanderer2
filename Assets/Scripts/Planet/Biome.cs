@@ -7,8 +7,10 @@ public class Biome
 {
     [Tooltip("for conveniance")]
     public string name;
-    [Tooltip("When do we are in the biome (each point on the sphere as 4 value, if they are higher than those of the predicate, => in this biome)")]
-    public BiomePredicate predicate;
+    [Tooltip("min gradients values to spawn")]
+    public BiomePredicate PredicateMin;
+    [Tooltip("max gradients values to spawn")]
+    public BiomePredicate PredicateMax;
     
     [Tooltip("What material to use, and when we use them in this biome(normals, color....)")]
     public BiomeMaterial[] biomeMaterials;
@@ -34,9 +36,13 @@ public class Biome
 
     
 
-    internal float4 GetPreds()
+    internal float4 GetMinPreds()
     {
-        return new float4(predicate.altitude, predicate.temperature, predicate.humidity, predicate.latitude);
+        return new float4(PredicateMin.altitude, PredicateMin.temperature, PredicateMin.humidity, PredicateMin.latitude);
+    }
+    internal float4 GetMaxPreds()
+    {
+        return new float4(PredicateMax.altitude, PredicateMax.temperature, PredicateMax.humidity, PredicateMax.latitude);
     }
 
     internal int GetGenToUse()

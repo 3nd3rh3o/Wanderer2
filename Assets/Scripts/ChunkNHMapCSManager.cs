@@ -83,7 +83,8 @@ public class ChunkNHMapCSManager
         ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
         ComputeBuffer nBuff = new ComputeBuffer(n.Length, sizeof(float)*3);
         ComputeBuffer cBuff = new ComputeBuffer(c.Length, sizeof(float)*4);
-        ComputeBuffer bPredsBuff = new ComputeBuffer(biomes.Length, sizeof(float)*4);
+        ComputeBuffer bMinPredsBuff = new ComputeBuffer(biomes.Length, sizeof(float)*4);
+        ComputeBuffer bMaxPredsBuff = new ComputeBuffer(biomes.Length, sizeof(float)*4);
         ComputeBuffer genToUseBuff = new ComputeBuffer(biomes.Length, sizeof(int));
         ComputeBuffer paramsOfGenBuff = new ComputeBuffer(biomes.Length, sizeof(float)*16);
         ComputeBuffer bBlendBuff = new ComputeBuffer(biomes.Length, sizeof(float));
@@ -94,7 +95,8 @@ public class ChunkNHMapCSManager
         float3[] vA = new float3[v.Length];
         float3[] nA = new float3[n.Length];
         float4[] cA = new float4[c.Length];
-        float4[] bPreds = new float4[biomes.Length];
+        float4[] bMinPreds = new float4[biomes.Length];
+        float4[] bMaxPreds = new float4[biomes.Length];
         int[] bGen = new int[biomes.Length];
         float4x4[] bGenP = new float4x4[biomes.Length];
         float[] bBlend = new float[biomes.Length];
@@ -108,7 +110,8 @@ public class ChunkNHMapCSManager
 
         for (int i = 0; i < biomes.Length; i++)
         {
-            bPreds[i] = biomes[i].GetPreds();
+            bMinPreds[i] = biomes[i].GetMinPreds();
+            bMaxPreds[i] = biomes[i].GetMaxPreds();
             bGen[i] = biomes[i].GetGenToUse();
             bGenP[i] = biomes[i].GetGenParams();
             bBlend[i] = biomes[i].blendingFactor;
@@ -116,7 +119,8 @@ public class ChunkNHMapCSManager
 
         vBuff.SetData(vA);
         nBuff.SetData(nA);
-        bPredsBuff.SetData(bPreds);
+        bMinPredsBuff.SetData(bMinPreds);
+        bMaxPredsBuff.SetData(bMaxPreds);
         genToUseBuff.SetData(bGen);
         paramsOfGenBuff.SetData(bGenP);
         bBlendBuff.SetData(bBlend);
@@ -142,7 +146,8 @@ public class ChunkNHMapCSManager
 
         cs.SetInt("_numBiomes", biomes.Length);
 
-        cs.SetBuffer(1, "_predicates", bPredsBuff);
+        cs.SetBuffer(1, "_minPredicates", bMinPredsBuff);
+        cs.SetBuffer(1, "_maxPredicates", bMaxPredsBuff);
         cs.SetBuffer(1, "_genToUse", genToUseBuff);
         cs.SetBuffer(1, "_paramsOfGen", paramsOfGenBuff);
         cs.SetBuffer(1, "_blendingFactor", bBlendBuff);
@@ -166,7 +171,8 @@ public class ChunkNHMapCSManager
         vBuff.Release();
         nBuff.Release();
         cBuff.Release();
-        bPredsBuff.Release();
+        bMinPredsBuff.Release();
+        bMaxPredsBuff.Release();
         genToUseBuff.Release();
         paramsOfGenBuff.Release();
         bBlendBuff.Release();
