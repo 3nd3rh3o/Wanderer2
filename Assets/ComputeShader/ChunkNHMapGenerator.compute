@@ -56,9 +56,9 @@ float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset
 {
     //TODO 4 dim noise map
     return float4(
-        simpleNoise(pos + offset, scale, multiplier),
-        simpleNoise(pos + offset + float3(2, 0, 0), scale, multiplier),
-        simpleNoise(pos + offset + float3(0, 0, 2), scale, multiplier),
+        clamp(simpleNoise(pos + offset, scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset + float3(2, 0, 0), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset + float3(0, 0, 2), scale, multiplier), -1, 1),
         dot(pos, float3(0, 1, 0))
     );
 }
@@ -85,7 +85,7 @@ float processBiomes(float3 sPoint, float4 chann, float4 p, uint genToUse, float4
     // TODO ADD A MAX LIMIT 
     float h = 0.0;
     if (p.x <= chann.x && p.y <= chann.y && p.z <= chann.z && p.w <= chann.w) h = sampleHeight(sPoint, genToUse, params);
-    return smoothMax(ph, h, lf);
+    return h!=0.0?smoothMax(h, ph, lf):ph;
 }
 
 // FOR FRAGMENT
@@ -121,13 +121,13 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         float3 posZPlus = normalize(vPos + float3(0.0, 0.0, Noffset));
         float3 posZMinus = normalize(vPos - float3(0.0, 0.0, Noffset));
 
-        float4 bChan = getBiomeChannels(vPos, _scale, _multiplier, _offset);
-        float4 bChanXP = getBiomeChannels(posXPlus, _scale, _multiplier, _offset);
-        float4 bChanXM = getBiomeChannels(posXMinus, _scale, _multiplier, _offset);
-        float4 bChanYP = getBiomeChannels(posYPlus, _scale, _multiplier, _offset);
-        float4 bChanYM = getBiomeChannels(posYMinus, _scale, _multiplier, _offset);
-        float4 bChanZP = getBiomeChannels(posZPlus, _scale, _multiplier, _offset);
-        float4 bChanZM = getBiomeChannels(posZMinus, _scale, _multiplier, _offset);
+        float4 bChan = getBiomeChannels(vPos, _scale, 0.99, _offset);
+        float4 bChanXP = getBiomeChannels(posXPlus, _scale, 0.99, _offset);
+        float4 bChanXM = getBiomeChannels(posXMinus, _scale, 0.99, _offset);
+        float4 bChanYP = getBiomeChannels(posYPlus, _scale, 0.99, _offset);
+        float4 bChanYM = getBiomeChannels(posYMinus, _scale, 0.99, _offset);
+        float4 bChanZP = getBiomeChannels(posZPlus, _scale, 0.99, _offset);
+        float4 bChanZM = getBiomeChannels(posZMinus, _scale, 0.99, _offset);
 
         float res = 0.0;
         float resXP = 0.0;
@@ -151,13 +151,13 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
             resZM = processBiomes(posZMinus, bChanZM, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM);
         }
 
-        res+=bChan.x;
-        resXP+=bChanXP.x;
-        resXM+=bChanXM.x;
-        resYP+=bChanYP.x;
-        resYM+=bChanYM.x;
-        resZP+=bChanZP.x;
-        resZM+=bChanZM.x;
+        res+=bChan.x * _multiplier;
+        resXP+=bChanXP.x * _multiplier;
+        resXM+=bChanXM.x * _multiplier;
+        resYP+=bChanYP.x * _multiplier;
+        resYM+=bChanYM.x * _multiplier;
+        resZP+=bChanZP.x * _multiplier;
+        resZM+=bChanZM.x * _multiplier;
 
         // Position finale du vertex après déformation
         float3 vFinalPos = vPos * (1.0 + res) * _bRad;
