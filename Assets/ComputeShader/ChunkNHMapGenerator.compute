@@ -74,6 +74,19 @@ float sampleHeight(float3 sPoint, int id, float4x4 params)
     }
     else return 0.0;
 }
+float smoothMax(float d1, float d2, float k)
+{
+	float h = clamp(0.5 - 0.5 * (d2 + d1)/k, 0.0, 1.0);
+	return lerp(d2, -d1, h) + k*h*(1.0 - h);
+}
+
+float processBiomes(float3 sPoint, float4 chann, float4 p, uint genToUse, float4x4 params, float lf, float ph)
+{
+    // TODO ADD A MAX LIMIT 
+    float h = 0.0;
+    if (p.x <= chann.x && p.y <= chann.y && p.z <= chann.z && p.w <= chann.w) h = sampleHeight(sPoint, genToUse, params);
+    return smoothMax(ph, h, lf);
+}
 
 // FOR FRAGMENT
 [numthreads(8, 8, 1)]
@@ -108,6 +121,14 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         float3 posZPlus = normalize(vPos + float3(0.0, 0.0, Noffset));
         float3 posZMinus = normalize(vPos - float3(0.0, 0.0, Noffset));
 
+        float4 bChan = getBiomeChannels(vPos, _scale, _multiplier, _offset);
+        float4 bChanXP = getBiomeChannels(posXPlus, _scale, _multiplier, _offset);
+        float4 bChanXM = getBiomeChannels(posXMinus, _scale, _multiplier, _offset);
+        float4 bChanYP = getBiomeChannels(posYPlus, _scale, _multiplier, _offset);
+        float4 bChanYM = getBiomeChannels(posYMinus, _scale, _multiplier, _offset);
+        float4 bChanZP = getBiomeChannels(posZPlus, _scale, _multiplier, _offset);
+        float4 bChanZM = getBiomeChannels(posZMinus, _scale, _multiplier, _offset);
+
         float res = 0.0;
         float resXP = 0.0;
         float resXM = 0.0;
@@ -117,39 +138,26 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         float resZM = 0.0;
 
 
-        float4 bChan = getBiomeChannels(vPos, _scale, _multiplier, _offset);
         // get only the predicates matching => send them to sampleHeight as additional params => final position is the lerped sum of biome layers.
         for (int i = 0; i < _numBiomes; i++)
         {
             float4 p = float4(_predicates[i][0], _predicates[i][1], _predicates[i][2], _predicates[i][3]);
-
-            if (p.x <= bChan.x && p.y <= bChan.y && p.z <= bChan.z && p.w <= bChan.w)
-            {
-                float4 d = bChan - p;
-                // compute how much we lerp
-                float2 bp = d.x <= d.y && d.x <= d.x && d.x <= d.w ? float2(bChan.x, p.x) : d.y < d.x && d.y < d.z && d.w > d.y ? float2(bChan.y, p.y) : ((d.x <= d.y && d.z < d.x) || (d.y < d.x && d.z <= d.y)) && d.z <= d.w ? float2(bChan.z, p.z) : float2(bChan.w, p.w);
-                
-                float lF = (1 - p) * (1 - _blendingFactor[i]);
-
-                float h = sampleHeight(vPos, _genToUse[i], _paramsOfGen[i]);
-                float hXP = sampleHeight(posXPlus, _genToUse[i], _paramsOfGen[i]);
-                float hXM = sampleHeight(posXMinus, _genToUse[i], _paramsOfGen[i]);
-                float hYP = sampleHeight(posYPlus, _genToUse[i], _paramsOfGen[i]);
-                float hYM = sampleHeight(posYMinus, _genToUse[i], _paramsOfGen[i]);
-                float hZP = sampleHeight(posZPlus, _genToUse[i], _paramsOfGen[i]);
-                float hZM = sampleHeight(posZMinus, _genToUse[i], _paramsOfGen[i]);
-
-
-                res += lerp(0.0, h, lF);
-                resXP += lerp(0.0, hXP, lF);
-                resXM += lerp(0.0, hXM, lF);
-                resYP += lerp(0.0, hYP, lF);
-                resYM += lerp(0.0, hYM, lF);
-                resZP += lerp(0.0, hZP, lF);
-                resZM += lerp(0.0, hZM, lF);
-            }
+            res = processBiomes(vPos, bChan, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], res);
+            resXP = processBiomes(posXPlus, bChanXP, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXP);
+            resXM = processBiomes(posXMinus, bChanXM, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXM);
+            resYP = processBiomes(posYPlus, bChanYP, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYP);
+            resYM = processBiomes(posYMinus, bChanYM, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYM);
+            resZP = processBiomes(posZPlus, bChanZP, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZP);
+            resZM = processBiomes(posZMinus, bChanZM, p, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM);
         }
-        
+
+        res+=bChan.x;
+        resXP+=bChanXP.x;
+        resXM+=bChanXM.x;
+        resYP+=bChanYP.x;
+        resYM+=bChanYM.x;
+        resZP+=bChanZP.x;
+        resZM+=bChanZM.x;
 
         // Position finale du vertex après déformation
         float3 vFinalPos = vPos * (1.0 + res) * _bRad;
