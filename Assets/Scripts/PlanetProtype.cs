@@ -15,6 +15,8 @@ public class PlanetPrototype : MonoBehaviour
     public float BiomeMultiplier = 1f;
     public Vector3 BiomeOffset = new();
     public Biome[] biomes = new Biome[0];
+    public bool autoUpdate = true;
+    public bool update = false;
 
 
     public float radius;
@@ -82,6 +84,9 @@ public class PlanetPrototype : MonoBehaviour
 
     void Update()
     {
+        if (!autoUpdate && !update) return;
+        if (LOD > 4) autoUpdate = false;
+        update = false;
         OnDisable();
         OnEnable();
         for (int i = 0; i <= LOD; i++) chunks?.ToList().ForEach(c => c.Update(LOD));
