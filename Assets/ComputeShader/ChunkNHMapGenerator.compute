@@ -35,7 +35,7 @@ StructuredBuffer<float4> _maxPredicates;
 StructuredBuffer<uint> _genToUse;
 StructuredBuffer<float4x4> _paramsOfGen;
 StructuredBuffer<float> _blendingFactor;
-
+StructuredBuffer<float3> _biomeDebugColor;
 
 
 
@@ -81,11 +81,11 @@ float smoothMax(float d1, float d2, float k)
 	return lerp(d2, -d1, h) + k*h*(1.0 - h);
 }
 
-float processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint genToUse, float4x4 params, float lf, float ph)
+float4 processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint genToUse, float4x4 params, float lf, float4 ph, float3 c)
 {
     float h = 0.0;
     if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) h = sampleHeight(sPoint, genToUse, params);
-    return h!=0.0? ph != 0? smoothMax(h, ph, lf): h :ph;
+    return h!=0.0? ph.x != 0? float4(smoothMax(h, ph.x, lf), c): float4(h, c) : ph;
 }
 
 // FOR FRAGMENT
@@ -128,13 +128,13 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         float4 bChanZP = getBiomeChannels(posZPlus, _scale, 0.75, _offset);
         float4 bChanZM = getBiomeChannels(posZMinus, _scale, 0.75, _offset);
 
-        float res = 0.0;
-        float resXP = 0.0;
-        float resXM = 0.0;
-        float resYP = 0.0;
-        float resYM = 0.0;
-        float resZP = 0.0;
-        float resZM = 0.0;
+        float4 res;
+        float4 resXP;
+        float4 resXM;
+        float4 resYP;
+        float4 resYM;
+        float4 resZP;
+        float4 resZM;
 
 
         // get only the predicates matching => send them to sampleHeight as additional params => final position is the lerped sum of biome layers.
@@ -142,13 +142,13 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         {
             float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
             float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
-            res = processBiomes(vPos, bChan, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], res);
-            resXP = processBiomes(posXPlus, bChanXP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXP);
-            resXM = processBiomes(posXMinus, bChanXM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXM);
-            resYP = processBiomes(posYPlus, bChanYP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYP);
-            resYM = processBiomes(posYMinus, bChanYM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYM);
-            resZP = processBiomes(posZPlus, bChanZP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZP);
-            resZM = processBiomes(posZMinus, bChanZM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM);
+            res = processBiomes(vPos, bChan, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], res, _biomeDebugColor[i]);
+            resXP = processBiomes(posXPlus, bChanXP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXP, _biomeDebugColor[i]);
+            resXM = processBiomes(posXMinus, bChanXM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXM, _biomeDebugColor[i]);
+            resYP = processBiomes(posYPlus, bChanYP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYP, _biomeDebugColor[i]);
+            resYM = processBiomes(posYMinus, bChanYM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYM, _biomeDebugColor[i]);
+            resZP = processBiomes(posZPlus, bChanZP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZP, _biomeDebugColor[i]);
+            resZM = processBiomes(posZMinus, bChanZM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM, _biomeDebugColor[i]);
         }
 
         res+=bChan.x * _multiplier;
@@ -160,22 +160,22 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         resZM+=bChanZM.x * _multiplier;
 
         // Position finale du vertex après déformation
-        float3 vFinalPos = vPos * (1.0 + res) * _bRad;
+        float3 vFinalPos = vPos * (1.0 + res.x) * _bRad;
         _vertices[id] = vFinalPos;
 
 
         // Calcul des positions déformées dans les trois directions
-        posXPlus = posXPlus * (1.0 + resXP) * _bRad;
+        posXPlus = posXPlus * (1.0 + resXP.x) * _bRad;
 
-        posXMinus = posXMinus * (1.0 + resXM) * _bRad;
+        posXMinus = posXMinus * (1.0 + resXM.x) * _bRad;
 
-        posYPlus = posYPlus * (1.0 + resYP) * _bRad;
+        posYPlus = posYPlus * (1.0 + resYP.x) * _bRad;
 
-        posYMinus = posYMinus * (1.0 + resYM) * _bRad;
+        posYMinus = posYMinus * (1.0 + resYM.x) * _bRad;
 
-        posZPlus = posZPlus * (1.0 + resZP) * _bRad;
+        posZPlus = posZPlus * (1.0 + resZP.x) * _bRad;
 
-        posZMinus = posZMinus * (1.0 + resZM) * _bRad;
+        posZMinus = posZMinus * (1.0 + resZM.x) * _bRad;
 
         // Calcul des gradients dans chaque direction
         float3 tangentX = posXPlus - posXMinus;
@@ -204,6 +204,6 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 
         // Normalisation finale
         _normals[id] = normalize(normal);
-        _color[id] = bChan * .5 + 1.;
+        _color[id] = float4(res.gba, 1.);
     }
 }

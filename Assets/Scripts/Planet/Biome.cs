@@ -34,6 +34,8 @@ public class Biome
     [Range(0f, 1f)]
     public float blendingFactor = 0f;
 
+    [Tooltip("Chunk debug color(written in vertex color channel)")]
+    public Color DebugColor;
     
 
     internal float4 GetMinPreds()
@@ -43,6 +45,11 @@ public class Biome
     internal float4 GetMaxPreds()
     {
         return new float4(PredicateMax.altitude, PredicateMax.temperature, PredicateMax.humidity, PredicateMax.latitude);
+    }
+
+    internal float3 GetColor()
+    {
+        return new float3(DebugColor.r, DebugColor.g, DebugColor.b);
     }
 
     internal int GetGenToUse()

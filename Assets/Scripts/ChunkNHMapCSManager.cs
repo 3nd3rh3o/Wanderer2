@@ -53,22 +53,6 @@ public class ChunkNHMapCSManager
         this.cs = cs;
     }
 
-    struct float3
-    {
-        public float x;
-        public float y;
-        public float z;
-        public Vector3 ToVec()
-        {
-            return new Vector3(x, y, z);
-        }
-        public float3(Vector3 v)
-        {
-            x = v.x;
-            y = v.y;
-            z = v.z;
-        }
-    }
 
     public void GenMap(RenderTexture buffer, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes)
     {
@@ -88,6 +72,7 @@ public class ChunkNHMapCSManager
         ComputeBuffer genToUseBuff = new ComputeBuffer(biomes.Length, sizeof(int));
         ComputeBuffer paramsOfGenBuff = new ComputeBuffer(biomes.Length, sizeof(float)*16);
         ComputeBuffer bBlendBuff = new ComputeBuffer(biomes.Length, sizeof(float));
+        ComputeBuffer bDebugColorBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
 
 
 
@@ -97,6 +82,7 @@ public class ChunkNHMapCSManager
         float4[] cA = new float4[c.Length];
         float4[] bMinPreds = new float4[biomes.Length];
         float4[] bMaxPreds = new float4[biomes.Length];
+        float3[] bDebugColor = new float3[biomes.Length];
         int[] bGen = new int[biomes.Length];
         float4x4[] bGenP = new float4x4[biomes.Length];
         float[] bBlend = new float[biomes.Length];
@@ -115,6 +101,7 @@ public class ChunkNHMapCSManager
             bGen[i] = biomes[i].GetGenToUse();
             bGenP[i] = biomes[i].GetGenParams();
             bBlend[i] = biomes[i].blendingFactor;
+            bDebugColor[i] = biomes[i].GetColor();
         }
 
         vBuff.SetData(vA);
@@ -124,6 +111,7 @@ public class ChunkNHMapCSManager
         genToUseBuff.SetData(bGen);
         paramsOfGenBuff.SetData(bGenP);
         bBlendBuff.SetData(bBlend);
+        bDebugColorBuff.SetData(bDebugColor);
 
         cs.SetTexture(0, "_NHMap", buffer);
 
@@ -151,6 +139,7 @@ public class ChunkNHMapCSManager
         cs.SetBuffer(1, "_genToUse", genToUseBuff);
         cs.SetBuffer(1, "_paramsOfGen", paramsOfGenBuff);
         cs.SetBuffer(1, "_blendingFactor", bBlendBuff);
+        cs.SetBuffer(1, "_biomeDebugColor", bDebugColorBuff);
     
 
 
@@ -163,8 +152,8 @@ public class ChunkNHMapCSManager
         cBuff.GetData(cA);
         for (int i = 0; i < vA.Length; i++) 
         {
-            v[i] = vA[i].ToVec();
-            n[i] = nA[i].ToVec();
+            v[i] = new Vector3(vA[i].x, vA[i].y, vA[i].z);
+            n[i] =  new Vector3(nA[i].x, nA[i].y, nA[i].z);
             c[i] = new Color(cA[i].x, cA[i].y, cA[i].z, cA[i].w);
             
         }
@@ -176,6 +165,7 @@ public class ChunkNHMapCSManager
         genToUseBuff.Release();
         paramsOfGenBuff.Release();
         bBlendBuff.Release();
+        bDebugColorBuff.Release();
     }
 
     [Serializable]
