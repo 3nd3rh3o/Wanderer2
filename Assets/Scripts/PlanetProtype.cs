@@ -18,6 +18,8 @@ public class PlanetPrototype : MonoBehaviour
     public bool autoUpdate = true;
     public bool update = false;
 
+    public bool oneFace;
+
 
     public float radius;
     [Range(0, 10)]
@@ -36,7 +38,7 @@ public class PlanetPrototype : MonoBehaviour
         RenderTexture[] renderTextures = new RenderTexture[chunkData.Count];
         for (int i = 0; i < chunkData.Count; i++) (combines[i], renderTextures[i]) = chunkData[i];
         // Crée un mesh global combiné
-        Mesh combinedMesh = new Mesh(){indexFormat = UnityEngine.Rendering.IndexFormat.UInt32};
+        Mesh combinedMesh = new Mesh() { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
         combinedMesh.CombineMeshes(combines.ToArray(), false, true);
 
 
@@ -63,7 +65,14 @@ public class PlanetPrototype : MonoBehaviour
     {
         if (cs) csMan = new(cs);
         Mesh mesh = new();
-        chunks = new Chunk[]{
+        if (oneFace)
+        {
+            chunks = new Chunk[]{
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes)};
+        }
+        else
+        {
+            chunks = new Chunk[]{
             new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
             new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
             new Chunk(new Vector3(0, 0, radius), radius * 2, 2, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
@@ -71,8 +80,9 @@ public class PlanetPrototype : MonoBehaviour
             new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
             new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes)
         };
+        }
         Build();
-        
+
     }
 
     void OnDisable()

@@ -71,7 +71,7 @@ float sampleHeight(float3 sPoint, int id, float4x4 params)
     {
         float4 args0 = params._m00_m10_m20_m30;
         float4 args1 = params._m01_m11_m21_m31;
-        return simpleNoise(sPoint, args0.x, args0.y);
+        return lerp(0., 1., abs(simpleNoise(sPoint, args0.x, args0.y * 0.01)));
     }
     else return 0.0;
 }
