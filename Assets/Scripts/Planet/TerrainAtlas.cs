@@ -20,6 +20,7 @@ public class TerrainAtlas
             #else
             atlas.ToList().ForEach(t => UnityEngine.Object.Destroy(t));
             #endif
+            atlas = null;
         }
     }
     public void Init()

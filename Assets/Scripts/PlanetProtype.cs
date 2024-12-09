@@ -92,7 +92,7 @@ public class PlanetPrototype : MonoBehaviour
         chunks?.ToList().ForEach(c => c.Kill());
         GetComponent<MeshFilter>().mesh = null;
         GetComponent<MeshRenderer>().SetMaterials(new());
-
+        atlas.Cleanup();
     }
 
     void Update()
