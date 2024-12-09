@@ -28,7 +28,7 @@ public class PlanetPrototype : MonoBehaviour
 
     protected void Build()
     {
-        List<Tuple<CombineInstance, RenderTexture>> chunkData = new();
+        List<Tuple<CombineInstance, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture>> chunkData = new();
 
         // Parcourt les faces principales (chunks racines)
         foreach (var face in chunks)
@@ -36,10 +36,15 @@ public class PlanetPrototype : MonoBehaviour
             face.CollectCombineData(chunkData);
         }
         CombineInstance[] combines = new CombineInstance[chunkData.Count];
-        RenderTexture[] renderTextures = new RenderTexture[chunkData.Count];
-        for (int i = 0; i < chunkData.Count; i++) (combines[i], renderTextures[i]) = chunkData[i];
+        RenderTexture[] albedosTextures = new RenderTexture[chunkData.Count];
+        RenderTexture[] normalsTextures = new RenderTexture[chunkData.Count];
+        RenderTexture[] heightsTextures = new RenderTexture[chunkData.Count];
+        RenderTexture[] metalicsTextures = new RenderTexture[chunkData.Count];
+        RenderTexture[] rougnesssTextures = new RenderTexture[chunkData.Count];
+        RenderTexture[] occlusionsTextures = new RenderTexture[chunkData.Count];
+        for (int i = 0; i < chunkData.Count; i++) (combines[i], albedosTextures[i], normalsTextures[i], heightsTextures[i], metalicsTextures[i], rougnesssTextures[i], occlusionsTextures[i]) = chunkData[i];
         // Crée un mesh global combiné
-        Mesh combinedMesh = new Mesh() { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+        Mesh combinedMesh = new Mesh();
         combinedMesh.CombineMeshes(combines.ToArray(), false, true);
 
 
@@ -48,10 +53,10 @@ public class PlanetPrototype : MonoBehaviour
         for (int i = 0; i < combines.Length; i++) m[i] = sharedMat;
         // Applique le mesh combiné au MeshFilter principal
         GetComponent<MeshRenderer>().SetMaterials(m.ToList());
-        for (int i = 0; i < renderTextures.Length; i++)
+        for (int i = 0; i < combines.Length; i++)
         {
             MaterialPropertyBlock mpb = new();
-            mpb.SetTexture("_NHMap", renderTextures[i]);
+            mpb.SetTexture("_Albedo", albedosTextures[i]);
             GetComponent<MeshRenderer>().SetPropertyBlock(mpb, i);
         }
         GetComponent<MeshFilter>().mesh = combinedMesh;

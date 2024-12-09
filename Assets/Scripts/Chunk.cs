@@ -42,7 +42,8 @@ public class Chunk
     private float gRad;
     private RenderTexture albedo;
     private RenderTexture ambientOcclusion;
-    private RenderTexture metalicRoughness;
+    private RenderTexture metalic;
+    private RenderTexture roughness;
     private RenderTexture normalMap;
     private RenderTexture height;
     private Texture3D[] refs;
@@ -55,7 +56,7 @@ public class Chunk
 
     private Biome[] biomes;
 
-    public void CollectCombineData(List<Tuple<CombineInstance, RenderTexture>> combineInstances)
+    public void CollectCombineData(List<Tuple<CombineInstance, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture>> combineInstances)
     {
         if (chunks == null)
         {
@@ -67,7 +68,7 @@ public class Chunk
                     mesh = cachedMesh,
                     transform = Matrix4x4.identity // Identité si tout est en local space
                 };
-                combineInstances.Add(new(combine, albedo));
+                combineInstances.Add(new(combine, albedo, normalMap, height, metalic, roughness, ambientOcclusion));
 
             }
         }
@@ -102,9 +103,12 @@ public class Chunk
         ambientOcclusion = new(256, 256, 32, RenderTextureFormat.ARGB32);
         ambientOcclusion.enableRandomWrite = true;
         ambientOcclusion.Create();
-        metalicRoughness = new(256, 256, 32, RenderTextureFormat.ARGB32);
-        metalicRoughness.enableRandomWrite = true;
-        metalicRoughness.Create();
+        metalic = new(256, 256, 32, RenderTextureFormat.ARGB32);
+        metalic.enableRandomWrite = true;
+        metalic.Create();
+        roughness = new(256, 256, 32, RenderTextureFormat.ARGB32);
+        roughness.enableRandomWrite = true;
+        roughness.Create();
         normalMap = new(256, 256, 32, RenderTextureFormat.ARGB32);
         normalMap.enableRandomWrite = true;
         normalMap.Create();
@@ -123,7 +127,7 @@ public class Chunk
         iMesh.colors = new Color[iMesh.vertices.Length];
         if (csMan != null)
         {
-            csMan.GenMap(refs, albedo, ambientOcclusion, metalicRoughness, normalMap, height, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes);
+            csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes);
         }
         return iMesh;
     }
@@ -226,10 +230,15 @@ public class Chunk
             ambientOcclusion.Release();
             ambientOcclusion = null;
         }
-        if (metalicRoughness)
+        if (metalic)
         {
-            metalicRoughness.Release();
-            metalicRoughness = null;
+            metalic.Release();
+            metalic = null;
+        }
+        if (roughness)
+        {
+            roughness.Release();
+            roughness = null;
         }
         if (normalMap)
         {

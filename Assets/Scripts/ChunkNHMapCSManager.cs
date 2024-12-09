@@ -53,7 +53,7 @@ public class ChunkNHMapCSManager
     }
 
 
-    public void GenMap(Texture3D[] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalicRoughness, RenderTexture normalMap, RenderTexture height, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes)
+    public void GenMap(Texture3D[] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes)
     {
         // VertexUpdate
 
@@ -113,7 +113,8 @@ public class ChunkNHMapCSManager
 
         cs.SetTexture(0, "_albedo", albedo);
         cs.SetTexture(0, "_ambientOclusion", ambientOclusion);
-        cs.SetTexture(0, "_metalicRoughness", metalicRoughness);
+        cs.SetTexture(0, "_metalic", metalic);
+        cs.SetTexture(0, "_roughness", roughness);
         cs.SetTexture(0, "_normalMap", normalMap);
         cs.SetTexture(0, "_height", height);
 
