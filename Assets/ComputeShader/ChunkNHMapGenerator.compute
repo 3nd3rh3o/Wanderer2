@@ -6,7 +6,22 @@
 
 
 //kernel 0
-RWTexture2D<float4> _NHMap;
+
+RWTexture2D<float4> _albedo;
+RWTexture2D<float4> _ambientOclusion;
+RWTexture2D<float4> _metalicRoughness;
+RWTexture2D<float4> _normalMap;
+RWTexture2D<float4> _height;
+
+Texture2DArray<float4> _ref_albedo;
+Texture2DArray<float4> _ref_ambientOclusion;
+Texture2DArray<float4> _ref_metalicRoughness;
+Texture2DArray<float4> _ref_normalMap;
+Texture2DArray<float4> _ref_height;
+
+
+
+
 //kernel 1, per vertex
 RWStructuredBuffer<float3> _vertices;
 RWStructuredBuffer<float3> _normals;
@@ -92,12 +107,7 @@ float4 processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint
 [numthreads(8, 8, 1)]
 void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
-    float2 step = (float2(id.x, id.y)) * 1.0 / 256.0;
-    float3 samplePoint = normalize(_origin + ((_mx - _origin) * step.x) + ((_my - _origin) * step.y));
-    float height = 0.0;
-
-    //DONT TOUCH THIS ! correct lerping to squish the vec to color clamps.
-    _NHMap[id.xy] = (half4(0, 0, 1, 1) + 1.0) * 0.5;
+    
 }
 
 

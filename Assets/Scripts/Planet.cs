@@ -62,12 +62,12 @@ public class Planet : MonoBehaviour
         if (cs) csMan = new(cs);
         Mesh mesh = new();
         chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius, csMan, 1, 1, new(), new Biome[0]),
+            /*new Chunk(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius, csMan, 1, 1, new(), new Biome[0]),
             new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius, csMan, 1, 1, new(), new Biome[0]),
             new Chunk(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius, csMan, 1, 1, new(), new Biome[0]),
             new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius, csMan, 1, 1, new(), new Biome[0]),
             new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius, csMan, 1, 1, new(), new Biome[0]),
-            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius, csMan, 1, 1, new(), new Biome[0])
+            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius, csMan, 1, 1, new(), new Biome[0])*/
         };
         chunkTasks = new();
         Build();

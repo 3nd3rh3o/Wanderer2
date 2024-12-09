@@ -7,6 +7,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class PlanetPrototype : MonoBehaviour
 {
+    //TODO only for test, later will be given by super dataholder.
+    public TerrainAtlas atlas = new();
     private Chunk[] chunks;
     public Material sharedMat;
     public ComputeShader cs;
@@ -17,7 +19,6 @@ public class PlanetPrototype : MonoBehaviour
     public Biome[] biomes = new Biome[0];
     public bool autoUpdate = true;
     public bool update = false;
-
     public bool oneFace;
 
 
@@ -63,22 +64,23 @@ public class PlanetPrototype : MonoBehaviour
 
     void OnEnable()
     {
+        atlas.Init();
         if (cs) csMan = new(cs);
         Mesh mesh = new();
         if (oneFace)
         {
             chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes)};
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas)};
         }
         else
         {
             chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
-            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
-            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
-            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
-            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes),
-            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes)
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
+            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
+            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
+            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
+            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
+            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas)
         };
         }
         Build();
@@ -90,6 +92,7 @@ public class PlanetPrototype : MonoBehaviour
         chunks?.ToList().ForEach(c => c.Kill());
         GetComponent<MeshFilter>().mesh = null;
         GetComponent<MeshRenderer>().SetMaterials(new());
+
     }
 
     void Update()
