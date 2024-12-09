@@ -25,7 +25,8 @@ public class TerrainAtlas
     }
     public void Init()
     {
-        if (atlas != null) return;
+        //TODO mouve it in CS later
+        if (atlas != null) Cleanup();
         atlas = new Texture3D[6];
         Texture3D albedos = new Texture3D(256, 256, types.Length, TextureFormat.RGBA32, false);
         for (int z = 0; z < types.Length; z++)
