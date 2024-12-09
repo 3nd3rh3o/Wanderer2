@@ -34,6 +34,9 @@ RWStructuredBuffer<float4> _color;
 //all ker
 uint _vNum;
 float _bRad;
+StructuredBuffer<float4> _minPredicates;
+StructuredBuffer<float4> _maxPredicates;
+StructuredBuffer<float> _blendingFactor;
 //NOTE un-normalized chunk bounds
 float3 _origin;
 float3 _mx;
@@ -47,11 +50,8 @@ float3 _offset;
 
 // Per biomes
 int _numBiomes;
-StructuredBuffer<float4> _minPredicates;
-StructuredBuffer<float4> _maxPredicates;
 StructuredBuffer<uint> _genToUse;
 StructuredBuffer<float4x4> _paramsOfGen;
-StructuredBuffer<float> _blendingFactor;
 StructuredBuffer<float3> _biomeDebugColor;
 
 
@@ -105,11 +105,29 @@ float4 processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint
     return h!=0.0? ph.x != 0? float4(smoothMax(h, ph.x, lf), c): float4(h, c) : ph;
 }
 
+int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id)
+{
+    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) return id;
+    return -1;
+}
+
 // FOR FRAGMENT
 [numthreads(8, 8, 1)]
 void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
-    
+    float3 dX = (_mx - _origin)/256;
+    float3 dY = (_my - _origin)/256;
+    int bToUse = 0;
+    float3 vPos = normalize(_origin + (dX * id.x) + (dY * id.y));
+    float4 bChann = getBiomeChannels(vPos, _scale, 0.75, _offset);
+    for (int i = 0; i < _numBiomes; i++)
+    {
+        float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
+        float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
+        int b = getBiome(vPos, bChann, mP, MP, i);
+        bToUse = b == -1? bToUse: b;
+    }
+    _albedo[id.xy] = _ref_albedo[float3(id.xy, bToUse+0.5)];
 }
 
 

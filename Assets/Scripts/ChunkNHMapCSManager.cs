@@ -125,6 +125,14 @@ public class ChunkNHMapCSManager
         cs.SetTexture(0, "_ref_normalMap", refs[3]);
         cs.SetTexture(0, "_ref_height", refs[4]);
 
+        
+        cs.SetBuffer(0, "_minPredicates", bMinPredsBuff);
+        cs.SetBuffer(0, "_maxPredicates", bMaxPredsBuff);
+        cs.SetBuffer(0, "_blendingFactor", bBlendBuff);
+        cs.SetBuffer(1, "_minPredicates", bMinPredsBuff);
+        cs.SetBuffer(1, "_maxPredicates", bMaxPredsBuff);
+        cs.SetBuffer(1, "_blendingFactor", bBlendBuff);
+
         cs.SetBuffer(1, "_vertices", vBuff);
         cs.SetBuffer(1, "_normals", nBuff);
 
@@ -143,12 +151,8 @@ public class ChunkNHMapCSManager
 
 
         cs.SetInt("_numBiomes", biomes.Length);
-
-        cs.SetBuffer(1, "_minPredicates", bMinPredsBuff);
-        cs.SetBuffer(1, "_maxPredicates", bMaxPredsBuff);
         cs.SetBuffer(1, "_genToUse", genToUseBuff);
         cs.SetBuffer(1, "_paramsOfGen", paramsOfGenBuff);
-        cs.SetBuffer(1, "_blendingFactor", bBlendBuff);
         cs.SetBuffer(1, "_biomeDebugColor", bDebugColorBuff);
     
 
