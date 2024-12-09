@@ -1,15 +1,30 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
 public class TerrainAtlas
 {
+
     [SerializeField]
     public TerrainType[] types;
     public Texture3D[] atlas;
 
+
+    public void Cleanup()
+    {
+        if (atlas != null)
+        {
+            #if UNITY_EDITOR
+            atlas.ToList().ForEach(t => UnityEngine.Object.DestroyImmediate(t));
+            #else
+            atlas.ToList().ForEach(t => UnityEngine.Object.Destroy(t));
+            #endif
+        }
+    }
     public void Init()
     {
+        if (atlas != null) return;
         atlas = new Texture3D[6];
         Texture3D albedos = new Texture3D(256, 256, types.Length, TextureFormat.RGBA32, false);
         for (int z = 0; z < types.Length; z++)
