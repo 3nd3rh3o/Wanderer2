@@ -28,7 +28,7 @@ public class TerrainAtlas
         //TODO mouve it in CS later
         if (atlas != null) Cleanup();
         int texSize = 256;
-
+        //PUT THIS IN A LOOP, PER-LOD
         atlas = new Texture3D[6];
         Texture3D albedos = new Texture3D(texSize, texSize, types.Length, TextureFormat.RGBA32, false);
         Texture3D normalMaps = new Texture3D(texSize, texSize, types.Length, TextureFormat.RGBA32, false);
