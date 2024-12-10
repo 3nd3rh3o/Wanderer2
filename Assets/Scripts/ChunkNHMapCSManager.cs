@@ -112,18 +112,19 @@ public class ChunkNHMapCSManager
         bDebugColorBuff.SetData(bDebugColor);
 
         cs.SetTexture(0, "_albedo", albedo);
-        cs.SetTexture(0, "_ambientOclusion", ambientOclusion);
-        cs.SetTexture(0, "_metalic", metalic);
-        cs.SetTexture(0, "_roughness", roughness);
         cs.SetTexture(0, "_normalMap", normalMap);
         cs.SetTexture(0, "_height", height);
+        cs.SetTexture(0, "_metalic", metalic);
+        cs.SetTexture(0, "_roughness", roughness);
+        cs.SetTexture(0, "_ambientOclusion", ambientOclusion);
 
         
         cs.SetTexture(0, "_ref_albedo", refs[0]);
-        cs.SetTexture(0, "_ref_ambientOclusion", refs[1]);
-        cs.SetTexture(0, "_ref_metalicRoughness", refs[2]);
-        cs.SetTexture(0, "_ref_normalMap", refs[3]);
-        cs.SetTexture(0, "_ref_height", refs[4]);
+        cs.SetTexture(0, "_ref_normalMap", refs[1]);
+        cs.SetTexture(0, "_ref_height", refs[2]);
+        cs.SetTexture(0, "_ref_metalic", refs[3]);
+        cs.SetTexture(0, "_ref_roughness", refs[4]);
+        cs.SetTexture(0, "_ref_ambientOclusion", refs[5]);
 
         
         cs.SetBuffer(0, "_minPredicates", bMinPredsBuff);

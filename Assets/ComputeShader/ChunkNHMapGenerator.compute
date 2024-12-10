@@ -8,18 +8,18 @@
 //kernel 0
 
 RWTexture2D<float4> _albedo;
-RWTexture2D<float4> _ambientOclusion;
-RWTexture2D<float4> _metalic;
-RWTexture2D<float4> _roughness;
 RWTexture2D<float4> _normalMap;
 RWTexture2D<float4> _height;
+RWTexture2D<float4> _metalic;
+RWTexture2D<float4> _roughness;
+RWTexture2D<float4> _ambientOclusion;
 
 Texture3D<float4> _ref_albedo;
-Texture3D<float4> _ref_ambientOclusion;
-Texture3D<float4> _ref_metalic;
-Texture3D<float4> _ref_roughness;
 Texture3D<float4> _ref_normalMap;
 Texture3D<float4> _ref_height;
+Texture3D<float4> _ref_metalic;
+Texture3D<float4> _ref_roughness;
+Texture3D<float4> _ref_ambientOclusion;
 
 
 
