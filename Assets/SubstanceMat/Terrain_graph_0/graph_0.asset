@@ -123,10 +123,10 @@ MonoBehaviour:
   PhysicalSize: {x: 100, y: 100, z: 0.5}
   EnablePhysicalSize: 0
   Thumbnail: 
-  CurrentStatePreset: 
+  CurrentStatePreset: " <sbspreset pkgurl=\"pkg://Grass\" label=\"\" >\n </sbspreset>\n"
   IsRuntimeOnly: 0
   GenerateAllOutputs: 0
-  GenerateAllMipmaps: 1
+  GenerateAllMipmaps: 0
   OutputMaterial: {fileID: 2100000, guid: 3dc7179bcd317da4c8f5c541acddbec3, type: 2}
   DefaultPreset: " <sbspreset pkgurl=\"pkg://Grass\" label=\"\" >\n  <presetinput
     identifier=\"$outputsize\" uid=\"3399204861\" type=\"8\" value=\"10,10\" />\n
@@ -149,7 +149,7 @@ MonoBehaviour:
           GuiDescription: 
           Type: 5
           WidgetType: 0
-        Data: {x: 10, y: 10}
+        Data: {x: 8, y: 8}
         NumericalDescription:
           DefaultValue: {x: 8, y: 8}
           MinValue: {x: 0, y: 0}
