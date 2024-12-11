@@ -1,14 +1,39 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
+[Serializable]
+public class TerrainLOD
+{
+    public Texture2D albedo;
+    public Texture2D normalMap;
+    public Texture2D height;
+    public Texture2D metalic;
+    public Texture2D roughness;
+    public Texture2D occlusion;
+}
+
+[Serializable]
+public class TerrainType
+{
+    public string name;
+    [SerializeField]
+    public TerrainLOD[] terrainLOD = new TerrainLOD[1];
+}
+
+
 
 [Serializable]
 public class TerrainAtlas
 {
 
     [SerializeField]
-    public TerrainType[] types;
+    public TerrainType[] types = new TerrainType[1];
     public Texture3D[][] atlas;
+    public bool bake = false;
+
+
 
 
     public void Cleanup()
@@ -28,12 +53,17 @@ public class TerrainAtlas
         //TODO ENSURE TEXSIZE AND mLOD ARE COHERENT!!! (REDUCE TEX SIZE TO 256, increase mLOD to 8)
         if (atlas != null) Cleanup();
         int texSize = 256;
-        int mLod = 3;
+        int mLod = 1;
 
-        atlas = new Texture3D[mLod][];
+        atlas = new Texture3D[6][];
         for (int l = 0; l < mLod; l++)
         {
-            atlas[l] = new Texture3D[6];
+            atlas[0] = new Texture3D[mLod];
+            atlas[1] = new Texture3D[mLod];
+            atlas[2] = new Texture3D[mLod];
+            atlas[3] = new Texture3D[mLod];
+            atlas[4] = new Texture3D[mLod];
+            atlas[5] = new Texture3D[mLod];
 
             //PUT THIS IN A LOOP, PER-LOD
             Texture3D albedos = new Texture3D(texSize, texSize, types.Length, TextureFormat.RGBA32, false);
@@ -49,22 +79,22 @@ public class TerrainAtlas
                 {
                     for (int x = 0; x < texSize; x++)
                     {
-                        albedos.SetPixel(x, y, z, types[z].albedo[l].GetPixel(x, y));
-                        normalMaps.SetPixel(x, y, z, types[z].normalMap[l].GetPixel(x, y));
-                        heights.SetPixel(x, y, z, types[z].height[l].GetPixel(x, y));
-                        metalics.SetPixel(x, y, z, types[z].metalic[l].GetPixel(x, y));
-                        roughnesss.SetPixel(x, y, z, types[z].roughness[l].GetPixel(x, y));
-                        occlusions.SetPixel(x, y, z, types[z].occlusion[l].GetPixel(x, y));
+                        albedos.SetPixel(x, y, z, types[z].terrainLOD[l].albedo.GetPixel(x, y));
+                        normalMaps.SetPixel(x, y, z, types[z].terrainLOD[l].normalMap.GetPixel(x, y));
+                        heights.SetPixel(x, y, z, types[z].terrainLOD[l].height.GetPixel(x, y));
+                        metalics.SetPixel(x, y, z, types[z].terrainLOD[l].metalic.GetPixel(x, y));
+                        roughnesss.SetPixel(x, y, z, types[z].terrainLOD[l].roughness.GetPixel(x, y));
+                        occlusions.SetPixel(x, y, z, types[z].terrainLOD[l].occlusion.GetPixel(x, y));
                     }
                 }
             }
 
-            atlas[l][0] = albedos;
-            atlas[l][1] = normalMaps;
-            atlas[l][2] = heights;
-            atlas[l][3] = metalics;
-            atlas[l][4] = roughnesss;
-            atlas[l][5] = occlusions;
+            atlas[0][l] = albedos;
+            atlas[1][l] = normalMaps;
+            atlas[2][l] = heights;
+            atlas[3][l] = metalics;
+            atlas[4][l] = roughnesss;
+            atlas[5][l] = occlusions;
 
 
             albedos.Apply();
@@ -78,13 +108,4 @@ public class TerrainAtlas
     }
 }
 
-[Serializable]
-public class TerrainType
-{
-    public Texture2D[] albedo;
-    public Texture2D[] normalMap;
-    public Texture2D[] height;
-    public Texture2D[] metalic;
-    public Texture2D[] roughness;
-    public Texture2D[] occlusion;
-}
+
