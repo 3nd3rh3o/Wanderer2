@@ -33,6 +33,8 @@ public class Biome
     public float[] carverArguments = new float[0];
     [Range(0f, 1f)]
     public float blendingFactor = 0f;
+    [Tooltip("Surface texture to use")]
+    public int surfaceMaterial;
 
     [Tooltip("Chunk debug color(written in vertex color channel)")]
     public Color DebugColor;
@@ -50,6 +52,11 @@ public class Biome
     internal float3 GetColor()
     {
         return new float3(DebugColor.r, DebugColor.g, DebugColor.b);
+    }
+
+    internal int GetTexIds()
+    {
+        return surfaceMaterial;
     }
 
     internal int GetGenToUse()

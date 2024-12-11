@@ -20,6 +20,7 @@ Texture3D<float4> _ref_height;
 Texture3D<float4> _ref_metalic;
 Texture3D<float4> _ref_roughness;
 Texture3D<float4> _ref_ambientOclusion;
+StructuredBuffer<int> _biomeTexIDs;
 
 
 
@@ -107,7 +108,7 @@ float4 processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint
 
 int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id)
 {
-    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) return id;
+    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) return _biomeTexIDs[id];
     return -1;
 }
 
