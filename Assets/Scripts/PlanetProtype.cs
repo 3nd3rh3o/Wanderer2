@@ -75,17 +75,17 @@ public class PlanetPrototype : MonoBehaviour
         if (oneFace)
         {
             chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas)};
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0)};
         }
         else
         {
             chunks = new Chunk[]{
-            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
-            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
-            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
-            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
-            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas),
-            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas)
+            new Chunk(new Vector3(0, radius, 0), radius * 2, 0, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0),
+            new Chunk(new Vector3(0, -radius, 0), radius * 2, 1, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0),
+            new Chunk(new Vector3(0, 0, radius), radius * 2, 2, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0),
+            new Chunk(new Vector3(0, 0, -radius), radius * 2, 3, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0),
+            new Chunk(new Vector3(radius, 0, 0), radius * 2, 4, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0),
+            new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0)
         };
         }
         Build();

@@ -55,13 +55,6 @@ public class ChunkNHMapCSManager
 
     public void GenMap(Texture3D[][] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, int lod, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes)
     {
-        // VertexUpdate
-
-
-        
-        
-
-
         ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
         ComputeBuffer nBuff = new ComputeBuffer(n.Length, sizeof(float)*3);
         ComputeBuffer cBuff = new ComputeBuffer(c.Length, sizeof(float)*4);
