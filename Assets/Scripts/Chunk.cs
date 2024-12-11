@@ -46,7 +46,7 @@ public class Chunk
     private RenderTexture roughness;
     private RenderTexture normalMap;
     private RenderTexture height;
-    private Texture3D[] refs;
+    private Texture3D[][] refs;
     private ChunkNHMapCSManager csMan;
     private Vector3 geoCenter;
 
@@ -83,7 +83,7 @@ public class Chunk
     }
 
 
-    public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, Biome[] biomes, Texture3D[] refs)
+    public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, Biome[] biomes, Texture3D[][] refs)
     {
 
         this.gRad = gRad;
@@ -127,7 +127,7 @@ public class Chunk
         iMesh.colors = new Color[iMesh.vertices.Length];
         if (csMan != null)
         {
-            csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes);
+            csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, LOD == 2? 0 : LOD == 1? 1 : 2, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes);
         }
         return iMesh;
     }

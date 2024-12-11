@@ -53,7 +53,7 @@ public class ChunkNHMapCSManager
     }
 
 
-    public void GenMap(Texture3D[] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes)
+    public void GenMap(Texture3D[][] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, int lod, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes)
     {
         // VertexUpdate
 
@@ -123,12 +123,12 @@ public class ChunkNHMapCSManager
         cs.SetTexture(0, "_ambientOclusion", ambientOclusion);
 
         
-        cs.SetTexture(0, "_ref_albedo", refs[0]);
-        cs.SetTexture(0, "_ref_normalMap", refs[1]);
-        cs.SetTexture(0, "_ref_height", refs[2]);
-        cs.SetTexture(0, "_ref_metalic", refs[3]);
-        cs.SetTexture(0, "_ref_roughness", refs[4]);
-        cs.SetTexture(0, "_ref_ambientOclusion", refs[5]);
+        cs.SetTexture(0, "_ref_albedo", refs[lod][0]);
+        cs.SetTexture(0, "_ref_normalMap", refs[lod][1]);
+        cs.SetTexture(0, "_ref_height", refs[lod][2]);
+        cs.SetTexture(0, "_ref_metalic", refs[lod][3]);
+        cs.SetTexture(0, "_ref_roughness", refs[lod][4]);
+        cs.SetTexture(0, "_ref_ambientOclusion", refs[lod][5]);
         cs.SetBuffer(0, "_biomeTexIDs", bTexIdsBuff);
 
         
