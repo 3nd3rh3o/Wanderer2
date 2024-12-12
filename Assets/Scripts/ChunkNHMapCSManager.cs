@@ -114,7 +114,6 @@ public class ChunkNHMapCSManager
         cs.SetTexture(0, "_metalic", metalic);
         cs.SetTexture(0, "_roughness", roughness);
         cs.SetTexture(0, "_ambientOclusion", ambientOclusion);
-
         
         cs.SetTexture(0, "_ref_albedo", refs[0][lod]);
         cs.SetTexture(0, "_ref_normalMap", refs[1][lod]);
@@ -124,7 +123,6 @@ public class ChunkNHMapCSManager
         cs.SetTexture(0, "_ref_ambientOclusion", refs[5][lod]);
         cs.SetBuffer(0, "_biomeTexIDs", bTexIdsBuff);
 
-        
         cs.SetBuffer(0, "_minPredicates", bMinPredsBuff);
         cs.SetBuffer(0, "_maxPredicates", bMaxPredsBuff);
         cs.SetBuffer(0, "_blendingFactor", bBlendBuff);

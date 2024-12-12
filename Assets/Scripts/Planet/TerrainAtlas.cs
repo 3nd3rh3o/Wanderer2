@@ -53,17 +53,18 @@ public class TerrainAtlas
         //TODO ENSURE TEXSIZE AND mLOD ARE COHERENT!!! (REDUCE TEX SIZE TO 256, increase mLOD to 8)
         if (atlas != null) Cleanup();
         int texSize = 256;
-        int mLod = 1;
+        int mLod = 6;
 
         atlas = new Texture3D[6][];
+        atlas[0] = new Texture3D[mLod];
+        atlas[1] = new Texture3D[mLod];
+        atlas[2] = new Texture3D[mLod];
+        atlas[3] = new Texture3D[mLod];
+        atlas[4] = new Texture3D[mLod];
+        atlas[5] = new Texture3D[mLod];
         for (int l = 0; l < mLod; l++)
         {
-            atlas[0] = new Texture3D[mLod];
-            atlas[1] = new Texture3D[mLod];
-            atlas[2] = new Texture3D[mLod];
-            atlas[3] = new Texture3D[mLod];
-            atlas[4] = new Texture3D[mLod];
-            atlas[5] = new Texture3D[mLod];
+
 
             //PUT THIS IN A LOOP, PER-LOD
             Texture3D albedos = new Texture3D(texSize, texSize, types.Length, TextureFormat.RGBA32, false);
