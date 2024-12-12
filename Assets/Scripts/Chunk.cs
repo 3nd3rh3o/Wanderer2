@@ -138,6 +138,7 @@ public class Chunk
 
     private Mesh ToMesh(QuadMesh qMesh)
     {
+        //TODO From normals and UVs, deduce tangent !
         Mesh mesh = new();
         int mF = qMesh.faces.Length;
         int[] f = qMesh.faces;

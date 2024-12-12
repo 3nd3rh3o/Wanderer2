@@ -58,6 +58,7 @@ public class PlanetPrototype : MonoBehaviour
             MaterialPropertyBlock mpb = new();
             mpb.SetTexture("_Albedo", albedosTextures[i]);
             mpb.SetTexture("_Normals", normalsTextures[i]);
+            mpb.SetTexture("_Height", heightsTextures[i]);
             GetComponent<MeshRenderer>().SetPropertyBlock(mpb, i);
         }
         GetComponent<MeshFilter>().mesh = combinedMesh;
