@@ -50,7 +50,7 @@ public class TerrainAtlas
     }
     public void Init()
     {
-        //TODO ENSURE TEXSIZE AND mLOD ARE COHERENT!!! (REDUCE TEX SIZE TO 256, increase mLOD to 8)
+        //TODO ENSURE TEXSIZE AND mLOD ARE COHERENT!!!
         if (atlas != null) Cleanup();
         int texSize = 256;
         int mLod = 6;
