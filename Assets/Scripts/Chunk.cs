@@ -193,13 +193,27 @@ public class Chunk
         Vector3[] v = qMesh.vertices;
         Vector3[] n = qMesh.normals;
         Vector2[] uv = qMesh.uvs;
+        Vector4[] tan = new Vector4[qMesh.vertices.Length];
         List<int> t = new((int)(mF * 1.5f));
+        // reading quads to put them in triangles
         for (int i = 0; i < mF; i += 4)
         {
             int a = f[i];
             int b = f[i + 1];
             int c = f[i + 2];
             int d = f[i + 3];
+            Vector3 tan_a = Vector3.Cross(n[a], v[d] - v[a]).normalized;
+            Vector3 tan_b = Vector3.Cross(n[b], v[c] - v[b]).normalized;
+            Vector3 tan_c = Vector3.Cross(n[c], v[d] - v[a]).normalized;
+            Vector3 tan_d = Vector3.Cross(n[d], v[c] - v[b]).normalized;
+
+            tan[a] = new Vector4(tan_a.x, tan_a.y, tan_a.z, 1);
+            tan[b] = new Vector4(tan_b.x, tan_b.y, tan_b.z, 1);
+            tan[c] = new Vector4(tan_c.x, tan_c.y, tan_c.z, 1);
+            tan[d] = new Vector4(tan_d.x, tan_d.y, tan_d.z, 1);
+
+
+
             t.AddRange(((v[b] + v[d]) * 0.5f).sqrMagnitude <= ((v[a] + v[c]) * 0.5f).sqrMagnitude ? new int[] { a, b, d, c, d, b } : new int[] { a, b, c, c, d, a });
         }
         mesh.SetVertices(v);
@@ -208,6 +222,7 @@ public class Chunk
         mesh.SetUVs(0, uv);
         mesh.SetColors(qMesh.colors);
         mesh.RecalculateBounds();
+        mesh.SetTangents(tan);
         geoCenter = mesh.bounds.center;
         return mesh;
     }
