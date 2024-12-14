@@ -149,25 +149,13 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
     else
     {
         uint2 parentOffset = _posRelToParent == 0 ? uint2(0, 0) : _posRelToParent == 1 ? uint2(128, 0) : _posRelToParent == 2 ? uint2(0, 128) : uint2(128, 128);
-        if (_ref_albedo[float3(id.xy, bToUse + 0.5)].a < 1.0)
-        {
-            _albedo[id.xy] = float4((_albedo_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_albedo[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
-            _normalMap[id.xy] = float4(_normalMap_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
-            _height[id.xy] = float4(_height_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
-            _metalic[id.xy] = float4(_metalic_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
-            _roughness[id.xy] = float4(_roughness_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
-            _ambientOclusion[id.xy] = float4(_ambientOclusion_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
-        }
-        else
-        {
-            _albedo[id.xy] = float4(_ref_albedo[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        _normalMap[id.xy] = float4(_ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        _height[id.xy] = float4(_ref_height[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        _metalic[id.xy] = float4(_ref_metalic[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        _roughness[id.xy] = float4(_ref_roughness[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        _ambientOclusion[id.xy] = float4(_ref_ambientOclusion[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        }
         
+        _albedo[id.xy] = float4((_albedo_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_albedo[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
+        _normalMap[id.xy] = float4((_normalMap_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
+        _height[id.xy] = float4((_height_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_height[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
+        _metalic[id.xy] = float4((_metalic_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_metalic[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
+        _roughness[id.xy] = float4((_roughness_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_roughness[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
+        _ambientOclusion[id.xy] = float4((_ambientOclusion_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_ambientOclusion[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
     }
 }
 
