@@ -146,7 +146,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _amplitude: 0
-    - _steps: 3.03
+    - _steps: 20
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

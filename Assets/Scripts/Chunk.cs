@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Unity.Collections;
 
 
 public class Chunk
@@ -40,6 +41,7 @@ public class Chunk
     private int DIR;
     private Chunk[] chunks;
     private float gRad;
+    private bool isRoot;
     private RenderTexture albedo;
     private RenderTexture ambientOcclusion;
     private RenderTexture metalic;
@@ -49,6 +51,8 @@ public class Chunk
     private Texture3D[][] refs;
     private ChunkNHMapCSManager csMan;
     private Vector3 geoCenter;
+    private RenderTexture[] parent_tex;
+    private int posRelToParent;
 
     //how deep in the tree
     private int lvl;
@@ -100,6 +104,49 @@ public class Chunk
         this.BMul = BMul;
         this.biomes = biomes;
         int MAX_TEX_SIZE = 256;
+        isRoot = true;
+
+        albedo = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
+        albedo.enableRandomWrite = true;
+        albedo.Create();
+        ambientOcclusion = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
+        ambientOcclusion.enableRandomWrite = true;
+        ambientOcclusion.Create();
+        metalic = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
+        metalic.enableRandomWrite = true;
+        metalic.Create();
+        roughness = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
+        roughness.enableRandomWrite = true;
+        roughness.Create();
+        normalMap = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
+        normalMap.enableRandomWrite = true;
+        normalMap.Create();
+        height = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
+        height.enableRandomWrite = true;
+        height.Create();
+
+        this.refs = refs;
+
+        cachedMesh = ToMesh(GenNHMap(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size))))));
+    }
+
+    public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, Biome[] biomes, Texture3D[][] refs, int lvl, RenderTexture[] parent_tex, int posRelToParent)
+    {
+        this.lvl = lvl;
+        this.gRad = gRad;
+        this.center = center;
+        this.size = size;
+        this.LOD = LOD;
+        DIR = Dir;
+        this.csMan = csMan;
+        this.BOff = BOff;
+        this.BSca = BSca;
+        this.BMul = BMul;
+        this.biomes = biomes;
+        int MAX_TEX_SIZE = 256;
+        isRoot = false;
+        this.parent_tex = parent_tex;
+        this.posRelToParent = posRelToParent;
 
         albedo = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
         albedo.enableRandomWrite = true;
@@ -131,7 +178,8 @@ public class Chunk
         iMesh.colors = new Color[iMesh.vertices.Length];
         if (csMan != null)
         {
-            csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, lvl, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes);
+            if (isRoot) csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, lvl, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes, null, -1);
+            else csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, lvl, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes, parent_tex, posRelToParent);
         }
         return iMesh;
     }
@@ -170,6 +218,7 @@ public class Chunk
         {
             chunks?.ToList().ForEach(c => c.Kill());
             chunks = null;
+            cachedMesh = ToMesh(GenNHMap(SubDivide(SubDivide(SubDivide(GenInitMesh(DIR, center, size))))));
         }
         else
         {
@@ -220,6 +269,7 @@ public class Chunk
             case ChunkTask.TYPE.KILLCHILD:
                 chunks.ToList().ForEach(c => c.Kill());
                 chunks = null;
+                cachedMesh = ToMesh(GenNHMap(SubDivide(SubDivide(SubDivide(GenInitMesh(DIR, center, size))))));
                 return;
         }
     }
@@ -264,14 +314,15 @@ public class Chunk
     {
         float nS = size * 0.5f;
         float ofs = nS * 0.5f;
+        RenderTexture[] prt = new RenderTexture[]{albedo, normalMap, height, metalic, roughness, ambientOcclusion};
         Chunk[] chunks = Dir switch
         {
-            0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1) },
-            1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1) },
-            2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1) },
-            3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1) },
-            4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1) },
-            5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1) },
+            0 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 0), new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 1), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 2), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 3)},
+            1 => new Chunk[] { new Chunk(center + new Vector3(-ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 0), new Chunk(center + new Vector3(-ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 1), new Chunk(center + new Vector3(ofs, 0, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 2), new Chunk(center + new Vector3(ofs, 0, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 3)},
+            2 => new Chunk[] { new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 0), new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 1), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 2), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 3)},
+            3 => new Chunk[] { new Chunk(center + new Vector3(-ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 0), new Chunk(center + new Vector3(ofs, ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 1), new Chunk(center + new Vector3(-ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 2), new Chunk(center + new Vector3(ofs, -ofs, 0), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 3)},
+            4 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 0), new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 1), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 2), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 3)},
+            5 => new Chunk[] { new Chunk(center + new Vector3(0, ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 0), new Chunk(center + new Vector3(0, ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 1), new Chunk(center + new Vector3(0, -ofs, ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 2), new Chunk(center + new Vector3(0, -ofs, -ofs), nS, Dir, LOD, gRad, csMan, BSca, BMul, BOff, biomes, refs, lvl + 1, prt, 3)},
             _ => throw new System.NotImplementedException()
         };
         return chunks;

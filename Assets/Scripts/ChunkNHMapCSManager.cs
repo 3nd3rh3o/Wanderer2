@@ -53,7 +53,7 @@ public class ChunkNHMapCSManager
     }
 
 
-    public void GenMap(Texture3D[][] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, int lod, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes)
+    public void GenMap(Texture3D[][] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, int lod, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes, RenderTexture[] parent_tex, int posRelToParent)
     {
         ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
         ComputeBuffer nBuff = new ComputeBuffer(n.Length, sizeof(float)*3);
@@ -114,6 +114,26 @@ public class ChunkNHMapCSManager
         cs.SetTexture(0, "_metalic", metalic);
         cs.SetTexture(0, "_roughness", roughness);
         cs.SetTexture(0, "_ambientOclusion", ambientOclusion);
+        if (parent_tex !=null)
+        {
+            cs.SetBool("_isRoot", false);
+            cs.SetInt("_posRelToParent", posRelToParent);
+            cs.SetTexture(0, "_albedo_parent", parent_tex[0]);
+            cs.SetTexture(0, "_normalMap_parent", parent_tex[1]);
+            cs.SetTexture(0, "_height_parent", parent_tex[2]);
+            cs.SetTexture(0, "_metalic_parent", parent_tex[3]);
+            cs.SetTexture(0, "_roughness_parent", parent_tex[4]);
+            cs.SetTexture(0, "_ambientOclusion_parent", parent_tex[5]);
+        }
+        else {
+            cs.SetBool("_isRoot", true);
+            cs.SetTexture(0, "_albedo_parent", albedo);
+            cs.SetTexture(0, "_normalMap_parent", albedo);
+            cs.SetTexture(0, "_height_parent", albedo);
+            cs.SetTexture(0, "_metalic_parent", albedo);
+            cs.SetTexture(0, "_roughness_parent", albedo);
+            cs.SetTexture(0, "_ambientOclusion_parent", albedo);
+        }
         
         cs.SetTexture(0, "_ref_albedo", refs[0][lod]);
         cs.SetTexture(0, "_ref_normalMap", refs[1][lod]);

@@ -3,7 +3,7 @@ using UnityEngine;
 public class SolarSystemManager : MonoBehaviour
 {
     private Vector3 playerPosition = new();
-    private Vector3 playerRotation = new();
+    //private Vector3 playerRotation = new();
     private SolarSystemsData solarSystemsData;
 
     //Solar system

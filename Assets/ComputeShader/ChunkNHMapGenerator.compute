@@ -13,6 +13,15 @@ RWTexture2D<float4> _height;
 RWTexture2D<float4> _metalic;
 RWTexture2D<float4> _roughness;
 RWTexture2D<float4> _ambientOclusion;
+//TODO give position relative to the parent to cs for inclusion of upper noise
+bool _isRoot;
+int _posRelToParent;
+Texture2D<float4> _albedo_parent;
+Texture2D<float4> _normalMap_parent;
+Texture2D<float4> _height_parent;
+Texture2D<float4> _metalic_parent;
+Texture2D<float4> _roughness_parent;
+Texture2D<float4> _ambientOclusion_parent;
 
 Texture3D<float4> _ref_albedo;
 Texture3D<float4> _ref_normalMap;
@@ -76,8 +85,8 @@ float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset
     //TODO 4 dim noise map
     return float4(
         clamp(simpleNoise(pos + offset, scale, multiplier), -1, 1),
-        clamp(simpleNoise(pos + offset + float3(2, 0, 0), scale, multiplier), -1, 1),
-        clamp(simpleNoise(pos + offset + float3(0, 0, 2), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset +float3(2, 0, 0), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset +float3(0, 0, 2), scale, multiplier), -1, 1),
         dot(pos, float3(0, 1, 0))
     );
 }
@@ -95,15 +104,15 @@ float sampleHeight(float3 sPoint, int id, float4x4 params)
 }
 float smoothMax(float d1, float d2, float k)
 {
-	float h = clamp(0.5 - 0.5 * (d2 + d1)/k, 0.0, 1.0);
-	return lerp(d2, -d1, h) + k*h*(1.0 - h);
+    float h = clamp(0.5 - 0.5 * (d2 + d1) / k, 0.0, 1.0);
+    return lerp(d2, -d1, h) + k * h * (1.0 - h);
 }
 
 float4 processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint genToUse, float4x4 params, float lf, float4 ph, float3 c)
 {
     float h = 0.0;
     if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) h = sampleHeight(sPoint, genToUse, params);
-    return h!=0.0? ph.x != 0? float4(smoothMax(h, ph.x, lf), c): float4(h, c) : ph;
+    return h != 0.0 ? ph.x != 0 ? float4(smoothMax(h, ph.x, lf), c) : float4(h, c) : ph;
 }
 
 int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id)
@@ -116,8 +125,8 @@ int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id)
 [numthreads(8, 8, 1)]
 void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
-    float3 dX = (_mx - _origin)/256;
-    float3 dY = (_my - _origin)/256;
+    float3 dX = (_mx - _origin) / 256;
+    float3 dY = (_my - _origin) / 256;
     int bToUse = 0;
     float3 vPos = normalize(_origin + (dX * id.x) + (dY * id.y));
     float4 bChann = getBiomeChannels(vPos, _scale, 0.75, _offset);
@@ -126,9 +135,40 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
         float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
         int b = getBiome(vPos, bChann, mP, MP, i);
-        bToUse = b == -1? bToUse: b;
+        bToUse = b == -1 ? bToUse : b;
     }
-    _albedo[id.xy] = _ref_albedo[float3(id.xy, bToUse+0.5)];
+    if (_isRoot)
+    {
+        _albedo[id.xy] = float4(_ref_albedo[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _normalMap[id.xy] = float4(_ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _height[id.xy] = float4(_ref_height[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _metalic[id.xy] = float4(_ref_metalic[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _roughness[id.xy] = float4(_ref_roughness[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _ambientOclusion[id.xy] = float4(_ref_ambientOclusion[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+    }
+    else
+    {
+        uint2 parentOffset = _posRelToParent == 0 ? uint2(0, 0) : _posRelToParent == 1 ? uint2(128, 0) : _posRelToParent == 2 ? uint2(0, 128) : uint2(128, 128);
+        if (_ref_albedo[float3(id.xy, bToUse + 0.5)].a < 1.0)
+        {
+            _albedo[id.xy] = float4((_albedo_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_albedo[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
+            _normalMap[id.xy] = float4(_normalMap_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
+            _height[id.xy] = float4(_height_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
+            _metalic[id.xy] = float4(_metalic_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
+            _roughness[id.xy] = float4(_roughness_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
+            _ambientOclusion[id.xy] = float4(_ambientOclusion_parent[float2(id.xy * .5 + parentOffset)].rgb, 1.0);
+        }
+        else
+        {
+            _albedo[id.xy] = float4(_ref_albedo[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _normalMap[id.xy] = float4(_ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _height[id.xy] = float4(_ref_height[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _metalic[id.xy] = float4(_ref_metalic[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _roughness[id.xy] = float4(_ref_roughness[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        _ambientOclusion[id.xy] = float4(_ref_ambientOclusion[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
+        }
+        
+    }
 }
 
 
@@ -182,13 +222,13 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
             resZM = processBiomes(posZMinus, bChanZM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM, _biomeDebugColor[i]);
         }
 
-        res+=bChan.x * _multiplier;
-        resXP+=bChanXP.x * _multiplier;
-        resXM+=bChanXM.x * _multiplier;
-        resYP+=bChanYP.x * _multiplier;
-        resYM+=bChanYM.x * _multiplier;
-        resZP+=bChanZP.x * _multiplier;
-        resZM+=bChanZM.x * _multiplier;
+        res += bChan.x * _multiplier;
+        resXP += bChanXP.x * _multiplier;
+        resXM += bChanXM.x * _multiplier;
+        resYP += bChanYP.x * _multiplier;
+        resYM += bChanYM.x * _multiplier;
+        resZP += bChanZP.x * _multiplier;
+        resZM += bChanZM.x * _multiplier;
 
         // Position finale du vertex après déformation
         float3 vFinalPos = vPos * (1.0 + res.x) * _bRad;

@@ -65,7 +65,7 @@ public class PlanetPrototype : MonoBehaviour
     }
 
     void Start()
-    {
+    { 
 
     }
 
@@ -90,8 +90,8 @@ public class PlanetPrototype : MonoBehaviour
             new Chunk(new Vector3(-radius, 0, 0), radius * 2, 5, LOD, radius, csMan, BiomeScale, BiomeMultiplier, BiomeOffset, biomes, atlas.atlas, 0)
         };
         }
+        for (int i = 0; i <= LOD; i++) chunks?.ToList().ForEach(c => c.Update(LOD));
         Build();
-
     }
 
     void OnDisable()
