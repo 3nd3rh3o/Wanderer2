@@ -111,13 +111,13 @@ float smoothMax(float d1, float d2, float k)
 float4 processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint genToUse, float4x4 params, float lf, float4 ph, float3 c)
 {
     float h = 0.0;
-    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) h = sampleHeight(sPoint, genToUse, params);
+    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x >= chann.x && maxp.y >= chann.y && maxp.z >= chann.z && maxp.w >= chann.w) h = sampleHeight(sPoint, genToUse, params);
     return h != 0.0 ? ph.x != 0 ? float4(smoothMax(h, ph.x, lf), c) : float4(h, c) : ph;
 }
 
 int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id)
 {
-    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x > chann.x && maxp.y > chann.y && maxp.z > chann.z && maxp.w > chann.w) return _biomeTexIDs[id];
+    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x >= chann.x && maxp.y >= chann.y && maxp.z >= chann.z && maxp.w >= chann.w) return _biomeTexIDs[id];
     return -1;
 }
 
