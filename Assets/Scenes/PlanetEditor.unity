@@ -119,714 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &821828133
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 821828136}
-  - component: {fileID: 821828135}
-  - component: {fileID: 821828134}
-  - component: {fileID: 821828137}
-  m_Layer: 0
-  m_Name: Main Camera
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!81 &821828134
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 821828133}
-  m_Enabled: 1
---- !u!20 &821828135
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 821828133}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 31.673458
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 100000
-  field of view: 41.5
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &821828136
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 821828133}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.20919214, y: -0.21247071, z: 0.04662053, w: -0.9533737}
-  m_LocalPosition: {x: -392.13477, y: 450.95508, z: -833.0078}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &821828137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 821828133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_VolumeTrigger: {fileID: 0}
-  m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 1
-  m_AllowHDROutput: 1
-  m_UseScreenCoordOverride: 0
-  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
-  m_TaaSettings:
-    m_Quality: 3
-    m_FrameInfluence: 0.1
-    m_JitterScale: 1
-    m_MipBias: 0
-    m_VarianceClampScale: 0.9
-    m_ContrastAdaptiveSharpening: 0
---- !u!1 &882063820
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 882063824}
-  - component: {fileID: 882063823}
-  - component: {fileID: 882063822}
-  - component: {fileID: 882063821}
-  m_Layer: 0
-  m_Name: Planet
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 1
-  m_IsActive: 1
---- !u!114 &882063821
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882063820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a3f80aa4121a034cb608a45706674aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  atlas:
-    types:
-    - name: Grass
-      terrainLOD:
-      - albedo: {fileID: 2800000, guid: c9645c01c3297084891b37fdd015eb99, type: 3}
-        normalMap: {fileID: 2800000, guid: 5f9fdf422ecc8164092603f97190fb16, type: 3}
-        height: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: d3c1c0e6b3ea13c43ba678822c9214ea, type: 3}
-        normalMap: {fileID: 2800000, guid: a92878c87a992b34eadb8a7dd0f74098, type: 3}
-        height: {fileID: 2800000, guid: d7a18b7362fd07145941a4a2882bd6e9, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: 0a8a6e907eacb6a4e8fdbba3a9d8bad4, type: 3}
-        normalMap: {fileID: 2800000, guid: 36ae6f763accc4e49bb4a28307af15fc, type: 3}
-        height: {fileID: 2800000, guid: f9499ddcc3cbf694088ce6e4e028d650, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: beaa85a61521e97438637a0f788b952b, type: 3}
-        normalMap: {fileID: 2800000, guid: 50349bb63e583cc498194087f0648130, type: 3}
-        height: {fileID: 2800000, guid: f252269773723b340a848690dfba7a3a, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: 86d54524acf07d74e80f62fcd9a52d10, type: 3}
-        normalMap: {fileID: 2800000, guid: f0c13d1adf25c1c4eb402e1289d6497e, type: 3}
-        height: {fileID: 2800000, guid: 1cb40b7e5cb01a94a8455ff8ce39a5d6, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: 46247f1bfaab74440b0949ad1ffb54cd, type: 3}
-        normalMap: {fileID: 2800000, guid: 5c31e62ca590cd84481663285bc001ee, type: 3}
-        height: {fileID: 2800000, guid: d848ecb56b99b8243af25ebece6291f7, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-    - name: Rock
-      terrainLOD:
-      - albedo: {fileID: 2800000, guid: bc2582910a8b0df42969a8e61e7ca5d9, type: 3}
-        normalMap: {fileID: 2800000, guid: 1b1cc35307f6f0b49bc256b7022ca76c, type: 3}
-        height: {fileID: 2800000, guid: 261e7554390a62046b89968b505a972e, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: 9d929bcff20a1ea4ab074b63d5d77442, type: 3}
-        normalMap: {fileID: 2800000, guid: df329be0fba53054caab591a73743b3f, type: 3}
-        height: {fileID: 2800000, guid: d5c07875b506f6d4485f0de92b593ab6, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: 70efd89fb049f4a45909a9cf572799bb, type: 3}
-        normalMap: {fileID: 2800000, guid: 918725e5ae4e30f4fa1d0f1ab1a5efec, type: 3}
-        height: {fileID: 2800000, guid: c1c10e0eb667b6341aca6a1b1d444632, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: 7d8ee02a64369f74ba95f3bdb4af8b3b, type: 3}
-        normalMap: {fileID: 2800000, guid: 978d04341456d794c860aec196593603, type: 3}
-        height: {fileID: 2800000, guid: c3d9587f82f9d3945bd18c421cb342d5, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: eadc82db8b36d0041b029a5513195fbd, type: 3}
-        normalMap: {fileID: 2800000, guid: b9c735ae64afe554f9f0da263e7adb74, type: 3}
-        height: {fileID: 2800000, guid: 253e6b74bb662d747ad58a7eca2da024, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-      - albedo: {fileID: 2800000, guid: 386f3c81ae05daa4e9807769ff978c8d, type: 3}
-        normalMap: {fileID: 2800000, guid: 80f85bf5fc6b3c4428fcf5aca2b59cb6, type: 3}
-        height: {fileID: 2800000, guid: a8b3385d544097a4690e5f6417eb44e9, type: 3}
-        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
-    - name: Snow
-      terrainLOD:
-      - albedo: {fileID: 2800000, guid: e6ee51bb85d3de345816a9e110bfddbd, type: 3}
-        normalMap: {fileID: 2800000, guid: 30ac5d889ce797a41bdc120b937acac4, type: 3}
-        height: {fileID: 2800000, guid: d9efced34199a114282b4a1e482f89a1, type: 3}
-        metalic: {fileID: 2800000, guid: ba84bf4480ac44341a4ab53f1c5e07cf, type: 3}
-        roughness: {fileID: 2800000, guid: 910ac5fb4f0cdbd4da2c65c2d32be25b, type: 3}
-        occlusion: {fileID: 2800000, guid: c50e206157726284395568cdb9567b39, type: 3}
-      - albedo: {fileID: 2800000, guid: 69b828b30fb1e5c47b60808f8e4da765, type: 3}
-        normalMap: {fileID: 2800000, guid: 8e3a9ace36a51194bb3c5480ab1ef02b, type: 3}
-        height: {fileID: 2800000, guid: bfeeb74b875288e4bbfd976a65add9f0, type: 3}
-        metalic: {fileID: 2800000, guid: aba62430782346349bd847bb48345a2e, type: 3}
-        roughness: {fileID: 2800000, guid: c62072d57d969d94d85945a72051865f, type: 3}
-        occlusion: {fileID: 2800000, guid: a969d1b13f583ed46a0e84f2dd7040a1, type: 3}
-      - albedo: {fileID: 2800000, guid: 2bca79616ac9a554888f92aab017d54d, type: 3}
-        normalMap: {fileID: 2800000, guid: c2db6f441335665438b0133827bf0011, type: 3}
-        height: {fileID: 2800000, guid: 05163681573aef64180206a916851176, type: 3}
-        metalic: {fileID: 2800000, guid: 49714d2b3884f6c4ab99668678c98960, type: 3}
-        roughness: {fileID: 2800000, guid: 752f5cc6699e1f94aa2a6c2a450e3636, type: 3}
-        occlusion: {fileID: 2800000, guid: 03fe66591cc15d84e9d9b56ae0b115c9, type: 3}
-      - albedo: {fileID: 2800000, guid: 5012120a97b44214297e471512886bba, type: 3}
-        normalMap: {fileID: 2800000, guid: 09a6db7422104ca47bac548cd29a2298, type: 3}
-        height: {fileID: 2800000, guid: 939725e93f3fb1b4b81a721584149b7d, type: 3}
-        metalic: {fileID: 2800000, guid: 18d1125922cb8224d89fc6f2584f2e5a, type: 3}
-        roughness: {fileID: 2800000, guid: 390ac4cdd37b8ae4f87d991fd305f807, type: 3}
-        occlusion: {fileID: 2800000, guid: 97c5e10c70a6ef14bbab05006b92b51c, type: 3}
-      - albedo: {fileID: 2800000, guid: b7a627f071f1add43a78e63d126e67ae, type: 3}
-        normalMap: {fileID: 2800000, guid: 2d45c45f22741c847a0b5bb83fa3d128, type: 3}
-        height: {fileID: 2800000, guid: 50adcadd865729b4a856197bc0181b0b, type: 3}
-        metalic: {fileID: 2800000, guid: 816a8e11fbce9a548852de09fc94a673, type: 3}
-        roughness: {fileID: 2800000, guid: 5e18416862079304bbedb772b7bc6b3b, type: 3}
-        occlusion: {fileID: 2800000, guid: 4967a6119fcb3114c904be0d0c2175c9, type: 3}
-      - albedo: {fileID: 2800000, guid: a4f9056aae0ccbb44b2f7cd42f9888cc, type: 3}
-        normalMap: {fileID: 2800000, guid: 2816448cc63b18643acf4f5107cb6c82, type: 3}
-        height: {fileID: 2800000, guid: ec70ffb879c159c45832862efce69db9, type: 3}
-        metalic: {fileID: 2800000, guid: 9f5b51bc5e9ca344b967c17c785ba4bb, type: 3}
-        roughness: {fileID: 2800000, guid: 345a097e233f932488a4d577d94af1b2, type: 3}
-        occlusion: {fileID: 2800000, guid: fa103b831d044864ab3256a8b6cb6fad, type: 3}
-    - name: Sand
-      terrainLOD:
-      - albedo: {fileID: 2800000, guid: d26c6e60e84f85c48beab5bbeb90008f, type: 3}
-        normalMap: {fileID: 2800000, guid: 3131ce08cc325bc43b26cb266f668ce0, type: 3}
-        height: {fileID: 2800000, guid: 38dec106526b8fc43bfe75117c1fbaf5, type: 3}
-        metalic: {fileID: 2800000, guid: 7beee259abf8b564998a2ccaec3128ec, type: 3}
-        roughness: {fileID: 2800000, guid: c1b8bbabff4120d4faf3351a73f0cfa6, type: 3}
-        occlusion: {fileID: 2800000, guid: 960b8515f7e9d964a8297c9f3e0f8020, type: 3}
-      - albedo: {fileID: 2800000, guid: dcc57ed1f7b78b34eb1fe6259b9d2cea, type: 3}
-        normalMap: {fileID: 2800000, guid: 87cd1dd4ca0f5054cb588878de6c2215, type: 3}
-        height: {fileID: 2800000, guid: 7b7ec75a389f1454780ca0dc91dac37b, type: 3}
-        metalic: {fileID: 2800000, guid: f2f82ec7edd2f1748a333dd7eefad759, type: 3}
-        roughness: {fileID: 2800000, guid: 543b62c90152a554785b660dea536c3a, type: 3}
-        occlusion: {fileID: 2800000, guid: 1a6543baad832004d993847ac16103e3, type: 3}
-      - albedo: {fileID: 2800000, guid: e3a05c18706fefd4090db4bd58e91e96, type: 3}
-        normalMap: {fileID: 2800000, guid: 2a8bdb8337f20634fb31d43e1a397904, type: 3}
-        height: {fileID: 2800000, guid: b5ea249c184198b4da0add9d29759db1, type: 3}
-        metalic: {fileID: 2800000, guid: f260bf859c0bdd24b956c497d8496039, type: 3}
-        roughness: {fileID: 2800000, guid: e6e6dc5a8d81efd429677d96436a05f3, type: 3}
-        occlusion: {fileID: 2800000, guid: 523f45b3dd4b8f54faea296ddd3b7e80, type: 3}
-      - albedo: {fileID: 2800000, guid: dc0d01668567ee344979d4a5aea75fc0, type: 3}
-        normalMap: {fileID: 2800000, guid: c572ae8e040caae4eb1fff7c9bfde1f2, type: 3}
-        height: {fileID: 2800000, guid: c3e33071bbce68b4cbf2b4c4d4b3791f, type: 3}
-        metalic: {fileID: 2800000, guid: 7cd7ea686bda0fb43bba75e632e8bdc8, type: 3}
-        roughness: {fileID: 2800000, guid: 16a3a5477fef35a4bbe480c3d40a0c2b, type: 3}
-        occlusion: {fileID: 2800000, guid: 97c5e10c70a6ef14bbab05006b92b51c, type: 3}
-      - albedo: {fileID: 2800000, guid: ddbd76aa400f3524db070b2e2dd39d3d, type: 3}
-        normalMap: {fileID: 2800000, guid: 3e87435fe76368d4b9783663c745156d, type: 3}
-        height: {fileID: 2800000, guid: 3bf11392d7b92e84292138c36cb59290, type: 3}
-        metalic: {fileID: 2800000, guid: 4e052860e092be24bb0ac62fe71e644c, type: 3}
-        roughness: {fileID: 2800000, guid: 8f5c2c3ead87ba041bd9be50de6042a1, type: 3}
-        occlusion: {fileID: 2800000, guid: 8217eca99e883394fa9e3318a264c921, type: 3}
-      - albedo: {fileID: 2800000, guid: dd4568c7199e1c54ca1394650c4c715d, type: 3}
-        normalMap: {fileID: 2800000, guid: 672c30a563ed628468977b2b170ee15b, type: 3}
-        height: {fileID: 2800000, guid: 44ee2b8178d7b1241b7d081235129d93, type: 3}
-        metalic: {fileID: 2800000, guid: e74720347f64e124f98a8ff32e7fe4c0, type: 3}
-        roughness: {fileID: 2800000, guid: 2d31fcff560ee914f8a9e61aa9d1aeb2, type: 3}
-        occlusion: {fileID: 2800000, guid: 90c95a63442960346a500e6c1c01f405, type: 3}
-    bake: 0
-  sharedMat: {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  cs: {fileID: 7200000, guid: 861bb91b47f1b604991bd6d405f522d0, type: 3}
-  BiomeScale: 0.88
-  BiomeMultiplier: 0.06
-  BiomeOffset: {x: 16.97, y: 1.29, z: 3.7}
-  biomes:
-  - name: deep sea
-    PredicateMin:
-      altitude: -1
-      temperature: -1
-      humidity: -1
-      latitude: -1
-    PredicateMax:
-      altitude: -0.548
-      temperature: 1
-      humidity: 1
-      latitude: 1
-    carver: 1
-    carverArguments:
-    - 0.82
-    - 0.08
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    blendingFactor: 0.117
-    surfaceMaterial: 3
-    DebugColor: {r: 0.042452812, g: 0.12453884, b: 1, a: 1}
-  - name: Sea
-    PredicateMin:
-      altitude: -0.548
-      temperature: -1
-      humidity: -1
-      latitude: -1
-    PredicateMax:
-      altitude: 0
-      temperature: 1
-      humidity: 1
-      latitude: 1
-    carver: 1
-    carverArguments:
-    - 0.82
-    - 0.03
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    blendingFactor: 0.117
-    surfaceMaterial: 3
-    DebugColor: {r: 0.043137252, g: 0.5865003, b: 1, a: 1}
-  - name: Beach
-    PredicateMin:
-      altitude: 0
-      temperature: -1
-      humidity: -1
-      latitude: -1
-    PredicateMax:
-      altitude: 0.007
-      temperature: 1
-      humidity: 1
-      latitude: 1
-    carver: 1
-    carverArguments:
-    - 0.82
-    - 0.03
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    blendingFactor: 0.117
-    surfaceMaterial: 3
-    DebugColor: {r: 0.90698564, g: 1, b: 0, a: 1}
-  - name: Plains
-    PredicateMin:
-      altitude: 0.007
-      temperature: -1
-      humidity: 0
-      latitude: -1
-    PredicateMax:
-      altitude: 0.4
-      temperature: 1
-      humidity: 1
-      latitude: 1
-    carver: 1
-    carverArguments:
-    - 0.82
-    - 0.06
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    blendingFactor: 0.117
-    surfaceMaterial: 0
-    DebugColor: {r: 0.22167933, g: 1, b: 0, a: 1}
-  - name: Desert
-    PredicateMin:
-      altitude: 0.007
-      temperature: -1
-      humidity: -1
-      latitude: -1
-    PredicateMax:
-      altitude: 0.4
-      temperature: 1
-      humidity: 0
-      latitude: 1
-    carver: 1
-    carverArguments:
-    - 0.82
-    - 0.06
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    blendingFactor: 0.117
-    surfaceMaterial: 3
-    DebugColor: {r: 1, g: 0.9606118, b: 0, a: 1}
-  - name: Mountains
-    PredicateMin:
-      altitude: 0.4
-      temperature: -1
-      humidity: -1
-      latitude: -1
-    PredicateMax:
-      altitude: 0.718
-      temperature: 1
-      humidity: 1
-      latitude: 1
-    carver: 1
-    carverArguments:
-    - 10.4
-    - 2.91
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    blendingFactor: 0.117
-    surfaceMaterial: 1
-    DebugColor: {r: 0.4528302, g: 0.4459355, b: 0.44215024, a: 1}
-  - name: Mountains Top
-    PredicateMin:
-      altitude: 0.718
-      temperature: -1
-      humidity: -1
-      latitude: -1
-    PredicateMax:
-      altitude: 1
-      temperature: 1
-      humidity: 1
-      latitude: 1
-    carver: 1
-    carverArguments:
-    - 10.4
-    - 4.23
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    blendingFactor: 0.117
-    surfaceMaterial: 2
-    DebugColor: {r: 1, g: 1, b: 1, a: 1}
-  autoUpdate: 0
-  update: 0
-  oneFace: 0
-  radius: 250
-  LOD: 1
---- !u!33 &882063822
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882063820}
-  m_Mesh: {fileID: 1904402482}
---- !u!23 &882063823
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882063820}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 2
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!4 &882063824
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882063820}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1502952372
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1502952374}
-  - component: {fileID: 1502952373}
-  - component: {fileID: 1502952375}
-  m_Layer: 0
-  m_Name: Directional Light
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!108 &1502952373
-Light:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1502952372}
-  m_Enabled: 1
-  serializedVersion: 11
-  m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1.21
-  m_Range: 10
-  m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 2
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 0.828
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 2.22
-    m_CullingMatrixOverride:
-      e00: 1
-      e01: 0
-      e02: 0
-      e03: 0
-      e10: 0
-      e11: 1
-      e12: 0
-      e13: 0
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-    m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingLayerMask: 1
-  m_Lightmapping: 4
-  m_LightShadowCasterMode: 0
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1.16
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
-  m_ForceVisible: 0
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
-  m_LightUnit: 1
-  m_LuxAtDistance: 1
-  m_EnableSpotReflector: 1
---- !u!4 &1502952374
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1502952372}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.4015781, y: 0.105522156, z: -0.36686587, w: 0.8324719}
-  m_LocalPosition: {x: -1.2419478, y: 82.59523, z: -1.2598664}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 48.248, y: -10.291, z: -52.184}
---- !u!114 &1502952375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1502952372}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Version: 3
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_RenderingLayers: 1
-  m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_ShadowRenderingLayers: 1
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
-  m_SoftShadowQuality: 0
---- !u!43 &1904402482
+--- !u!43 &138283434
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1221,6 +514,730 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &821828133
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 821828136}
+  - component: {fileID: 821828135}
+  - component: {fileID: 821828134}
+  - component: {fileID: 821828138}
+  - component: {fileID: 821828137}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &821828134
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821828133}
+  m_Enabled: 1
+--- !u!20 &821828135
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821828133}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 1
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 45.57919
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 1
+  far clip plane: 100000
+  field of view: 24.02185
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 1
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &821828136
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821828133}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.09073497, y: 0.7765487, z: -0.11498289, w: -0.61279535}
+  m_LocalPosition: {x: 1210.8358, y: 402.72693, z: 308.13547}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &821828137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821828133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+--- !u!114 &821828138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821828133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d2bb370ccc96b4c83f00c10d9a1fad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasChanged: 0
+  _shader: {fileID: 4800000, guid: 10654d4d6de908d4eb19c927d0941ed7, type: 3}
+  _rayMarchMat: {fileID: 0}
+  _cam: {fileID: 0}
+--- !u!1 &882063820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 882063824}
+  - component: {fileID: 882063823}
+  - component: {fileID: 882063822}
+  - component: {fileID: 882063821}
+  m_Layer: 0
+  m_Name: Planet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 1
+  m_IsActive: 1
+--- !u!114 &882063821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882063820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a3f80aa4121a034cb608a45706674aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  atlas:
+    types:
+    - name: Grass
+      terrainLOD:
+      - albedo: {fileID: 2800000, guid: c9645c01c3297084891b37fdd015eb99, type: 3}
+        normalMap: {fileID: 2800000, guid: 5f9fdf422ecc8164092603f97190fb16, type: 3}
+        height: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: d3c1c0e6b3ea13c43ba678822c9214ea, type: 3}
+        normalMap: {fileID: 2800000, guid: a92878c87a992b34eadb8a7dd0f74098, type: 3}
+        height: {fileID: 2800000, guid: d7a18b7362fd07145941a4a2882bd6e9, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: 0a8a6e907eacb6a4e8fdbba3a9d8bad4, type: 3}
+        normalMap: {fileID: 2800000, guid: 36ae6f763accc4e49bb4a28307af15fc, type: 3}
+        height: {fileID: 2800000, guid: f9499ddcc3cbf694088ce6e4e028d650, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: beaa85a61521e97438637a0f788b952b, type: 3}
+        normalMap: {fileID: 2800000, guid: 50349bb63e583cc498194087f0648130, type: 3}
+        height: {fileID: 2800000, guid: f252269773723b340a848690dfba7a3a, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: 86d54524acf07d74e80f62fcd9a52d10, type: 3}
+        normalMap: {fileID: 2800000, guid: f0c13d1adf25c1c4eb402e1289d6497e, type: 3}
+        height: {fileID: 2800000, guid: 1cb40b7e5cb01a94a8455ff8ce39a5d6, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: 46247f1bfaab74440b0949ad1ffb54cd, type: 3}
+        normalMap: {fileID: 2800000, guid: 5c31e62ca590cd84481663285bc001ee, type: 3}
+        height: {fileID: 2800000, guid: d848ecb56b99b8243af25ebece6291f7, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+    - name: Rock
+      terrainLOD:
+      - albedo: {fileID: 2800000, guid: bc2582910a8b0df42969a8e61e7ca5d9, type: 3}
+        normalMap: {fileID: 2800000, guid: 1b1cc35307f6f0b49bc256b7022ca76c, type: 3}
+        height: {fileID: 2800000, guid: 261e7554390a62046b89968b505a972e, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: 9d929bcff20a1ea4ab074b63d5d77442, type: 3}
+        normalMap: {fileID: 2800000, guid: df329be0fba53054caab591a73743b3f, type: 3}
+        height: {fileID: 2800000, guid: d5c07875b506f6d4485f0de92b593ab6, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: 70efd89fb049f4a45909a9cf572799bb, type: 3}
+        normalMap: {fileID: 2800000, guid: 918725e5ae4e30f4fa1d0f1ab1a5efec, type: 3}
+        height: {fileID: 2800000, guid: c1c10e0eb667b6341aca6a1b1d444632, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: 7d8ee02a64369f74ba95f3bdb4af8b3b, type: 3}
+        normalMap: {fileID: 2800000, guid: 978d04341456d794c860aec196593603, type: 3}
+        height: {fileID: 2800000, guid: c3d9587f82f9d3945bd18c421cb342d5, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: eadc82db8b36d0041b029a5513195fbd, type: 3}
+        normalMap: {fileID: 2800000, guid: b9c735ae64afe554f9f0da263e7adb74, type: 3}
+        height: {fileID: 2800000, guid: 253e6b74bb662d747ad58a7eca2da024, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+      - albedo: {fileID: 2800000, guid: 386f3c81ae05daa4e9807769ff978c8d, type: 3}
+        normalMap: {fileID: 2800000, guid: 80f85bf5fc6b3c4428fcf5aca2b59cb6, type: 3}
+        height: {fileID: 2800000, guid: a8b3385d544097a4690e5f6417eb44e9, type: 3}
+        metalic: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        roughness: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+        occlusion: {fileID: 2800000, guid: 19505adee9bdc0c42925d8b2b5e9f842, type: 3}
+    - name: Snow
+      terrainLOD:
+      - albedo: {fileID: 2800000, guid: e6ee51bb85d3de345816a9e110bfddbd, type: 3}
+        normalMap: {fileID: 2800000, guid: 30ac5d889ce797a41bdc120b937acac4, type: 3}
+        height: {fileID: 2800000, guid: d9efced34199a114282b4a1e482f89a1, type: 3}
+        metalic: {fileID: 2800000, guid: ba84bf4480ac44341a4ab53f1c5e07cf, type: 3}
+        roughness: {fileID: 2800000, guid: 910ac5fb4f0cdbd4da2c65c2d32be25b, type: 3}
+        occlusion: {fileID: 2800000, guid: c50e206157726284395568cdb9567b39, type: 3}
+      - albedo: {fileID: 2800000, guid: 69b828b30fb1e5c47b60808f8e4da765, type: 3}
+        normalMap: {fileID: 2800000, guid: 8e3a9ace36a51194bb3c5480ab1ef02b, type: 3}
+        height: {fileID: 2800000, guid: bfeeb74b875288e4bbfd976a65add9f0, type: 3}
+        metalic: {fileID: 2800000, guid: aba62430782346349bd847bb48345a2e, type: 3}
+        roughness: {fileID: 2800000, guid: c62072d57d969d94d85945a72051865f, type: 3}
+        occlusion: {fileID: 2800000, guid: a969d1b13f583ed46a0e84f2dd7040a1, type: 3}
+      - albedo: {fileID: 2800000, guid: 2bca79616ac9a554888f92aab017d54d, type: 3}
+        normalMap: {fileID: 2800000, guid: c2db6f441335665438b0133827bf0011, type: 3}
+        height: {fileID: 2800000, guid: 05163681573aef64180206a916851176, type: 3}
+        metalic: {fileID: 2800000, guid: 49714d2b3884f6c4ab99668678c98960, type: 3}
+        roughness: {fileID: 2800000, guid: 752f5cc6699e1f94aa2a6c2a450e3636, type: 3}
+        occlusion: {fileID: 2800000, guid: 03fe66591cc15d84e9d9b56ae0b115c9, type: 3}
+      - albedo: {fileID: 2800000, guid: 5012120a97b44214297e471512886bba, type: 3}
+        normalMap: {fileID: 2800000, guid: 09a6db7422104ca47bac548cd29a2298, type: 3}
+        height: {fileID: 2800000, guid: 939725e93f3fb1b4b81a721584149b7d, type: 3}
+        metalic: {fileID: 2800000, guid: 18d1125922cb8224d89fc6f2584f2e5a, type: 3}
+        roughness: {fileID: 2800000, guid: 390ac4cdd37b8ae4f87d991fd305f807, type: 3}
+        occlusion: {fileID: 2800000, guid: 97c5e10c70a6ef14bbab05006b92b51c, type: 3}
+      - albedo: {fileID: 2800000, guid: b7a627f071f1add43a78e63d126e67ae, type: 3}
+        normalMap: {fileID: 2800000, guid: 2d45c45f22741c847a0b5bb83fa3d128, type: 3}
+        height: {fileID: 2800000, guid: 50adcadd865729b4a856197bc0181b0b, type: 3}
+        metalic: {fileID: 2800000, guid: 816a8e11fbce9a548852de09fc94a673, type: 3}
+        roughness: {fileID: 2800000, guid: 5e18416862079304bbedb772b7bc6b3b, type: 3}
+        occlusion: {fileID: 2800000, guid: 4967a6119fcb3114c904be0d0c2175c9, type: 3}
+      - albedo: {fileID: 2800000, guid: a4f9056aae0ccbb44b2f7cd42f9888cc, type: 3}
+        normalMap: {fileID: 2800000, guid: 2816448cc63b18643acf4f5107cb6c82, type: 3}
+        height: {fileID: 2800000, guid: ec70ffb879c159c45832862efce69db9, type: 3}
+        metalic: {fileID: 2800000, guid: 9f5b51bc5e9ca344b967c17c785ba4bb, type: 3}
+        roughness: {fileID: 2800000, guid: 345a097e233f932488a4d577d94af1b2, type: 3}
+        occlusion: {fileID: 2800000, guid: fa103b831d044864ab3256a8b6cb6fad, type: 3}
+    - name: Sand
+      terrainLOD:
+      - albedo: {fileID: 2800000, guid: d26c6e60e84f85c48beab5bbeb90008f, type: 3}
+        normalMap: {fileID: 2800000, guid: 3131ce08cc325bc43b26cb266f668ce0, type: 3}
+        height: {fileID: 2800000, guid: 38dec106526b8fc43bfe75117c1fbaf5, type: 3}
+        metalic: {fileID: 2800000, guid: 7beee259abf8b564998a2ccaec3128ec, type: 3}
+        roughness: {fileID: 2800000, guid: c1b8bbabff4120d4faf3351a73f0cfa6, type: 3}
+        occlusion: {fileID: 2800000, guid: 960b8515f7e9d964a8297c9f3e0f8020, type: 3}
+      - albedo: {fileID: 2800000, guid: dcc57ed1f7b78b34eb1fe6259b9d2cea, type: 3}
+        normalMap: {fileID: 2800000, guid: 87cd1dd4ca0f5054cb588878de6c2215, type: 3}
+        height: {fileID: 2800000, guid: 7b7ec75a389f1454780ca0dc91dac37b, type: 3}
+        metalic: {fileID: 2800000, guid: f2f82ec7edd2f1748a333dd7eefad759, type: 3}
+        roughness: {fileID: 2800000, guid: 543b62c90152a554785b660dea536c3a, type: 3}
+        occlusion: {fileID: 2800000, guid: 1a6543baad832004d993847ac16103e3, type: 3}
+      - albedo: {fileID: 2800000, guid: e3a05c18706fefd4090db4bd58e91e96, type: 3}
+        normalMap: {fileID: 2800000, guid: 2a8bdb8337f20634fb31d43e1a397904, type: 3}
+        height: {fileID: 2800000, guid: b5ea249c184198b4da0add9d29759db1, type: 3}
+        metalic: {fileID: 2800000, guid: f260bf859c0bdd24b956c497d8496039, type: 3}
+        roughness: {fileID: 2800000, guid: e6e6dc5a8d81efd429677d96436a05f3, type: 3}
+        occlusion: {fileID: 2800000, guid: 523f45b3dd4b8f54faea296ddd3b7e80, type: 3}
+      - albedo: {fileID: 2800000, guid: dc0d01668567ee344979d4a5aea75fc0, type: 3}
+        normalMap: {fileID: 2800000, guid: c572ae8e040caae4eb1fff7c9bfde1f2, type: 3}
+        height: {fileID: 2800000, guid: c3e33071bbce68b4cbf2b4c4d4b3791f, type: 3}
+        metalic: {fileID: 2800000, guid: 7cd7ea686bda0fb43bba75e632e8bdc8, type: 3}
+        roughness: {fileID: 2800000, guid: 16a3a5477fef35a4bbe480c3d40a0c2b, type: 3}
+        occlusion: {fileID: 2800000, guid: 97c5e10c70a6ef14bbab05006b92b51c, type: 3}
+      - albedo: {fileID: 2800000, guid: ddbd76aa400f3524db070b2e2dd39d3d, type: 3}
+        normalMap: {fileID: 2800000, guid: 3e87435fe76368d4b9783663c745156d, type: 3}
+        height: {fileID: 2800000, guid: 3bf11392d7b92e84292138c36cb59290, type: 3}
+        metalic: {fileID: 2800000, guid: 4e052860e092be24bb0ac62fe71e644c, type: 3}
+        roughness: {fileID: 2800000, guid: 8f5c2c3ead87ba041bd9be50de6042a1, type: 3}
+        occlusion: {fileID: 2800000, guid: 8217eca99e883394fa9e3318a264c921, type: 3}
+      - albedo: {fileID: 2800000, guid: dd4568c7199e1c54ca1394650c4c715d, type: 3}
+        normalMap: {fileID: 2800000, guid: 672c30a563ed628468977b2b170ee15b, type: 3}
+        height: {fileID: 2800000, guid: 44ee2b8178d7b1241b7d081235129d93, type: 3}
+        metalic: {fileID: 2800000, guid: e74720347f64e124f98a8ff32e7fe4c0, type: 3}
+        roughness: {fileID: 2800000, guid: 2d31fcff560ee914f8a9e61aa9d1aeb2, type: 3}
+        occlusion: {fileID: 2800000, guid: 90c95a63442960346a500e6c1c01f405, type: 3}
+    bake: 0
+  sharedMat: {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  cs: {fileID: 7200000, guid: 861bb91b47f1b604991bd6d405f522d0, type: 3}
+  BiomeScale: 0.88
+  BiomeMultiplier: 0.06
+  BiomeOffset: {x: 16.97, y: 1.29, z: 3.7}
+  biomes:
+  - name: deep sea
+    PredicateMin:
+      altitude: -1
+      temperature: -1
+      humidity: -1
+      latitude: -1
+    PredicateMax:
+      altitude: -0.548
+      temperature: 1
+      humidity: 1
+      latitude: 1
+    carver: 1
+    carverArguments:
+    - 0.82
+    - 0.08
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    blendingFactor: 0.117
+    surfaceMaterial: 3
+    DebugColor: {r: 0.042452812, g: 0.12453884, b: 1, a: 1}
+  - name: Sea
+    PredicateMin:
+      altitude: -0.548
+      temperature: -1
+      humidity: -1
+      latitude: -1
+    PredicateMax:
+      altitude: 0
+      temperature: 1
+      humidity: 1
+      latitude: 1
+    carver: 1
+    carverArguments:
+    - 0.82
+    - 0.03
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    blendingFactor: 0.117
+    surfaceMaterial: 3
+    DebugColor: {r: 0.043137252, g: 0.5865003, b: 1, a: 1}
+  - name: Beach
+    PredicateMin:
+      altitude: 0
+      temperature: -1
+      humidity: -1
+      latitude: -1
+    PredicateMax:
+      altitude: 0.007
+      temperature: 1
+      humidity: 1
+      latitude: 1
+    carver: 1
+    carverArguments:
+    - 0.82
+    - 0.03
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    blendingFactor: 0.117
+    surfaceMaterial: 3
+    DebugColor: {r: 0.90698564, g: 1, b: 0, a: 1}
+  - name: Plains
+    PredicateMin:
+      altitude: 0.007
+      temperature: -1
+      humidity: 0
+      latitude: -1
+    PredicateMax:
+      altitude: 0.4
+      temperature: 1
+      humidity: 1
+      latitude: 1
+    carver: 1
+    carverArguments:
+    - 0.82
+    - 0.06
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    blendingFactor: 0.117
+    surfaceMaterial: 0
+    DebugColor: {r: 0.22167933, g: 1, b: 0, a: 1}
+  - name: Desert
+    PredicateMin:
+      altitude: 0.007
+      temperature: -1
+      humidity: -1
+      latitude: -1
+    PredicateMax:
+      altitude: 0.4
+      temperature: 1
+      humidity: 0
+      latitude: 1
+    carver: 1
+    carverArguments:
+    - 0.82
+    - 0.06
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    blendingFactor: 0.117
+    surfaceMaterial: 3
+    DebugColor: {r: 1, g: 0.9606118, b: 0, a: 1}
+  - name: Mountains
+    PredicateMin:
+      altitude: 0.4
+      temperature: -1
+      humidity: -1
+      latitude: -1
+    PredicateMax:
+      altitude: 0.718
+      temperature: 1
+      humidity: 1
+      latitude: 1
+    carver: 1
+    carverArguments:
+    - 10.4
+    - 2.91
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    blendingFactor: 0.117
+    surfaceMaterial: 1
+    DebugColor: {r: 0.4528302, g: 0.4459355, b: 0.44215024, a: 1}
+  - name: Mountains Top
+    PredicateMin:
+      altitude: 0.718
+      temperature: -1
+      humidity: -1
+      latitude: -1
+    PredicateMax:
+      altitude: 1
+      temperature: 1
+      humidity: 1
+      latitude: 1
+    carver: 1
+    carverArguments:
+    - 10.4
+    - 4.23
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    blendingFactor: 0.117
+    surfaceMaterial: 2
+    DebugColor: {r: 1, g: 1, b: 1, a: 1}
+  autoUpdate: 0
+  update: 0
+  oneFace: 0
+  radius: 250
+  LOD: 1
+--- !u!33 &882063822
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882063820}
+  m_Mesh: {fileID: 138283434}
+--- !u!23 &882063823
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882063820}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 4294967295
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  - {fileID: 2100000, guid: d235befac5926544ebf3a37323ccfff6, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 2
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!4 &882063824
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882063820}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1502952372
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1502952374}
+  - component: {fileID: 1502952373}
+  - component: {fileID: 1502952375}
+  m_Layer: 0
+  m_Name: Directional Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!108 &1502952373
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502952372}
+  m_Enabled: 1
+  serializedVersion: 11
+  m_Type: 1
+  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Intensity: 1.21
+  m_Range: 10
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 2
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 0.828
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 2.22
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1.16
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
+--- !u!4 &1502952374
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502952372}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.4015781, y: 0.105522156, z: -0.36686587, w: 0.8324719}
+  m_LocalPosition: {x: -1.2419478, y: 82.59523, z: -1.2598664}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 48.248, y: -10.291, z: -52.184}
+--- !u!114 &1502952375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502952372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
