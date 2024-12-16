@@ -1,68 +1,68 @@
-Shader "Hiddend/RaymarchMain"
+Shader "Fullscreen/Atmosphere"
 {
-    Properties
-    {
-        _MainTex ("Texture", 2D) = "white" { }
-    }
     SubShader
     {
-        Cull Off ZWrite Off ZTest Always
-
+        Tags { "RenderPipeline"="UniversalPipeline" }
+        Blend One One
         Pass
         {
-            CGPROGRAM
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma target 5.0
-
-
             #include "UnityCG.cginc"
 
-            // how to draw
+            // Entrée et variables globales
+            float4x4 _CamFrustum;    // Frustum de la caméra
+            float4x4 _CamToWorld;    // Matrice pour passer en World Space
             sampler2D _MainTex;
-            uniform sampler2D _CameraDepthTexture;
-            uniform float4x4 _CamFrustum, _CamToWorld;
 
-            struct appdata
+            struct Attributes
             {
-                float4 vertex : POSITION;
+                float4 position : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
-            struct v2f
+            // Varyings : sortie du vertex shader vers le fragment shader
+            struct Varyings
             {
-                float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
-                float3 ray : TEXCOORD1;
+                float4 positionCS : SV_POSITION; // Position en Clip Space
+                float2 uv : TEXCOORD0;           // Coordonnées UV
+                float3 ray : TEXCOORD1;          // Rayon directionnel pour le raymarching
             };
 
-            v2f vert(appdata v)
+            // Vertex Shader
+            Varyings vert(Attributes v)
             {
-                v2f o;
-                half index = v.vertex.z;
-                v.vertex.z = 0;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                Varyings o;
+
+                // Index pour le frustrum (à partir de la composante z du vertex)
+                half index = v.position.z;
+
+                // Réinitialiser la composante Z
+                v.position.z = 0;
+
+                // Transforme en clip space
+                o.positionCS = UnityObjectToClipPos(v.position);
                 o.uv = v.uv;
 
-                o.ray = _CamFrustum[(int) index].xyz;
+                // Calcul du rayon directionnel à partir du frustrum
+                o.ray = _CamFrustum[(int)index].xyz;
 
+                // Normalisation : diviser par abs(z) pour conserver la direction
                 o.ray /= abs(o.ray.z);
 
-                o.ray = mul(_CamToWorld, o.ray);
+                // Transformation du rayon en World Space
+                o.ray = mul((float3x3)_CamToWorld, o.ray);
 
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            // Fragment Shader
+            half4 frag(Varyings i) : SV_Target
             {
-                float depth = LinearEyeDepth(tex2D(_CameraDepthTexture, i.uv).r);
-                depth *= length(i.ray);
-                fixed3 col = tex2D(_MainTex, i.uv);
-                float3 rayDirection = normalize(i.ray.xyz);
-                float3 rayOrigin = _WorldSpaceCameraPos;
-                return fixed4(1.0, 1.0, 1.0, 1.0);
+                return half4(1, 1, 1, 1.0);
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }
