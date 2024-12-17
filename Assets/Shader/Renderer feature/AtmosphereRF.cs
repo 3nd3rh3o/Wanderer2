@@ -39,7 +39,8 @@ public class AtmosphereRendererPassFeature : ScriptableRendererFeature
                 UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
                 passData.depthTexture = resourceData.cameraDepthTexture;
 
-                builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
+                builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.ReadWrite);
+                builder.SetRenderAttachmentDepth(resourceData.cameraDepthTexture, AccessFlags.ReadWrite);
 
                 builder.SetRenderFunc((PassData data, RasterGraphContext context) =>
                 {

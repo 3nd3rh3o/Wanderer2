@@ -2,14 +2,20 @@ Shader "Fullscreen/Atmosphere"
 {
     SubShader
     {
-        Tags { "RenderPipeline"="UniversalPipeline" }
+        Tags { "RenderPipeline"="UniversalPipeline" "RenderType" = "Transparent"}
         Blend One One
+        ZTest Always
+        ZWrite Off
+
         Pass
         {
+            Name "Main"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+
+            sampler2D _CameraDepthTexture;
 
             // Entrée et variables globales
             float4x4 _CamFrustum;    // Frustum de la caméra
@@ -58,9 +64,9 @@ Shader "Fullscreen/Atmosphere"
             }
 
             // Fragment Shader
-            half4 frag(Varyings i) : SV_Target
+            half4 frag(Varyings i) : SV_TARGET
             {
-                return half4(1, 1, 1, 1.0);
+                return SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
             }
             ENDHLSL
         }
