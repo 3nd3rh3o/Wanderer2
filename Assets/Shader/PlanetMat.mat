@@ -145,7 +145,7 @@ Material:
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _amplitude: 0.1
+    - _amplitude: 0
     - _steps: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
