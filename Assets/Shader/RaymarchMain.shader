@@ -8,7 +8,7 @@ Shader "Custom/SceneDepthEffect"
         Tags { "RenderPipeline" = "UniversalPipeline" }
         Pass
         {
-            Name "DrawProcedural"
+            Name "Atmosphere drawing"
             
             // Render State
             Cull Off
@@ -25,30 +25,12 @@ Shader "Custom/SceneDepthEffect"
             
             
             // Defines
-            #define ATTRIBUTES_NEED_TEXCOORD0
-            #define ATTRIBUTES_NEED_TEXCOORD1
-            #define ATTRIBUTES_NEED_VERTEXID
-            #define VARYINGS_NEED_POSITION_WS
-            #define VARYINGS_NEED_TEXCOORD0
-            #define VARYINGS_NEED_TEXCOORD1
-            
-            #define SHADERPASS SHADERPASS_DRAWPROCEDURAL
-            #define REQUIRE_DEPTH_TEXTURE
+
             
             
             // Includes
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureStack.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/DebugMipmapStreamingMacros.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareNormalsTexture.hlsl"
             
@@ -73,21 +55,13 @@ Shader "Custom/SceneDepthEffect"
                 float4 texCoord0;
                 float4 texCoord1;
             };
-            struct VertexDescriptionInputs { };
+
+
             struct PackedVaryings
             {
                 float4 positionCS : SV_POSITION;
                 float4 texCoord0 : INTERP0;
                 float4 texCoord1 : INTERP1;
-                #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
-                    uint instanceID : CUSTOM_INSTANCE_ID;
-                #endif
-                #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
-                    uint stereoTargetEyeIndexAsBlendIdx0 : BLENDINDICES0;
-                #endif
-                #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
-                    uint stereoTargetEyeIndexAsRTArrayIdx : SV_RenderTargetArrayIndex;
-                #endif
             };
             
             PackedVaryings PackVaryings(Varyings input)
@@ -97,15 +71,6 @@ Shader "Custom/SceneDepthEffect"
                 output.positionCS = input.positionCS;
                 output.texCoord0.xyzw = input.texCoord0;
                 output.texCoord1.xyzw = input.texCoord1;
-                #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
-                    output.instanceID = input.instanceID;
-                #endif
-                #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
-                    output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
-                #endif
-                #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
-                    output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
-                #endif
                 return output;
             }
             
@@ -115,29 +80,9 @@ Shader "Custom/SceneDepthEffect"
                 output.positionCS = input.positionCS;
                 output.texCoord0 = input.texCoord0.xyzw;
                 output.texCoord1 = input.texCoord1.xyzw;
-                #if UNITY_ANY_INSTANCING_ENABLED || defined(VARYINGS_NEED_INSTANCEID)
-                    output.instanceID = input.instanceID;
-                #endif
-                #if (defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || (defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))
-                    output.stereoTargetEyeIndexAsBlendIdx0 = input.stereoTargetEyeIndexAsBlendIdx0;
-                #endif
-                #if (defined(UNITY_STEREO_INSTANCING_ENABLED))
-                    output.stereoTargetEyeIndexAsRTArrayIdx = input.stereoTargetEyeIndexAsRTArrayIdx;
-                #endif
                 return output;
             }
-            
-            
-            
-            CBUFFER_START(UnityPerMaterial)
-                UNITY_TEXTURE_STREAMING_DEBUG_VARS;
-            CBUFFER_END
-            
-            
-            
 
-            
-            
             struct SurfaceDescription
             {
                 float3 BaseColor;
@@ -220,29 +165,6 @@ Shader "Custom/SceneDepthEffect"
 
                 output.color.rgb = surfaceDescription.BaseColor;
                 output.color.a = surfaceDescription.Alpha;
-                #if defined(DEPTH_WRITE)
-
-                    float n = _ProjectionParams.y;
-                    float f = _ProjectionParams.z;
-
-                    #if defined(DEPTH_WRITE_MODE_EYE)
-                        // Reverse of LinearEyeDepth
-                        float d = rcp(max(surfaceDescription.FullscreenEyeDepth, 0.000000001));
-                        output.depth = (d - _ZBufferParams.w) / _ZBufferParams.z;
-                    #endif
-
-                    #if defined(DEPTH_WRITE_MODE_LINEAR01)
-                        // Reverse of Linear01Depth
-                        float d = rcp(max(surfaceDescription.FullscreenLinear01Depth, 0.000000001));
-                        output.depth = (d - _ZBufferParams.y) / _ZBufferParams.x;
-                    #endif
-
-                    #if defined(DEPTH_WRITE_MODE_RAW)
-                        output.depth = surfaceDescription.FullscreenRawDepth;
-                    #endif
-
-                #endif
-
                 return output;
             }
 
