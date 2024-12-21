@@ -11,6 +11,10 @@ public class PlanetPrototype : MonoBehaviour
     public TerrainAtlas atlas = new();
     private Chunk[] chunks;
     public Material sharedMat;
+    public Material atmosphereMat;
+    public Transform Light;
+    public float AtmosphereRadius = 0f;
+    public float PlanetAtmRad;
     public ComputeShader cs;
     private ChunkNHMapCSManager csMan;
     public float BiomeScale = 1f;
@@ -104,6 +108,10 @@ public class PlanetPrototype : MonoBehaviour
 
     void Update()
     {
+        atmosphereMat?.SetVector("_PlanetPosition", transform.position);
+        atmosphereMat?.SetVector("sunDir", (-transform.position + Light.position).normalized);
+        atmosphereMat?.SetFloat("_AtmosphereRadius", AtmosphereRadius);
+        atmosphereMat?.SetFloat("_PlanetRadius", PlanetAtmRad);
         if (!autoUpdate && !update) return;
         if (LOD > 4) autoUpdate = false;
         update = false;

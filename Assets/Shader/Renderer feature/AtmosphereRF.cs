@@ -1,101 +1,272 @@
+using System;
 using UnityEngine;
+using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.Rendering.RenderGraphModule;
-using OpenCover.Framework.Model;
-using Unity.VisualScripting;
-using UnityEngine.Rendering.RenderGraphModule.Util;
+using UnityEngine.Experimental.Rendering;
 
-public class AtmosphereRendererPassFeature : ScriptableRendererFeature
+
+
+public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendererFeature
 {
-    [System.Serializable]
-    public class Settings
+    /// <summary>
+    /// An injection point for the full screen pass. This is similar to the RenderPassEvent enum but limited to only supported events.
+    /// </summary>
+    public enum InjectionPoint
     {
-        public Shader shader;
+        /// <summary>
+        /// Inject a full screen pass before transparents are rendered.
+        /// </summary>
+        BeforeRenderingTransparents = RenderPassEvent.BeforeRenderingTransparents,
+
+        /// <summary>
+        /// Inject a full screen pass before post processing is rendered.
+        /// </summary>
+        BeforeRenderingPostProcessing = RenderPassEvent.BeforeRenderingPostProcessing,
+
+        /// <summary>
+        /// Inject a full screen pass after post processing is rendered.
+        /// </summary>
+        AfterRenderingPostProcessing = RenderPassEvent.AfterRenderingPostProcessing
     }
 
-    public Settings settings = new();
+    /// <summary>
+    /// Specifies at which injection point the pass will be rendered.
+    /// </summary>
+    public InjectionPoint injectionPoint = InjectionPoint.AfterRenderingPostProcessing;
 
-    class AtmosphereRenderPass : ScriptableRenderPass
+    /// <summary>
+    /// Specifies whether the assigned material will need to use the current screen contents as an input texture.
+    /// Disable this to optimize away an extra color copy pass when you know that the assigned material will only need
+    /// to write on top of or hardware blend with the contents of the active color target.
+    /// </summary>
+    public bool fetchColorBuffer = true;
+
+    /// <summary>
+    /// A mask of URP textures that the assigned material will need access to. Requesting unused requirements can degrade
+    /// performance unnecessarily as URP might need to run additional rendering passes to generate them.
+    /// </summary>
+    public ScriptableRenderPassInput requirements = ScriptableRenderPassInput.None;
+
+    /// <summary>
+    /// The material used to render the full screen pass (typically based on the Fullscreen Shader Graph target).
+    /// </summary>
+    public Material passMaterial;
+
+    /// <summary>
+    /// The shader pass index that should be used when rendering the assigned material.
+    /// </summary>
+    public int passIndex = 0;
+
+    /// <summary>
+    /// Specifies if the active camera's depth-stencil buffer should be bound when rendering the full screen pass.
+    /// Disabling this will ensure that the material's depth and stencil commands will have no effect (this could also have a slight performance benefit).
+    /// </summary>
+    public bool bindDepthStencilAttachment = false;
+
+    private AtmosphereRenderPass m_FullScreenPass;
+
+    /// <inheritdoc/>
+    public override void Create()
     {
-        private Material material;
-        private RenderTextureDescriptor targetDescriptor;
+        m_FullScreenPass = new AtmosphereRenderPass(name);
+    }
 
-        public AtmosphereRenderPass(Shader shader)
+    /// <inheritdoc/>
+    public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
+    {
+        if (renderingData.cameraData.cameraType == CameraType.Preview
+            || renderingData.cameraData.cameraType == CameraType.Reflection
+            || UniversalRenderer.IsOffscreenDepthTexture(ref renderingData.cameraData))
+            return;
+
+        if (passMaterial == null)
         {
-            if (shader != null) material = new(shader);
-            targetDescriptor = new RenderTextureDescriptor(Screen.width, Screen.height,
-            RenderTextureFormat.Default, 0);
+            Debug.LogWarningFormat("The full screen feature \"{0}\" will not execute - no material is assigned. Please make sure a material is assigned for this feature on the renderer asset.", name);
+            return;
         }
 
-        private class PassData
+        if (passIndex < 0 || passIndex >= passMaterial.passCount)
         {
-            public Material material;
-            public TextureHandle sourceColTex;
-            public TextureHandle sourceDepthTex;
-            public TextureHandle destColTex;
-            public Camera cam;
+            Debug.LogWarningFormat("The full screen feature \"{0}\" will not execute - the pass index is out of bounds for the material.", name);
+            return;
         }
+
+        m_FullScreenPass.renderPassEvent = (RenderPassEvent)injectionPoint;
+        m_FullScreenPass.ConfigureInput(requirements);
+        m_FullScreenPass.SetupMembers(passMaterial, passIndex, fetchColorBuffer, bindDepthStencilAttachment);
+
+        m_FullScreenPass.requiresIntermediateTexture = fetchColorBuffer;
+        
+        renderer.EnqueuePass(m_FullScreenPass);
+    }
+
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        m_FullScreenPass.Dispose();
+    }
+
+    internal class AtmosphereRenderPass : ScriptableRenderPass
+    {
+        private Material m_Material;
+        private int m_PassIndex;
+        private bool m_FetchActiveColor;
+        private bool m_BindDepthStencilAttachment;
+        private RTHandle m_CopiedColor;
+
+        private static MaterialPropertyBlock s_SharedPropertyBlock = new MaterialPropertyBlock();
+
+        public AtmosphereRenderPass(string passName)
+        {
+            profilingSampler = new ProfilingSampler(passName);
+        }
+
+        public void SetupMembers(Material material, int passIndex, bool fetchActiveColor, bool bindDepthStencilAttachment)
+        {
+            m_Material = material;
+            m_PassIndex = passIndex;
+            m_FetchActiveColor = fetchActiveColor;
+            m_BindDepthStencilAttachment = bindDepthStencilAttachment;
+        }
+
+
+        internal void ReAllocate(RenderTextureDescriptor desc)
+        {
+            desc.msaaSamples = 1;
+            desc.depthStencilFormat = GraphicsFormat.None;
+            RenderingUtils.ReAllocateHandleIfNeeded(ref m_CopiedColor, desc, name: "_FullscreenPassColorCopy");
+        }
+
+        public void Dispose()
+        {
+            m_CopiedColor?.Release();
+        }
+
+        private static void ExecuteCopyColorPass(RasterCommandBuffer cmd, RTHandle sourceTexture)
+        {
+            Blitter.BlitTexture(cmd, sourceTexture, new Vector4(1, 1, 0, 0), 0.0f, false);
+        }
+
+        private static void ExecuteMainPass(RasterCommandBuffer cmd, RTHandle sourceTexture, Material material, int passIndex)
+        {
+            s_SharedPropertyBlock.Clear();
+            if (sourceTexture != null)
+                s_SharedPropertyBlock.SetTexture(Shader.PropertyToID("_BlitTexture"), sourceTexture);
+
+            // We need to set the "_BlitScaleBias" uniform for user materials with shaders relying on core Blit.hlsl to work
+            s_SharedPropertyBlock.SetVector(Shader.PropertyToID("_BlitScaleBias"), new Vector4(1, 1, 0, 0));
+
+            cmd.DrawProcedural(Matrix4x4.identity, material, passIndex, MeshTopology.Triangles, 3, 1, s_SharedPropertyBlock);
+        }
+
+        
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            const string passName = "Atmosphere Rendering(fullscreen post proccessing effect)";
+            UniversalResourceData resourcesData = frameData.Get<UniversalResourceData>();
+            UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
 
-            using (var builder = renderGraph.AddRasterRenderPass<PassData>(passName, out var passData))
+            TextureHandle source, destination;
+
+            Debug.Assert(resourcesData.cameraColor.IsValid());
+
+            if (m_FetchActiveColor)
             {
-                passData.material = material;
+                var targetDesc = renderGraph.GetTextureDesc(resourcesData.cameraColor);
+                targetDesc.name = "_CameraColorFullScreenPass";
+                targetDesc.clearBuffer = false;
 
-                UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
-                passData.sourceColTex = resourceData.activeColorTexture;
-                passData.sourceDepthTex = resourceData.activeDepthTexture;
-                passData.destColTex = resourceData.cameraOpaqueTexture;
-                builder.SetRenderAttachment(passData.destColTex, 0, AccessFlags.Write);
-                builder.UseTexture(passData.sourceColTex, AccessFlags.Read);
-                builder.UseTexture(resourceData.activeDepthTexture, AccessFlags.Read);
-                builder.AllowPassCulling(false);
-
-                builder.SetRenderFunc((PassData data, RasterGraphContext context) =>
+                source = resourcesData.activeColorTexture;
+                destination = renderGraph.CreateTexture(targetDesc);
+                
+                using (var builder = renderGraph.AddRasterRenderPass<CopyPassData>("Copy Color Full Screen", out var passData, profilingSampler))
                 {
-                    Blitter.BlitTexture(context.cmd, new(1, 1, 1, 1), data.material, 0);
-                });
+                    passData.inputTexture = source;
+                    builder.UseTexture(passData.inputTexture, AccessFlags.Read);
+
+                    builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
+
+                    builder.SetRenderFunc((CopyPassData data, RasterGraphContext rgContext) =>
+                    {
+                        ExecuteCopyColorPass(rgContext.cmd, data.inputTexture);
+                    });
+                }
+
+                //Swap for next pass;
+                source = destination;                
+            }
+            else
+            {
+                source = TextureHandle.nullHandle;
             }
 
+            destination = resourcesData.activeColorTexture;
+
+
+            using (var builder = renderGraph.AddRasterRenderPass<MainPassData>(passName, out var passData, profilingSampler))
+            {
+                passData.material = m_Material;
+                passData.passIndex = m_PassIndex;
+
+                passData.inputTexture = source;
+
+                if(passData.inputTexture.IsValid())
+                    builder.UseTexture(passData.inputTexture, AccessFlags.Read);
+
+                bool needsColor = (input & ScriptableRenderPassInput.Color) != ScriptableRenderPassInput.None;
+                bool needsDepth = (input & ScriptableRenderPassInput.Depth) != ScriptableRenderPassInput.None;
+                bool needsMotion = (input & ScriptableRenderPassInput.Motion) != ScriptableRenderPassInput.None;
+                bool needsNormal = (input & ScriptableRenderPassInput.Normal) != ScriptableRenderPassInput.None;
+
+                if (needsColor)
+                {
+                    Debug.Assert(resourcesData.cameraOpaqueTexture.IsValid());
+                    builder.UseTexture(resourcesData.cameraOpaqueTexture);
+                }
+
+                if (needsDepth)
+                {
+                    Debug.Assert(resourcesData.cameraDepthTexture.IsValid());
+                    builder.UseTexture(resourcesData.cameraDepthTexture);
+                }
+
+                if (needsMotion)
+                {
+                    Debug.Assert(resourcesData.motionVectorColor.IsValid());
+                    builder.UseTexture(resourcesData.motionVectorColor);
+                    Debug.Assert(resourcesData.motionVectorDepth.IsValid());
+                    builder.UseTexture(resourcesData.motionVectorDepth);
+                }
+
+                if (needsNormal)
+                {
+                    Debug.Assert(resourcesData.cameraNormalsTexture.IsValid());
+                    builder.UseTexture(resourcesData.cameraNormalsTexture);
+                }
+                
+                builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
+
+                if (m_BindDepthStencilAttachment)
+                    builder.SetRenderAttachmentDepth(resourcesData.activeDepthTexture, AccessFlags.Write);
+
+                builder.SetRenderFunc((MainPassData data, RasterGraphContext rgContext) =>
+                {
+                    ExecuteMainPass(rgContext.cmd, data.inputTexture, data.material, data.passIndex);
+                });                
+            }
         }
-        private Matrix4x4 CamFrustum(Camera cam)
+
+        private class CopyPassData
         {
-            Matrix4x4 frustum = Matrix4x4.identity;
-            if (cam == null) return frustum;
-            float fov = Mathf.Tan((cam.fieldOfView * 0.5f) * Mathf.Deg2Rad);
-
-
-            Vector3 goUp = Vector3.up * fov;
-            Vector3 goRight = Vector3.right * fov * cam.aspect;
-
-
-
-            Vector3 TL = (-Vector3.forward - goRight + goUp);
-            Vector3 TR = (-Vector3.forward + goRight + goUp);
-            Vector3 BL = (-Vector3.forward - goRight - goUp);
-            Vector3 BR = (-Vector3.forward + goRight - goUp);
-
-            frustum.SetRow(0, TL);
-            frustum.SetRow(1, TR);
-            frustum.SetRow(2, BR);
-            frustum.SetRow(3, BL);
-            return frustum;
+            internal TextureHandle inputTexture;
         }
-    }
 
-    AtmosphereRenderPass m_ScriptablePass;
-
-    public override void Create()
-    {
-        m_ScriptablePass = new AtmosphereRenderPass(settings.shader);
-        m_ScriptablePass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-    }
-
-    public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
-    {
-        renderer.EnqueuePass(m_ScriptablePass);
+        private class MainPassData
+        {
+            internal Material material;
+            internal int passIndex;
+            internal TextureHandle inputTexture;
+        }
     }
 }
