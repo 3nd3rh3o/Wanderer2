@@ -100,6 +100,7 @@ Shader "Wanderer/Terrain/Planet"
             AlphaToMask[_AlphaToMask]
 
             HLSLPROGRAM
+            //TODO SWITCH TO FULLY CUSTOM LIGHTING MODEL FOR TERRAIN!!
             #pragma target 2.0
 
             // -------------------------------------
