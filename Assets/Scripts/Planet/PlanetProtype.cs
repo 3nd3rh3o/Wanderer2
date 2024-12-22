@@ -24,6 +24,7 @@ public class PlanetPrototype : MonoBehaviour
     public bool autoUpdate = true;
     public bool update = false;
     public bool oneFace;
+    
 
 
     public float radius;
@@ -105,13 +106,23 @@ public class PlanetPrototype : MonoBehaviour
         GetComponent<MeshRenderer>().SetMaterials(new());
         atlas.Cleanup();
     }
-
+    public Vector3 wavelength = new Vector3(700, 530, 440);
+    public float scatteringStrength;
     void Update()
     {
+        float scatterR = Mathf.Pow(400 / wavelength.x, 4) * scatteringStrength;
+        float scatterG = Mathf.Pow(400 / wavelength.y, 4) * scatteringStrength;
+        float scatterB = Mathf.Pow(400 / wavelength.z, 4) * scatteringStrength;
+        Vector3 scatteringCoefficients = new Vector3(scatterR, scatterG, scatterB);
+
+
+
+        atmosphereMat?.SetVector("_ScatteringCoefficients", scatteringCoefficients);
         atmosphereMat?.SetVector("_PlanetPosition", transform.position);
         atmosphereMat?.SetVector("sunDir", (-transform.position + Light.position).normalized);
         atmosphereMat?.SetFloat("_AtmosphereRadius", AtmosphereRadius);
         atmosphereMat?.SetFloat("_PlanetRadius", PlanetAtmRad);
+        
         if (!autoUpdate && !update) return;
         if (LOD > 4) autoUpdate = false;
         update = false;

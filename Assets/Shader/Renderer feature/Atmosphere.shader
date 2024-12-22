@@ -32,6 +32,7 @@ Shader "Volumetric/Atmosphere"
             #include "fullscreenPassSetup.hlsl"
 
             float3 _PlanetPosition;
+            float3 _ScatteringCoefficients;
             float _AtmosphereRadius;
             float _DensityFallOff;
             float _PlanetRadius;
@@ -94,22 +95,24 @@ Shader "Volumetric/Atmosphere"
                 return opticalDepth;
             }
 
-            float calculateLight(float3 rayOrigin, float3 rayDir, float rayLength)
+            float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength, float3 originalCol)
             {
                 float3 inScatterPoint = rayOrigin;
                 float stepSize = rayLength / (_numScatteringPoints - 1);
-                float inScatteredLight = 0;
+                float3 inScatteredLight = 0;
+                float viewRayOpticalDepth = 0;
                 for (int i = 0; i < _numScatteringPoints; i++)
                 {
                     float sunRayLength = raySphere(_PlanetPosition, _AtmosphereRadius, inScatterPoint, sunDir).y;
                     float sunRayOpticalDepth = opticalDepth(inScatterPoint, sunDir, sunRayLength);
-                    float viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
-                    float transmitance = exp( - (sunRayOpticalDepth + viewRayOpticalDepth));
+                    viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
+                    float3 transmitance = exp( - (sunRayOpticalDepth + viewRayOpticalDepth) * _ScatteringCoefficients);
                     float localDensity = densityAtPoint(inScatterPoint);
-                    inScatteredLight += localDensity * transmitance * stepSize;
+                    inScatteredLight += localDensity * transmitance * _ScatteringCoefficients * stepSize;
                     inScatterPoint += rayDir * stepSize;
                 }
-                return inScatteredLight;
+                float originalColTransmittance = exp(-viewRayOpticalDepth);
+                return originalCol * originalColTransmittance + inScatteredLight;
             }
 
             SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
@@ -137,8 +140,8 @@ Shader "Volumetric/Atmosphere"
                 if (dstThroughAtmosphere > 0)
                 {
                     float3 pointInAtmosphere = rayOrigin + rayDir * dstToAtmosphere;
-                    float light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere);
-                    color += float3(0, 0, 0) * (1-light) + light;
+                    float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere, color);
+                    color = light; 
                 }
 
 
