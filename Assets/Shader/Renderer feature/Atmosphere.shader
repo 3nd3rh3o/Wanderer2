@@ -1,4 +1,4 @@
-Shader "Volumetric/Atmosphere"
+Shader "Wanderer/Volumetric/Atmosphere"
 {
     Properties
     {
@@ -39,8 +39,6 @@ Shader "Volumetric/Atmosphere"
             float _numScatteringPoints;
             float _numOpticalDepthPoints;
             float3 sunDir;
-
-            
 
 
 
