@@ -60,9 +60,10 @@ public class PlanetPrototype : MonoBehaviour
         for (int i = 0; i < combines.Length; i++)
         {
             MaterialPropertyBlock mpb = new();
-            mpb.SetTexture("_Albedo", albedosTextures[i]);
-            mpb.SetTexture("_Normals", normalsTextures[i]);
-            mpb.SetTexture("_Height", heightsTextures[i]);
+            mpb.SetTexture("_BaseMap", albedosTextures[i]);
+            mpb.SetTexture("_BumpMap", normalsTextures[i]);
+            //TODO fix me?
+            //mpb.SetTexture("_ParallaxMap", heightsTextures[i]);
             GetComponent<MeshRenderer>().SetPropertyBlock(mpb, i);
         }
         GetComponent<MeshFilter>().mesh = combinedMesh;
@@ -109,7 +110,7 @@ public class PlanetPrototype : MonoBehaviour
     public float scatteringStrength;
     void Update()
     {
-        /*
+        
         float scatterR = Mathf.Pow(400 / wavelength.x, 4) * scatteringStrength;
         float scatterG = Mathf.Pow(400 / wavelength.y, 4) * scatteringStrength;
         float scatterB = Mathf.Pow(400 / wavelength.z, 4) * scatteringStrength;
@@ -122,7 +123,7 @@ public class PlanetPrototype : MonoBehaviour
         atmosphereMat?.SetVector("sunDir", (-transform.position).normalized);
         atmosphereMat?.SetFloat("_AtmosphereRadius", AtmosphereRadius);
         atmosphereMat?.SetFloat("_PlanetRadius", PlanetAtmRad);
-        */
+        
         if (!autoUpdate && !update) return;
         if (LOD > 4) autoUpdate = false;
         update = false;

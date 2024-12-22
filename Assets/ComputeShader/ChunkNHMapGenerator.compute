@@ -82,7 +82,7 @@ float simpleNoise(float3 pos, float scale, float multiplier, float3 offset)
 
 float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset)
 {
-    //TODO 4 dim noise map
+    //NOTE 4 dim noise map
     return float4(
         clamp(simpleNoise(pos + offset, scale, multiplier), -1, 1),
         clamp(simpleNoise(pos + offset +float3(2, 0, 0), scale, multiplier), -1, 1),
