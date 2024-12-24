@@ -579,8 +579,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -307.00006103515627,
-            "y": 340.0,
+            "x": -287.0,
+            "y": 320.0,
             "width": 172.0,
             "height": 190.0
         }
@@ -739,7 +739,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "4d8d4c6c01c74127b417445d25480f01",
     "m_Id": 0,
-    "m_DisplayName": "_Normals",
+    "m_DisplayName": "_Bumps",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -769,10 +769,10 @@
     "m_Guid": {
         "m_GuidSerialized": "fb206d8d-712a-4fd2-bcdd-ed1ba0ae49ca"
     },
-    "m_Name": "_Normals",
+    "m_Name": "_Bumps",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "_Normals",
-    "m_DefaultReferenceName": "_Normals",
+    "m_RefNameGeneratedByDisplayName": "_Bumps",
+    "m_DefaultReferenceName": "_Bumps",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -1001,7 +1001,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "78511357a493455490e740aaacbcea30",
     "m_Id": 0,
-    "m_DisplayName": "_Albedo",
+    "m_DisplayName": "_BaseMap",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1137,10 +1137,10 @@
     "m_Guid": {
         "m_GuidSerialized": "171eef47-61eb-427b-ad3c-085d82c59c68"
     },
-    "m_Name": "_Albedo",
+    "m_Name": "_BaseMap",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "_Albedo",
-    "m_DefaultReferenceName": "_Albedo",
+    "m_RefNameGeneratedByDisplayName": "_BaseMap",
+    "m_DefaultReferenceName": "_BaseMap",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,

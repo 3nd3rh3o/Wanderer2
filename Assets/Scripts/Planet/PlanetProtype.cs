@@ -13,6 +13,7 @@ public class PlanetPrototype : MonoBehaviour
     public Material sharedMat;
     public Material atmosphereMat;
     public float AtmosphereRadius = 0f;
+    public AtmosphereFullScreenPassRendererFeature atmosphere;
     public float PlanetAtmRad;
     public ComputeShader cs;
     private ChunkNHMapCSManager csMan;
@@ -62,6 +63,7 @@ public class PlanetPrototype : MonoBehaviour
             MaterialPropertyBlock mpb = new();
             mpb.SetTexture("_BaseMap", albedosTextures[i]);
             mpb.SetTexture("_BumpMap", normalsTextures[i]);
+            
             //TODO fix me?
             //mpb.SetTexture("_ParallaxMap", heightsTextures[i]);
             GetComponent<MeshRenderer>().SetPropertyBlock(mpb, i);
@@ -117,7 +119,8 @@ public class PlanetPrototype : MonoBehaviour
         Vector3 scatteringCoefficients = new Vector3(scatterR, scatterG, scatterB);
 
 
-
+        sharedMat?.SetVector("_LightDirection", (transform.position).normalized);
+        sharedMat?.SetVector("_LightColor", new Vector3(1, 1 , 1));
         atmosphereMat?.SetVector("_ScatteringCoefficients", scatteringCoefficients);
         atmosphereMat?.SetVector("_PlanetPosition", transform.position);
         atmosphereMat?.SetVector("sunDir", (-transform.position).normalized);

@@ -63,6 +63,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
     /// Disabling this will ensure that the material's depth and stencil commands will have no effect (this could also have a slight performance benefit).
     /// </summary>
     public bool bindDepthStencilAttachment = false;
+    public bool enabled = false;
 
     private AtmosphereRenderPass m_FullScreenPass;
 
@@ -94,7 +95,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
 
         m_FullScreenPass.renderPassEvent = (RenderPassEvent)injectionPoint;
         m_FullScreenPass.ConfigureInput(requirements);
-        m_FullScreenPass.SetupMembers(passMaterial, passIndex, fetchColorBuffer, bindDepthStencilAttachment);
+        m_FullScreenPass.SetupMembers(passMaterial, passIndex, fetchColorBuffer, bindDepthStencilAttachment, enabled);
 
         m_FullScreenPass.requiresIntermediateTexture = fetchColorBuffer;
         
@@ -114,6 +115,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
         private bool m_FetchActiveColor;
         private bool m_BindDepthStencilAttachment;
         private RTHandle m_CopiedColor;
+        private bool m_enabled;
 
         private static MaterialPropertyBlock s_SharedPropertyBlock = new MaterialPropertyBlock();
 
@@ -122,12 +124,13 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
             profilingSampler = new ProfilingSampler(passName);
         }
 
-        public void SetupMembers(Material material, int passIndex, bool fetchActiveColor, bool bindDepthStencilAttachment)
+        public void SetupMembers(Material material, int passIndex, bool fetchActiveColor, bool bindDepthStencilAttachment, bool enabled)
         {
             m_Material = material;
             m_PassIndex = passIndex;
             m_FetchActiveColor = fetchActiveColor;
             m_BindDepthStencilAttachment = bindDepthStencilAttachment;
+            m_enabled = enabled;
         }
 
 
@@ -150,6 +153,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
 
         private static void ExecuteMainPass(RasterCommandBuffer cmd, RTHandle sourceTexture, Material material, int passIndex)
         {
+            
             s_SharedPropertyBlock.Clear();
             if (sourceTexture != null)
                 s_SharedPropertyBlock.SetTexture(Shader.PropertyToID("_BlitTexture"), sourceTexture);
@@ -208,6 +212,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
             {
                 passData.material = m_Material;
                 passData.passIndex = m_PassIndex;
+                passData.enabled = m_enabled;
 
                 passData.inputTexture = source;
 
@@ -252,6 +257,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
 
                 builder.SetRenderFunc((MainPassData data, RasterGraphContext rgContext) =>
                 {
+                    if (data.enabled)
                     ExecuteMainPass(rgContext.cmd, data.inputTexture, data.material, data.passIndex);
                 });                
             }
@@ -267,6 +273,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
             internal Material material;
             internal int passIndex;
             internal TextureHandle inputTexture;
+            internal bool enabled;
         }
     }
 }

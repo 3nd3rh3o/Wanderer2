@@ -5,7 +5,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
         _AtmosphereRadius ("Radius", Range(0, 1000)) = 100
         _numScatteringPoints ("Number of scattering points", Range(1, 100)) = 1
         _numOpticalDepthPoints ("Number of Optical Depth points", Range(1, 100)) = 1
-        _DensityFallOff ("Atmosphere density falloff", Range(0, 20)) = 1
+        _DensityFallOff ("Atmosphere density falloff", Range(-10, 60)) = 1
     }
 
     SubShader
