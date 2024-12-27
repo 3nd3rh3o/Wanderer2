@@ -39,7 +39,18 @@ public class SolarSystemData
     [SerializeField]
     private List<PlanetData> planets = new();
 
-
+    public Vector3 GetPosition()
+    {
+        return position;
+    }
+    public Vector3 GetOrientation()
+    {
+        return orientationE;
+    }
+    public String GetName()
+    {
+        return name;
+    }
     public float DistanceFrom(Vector3 position)
     {
         return (this.position - position).magnitude;
@@ -52,6 +63,10 @@ public class PlanetData
     private string name;
     [SerializeField]
     private Vector3 position;
+    [SerializeField]
+    private Vector3 initialVelocity;
+    [SerializeField]
+    private Vector3 initialTorque;
     [SerializeField]
     private float radius;
     [SerializeField]
@@ -68,6 +83,10 @@ public class MoonData
     private string name;
     [SerializeField]
     private Vector3 position;
+    [SerializeField]
+    private Vector3 initialVelocity;
+    [SerializeField]
+    private Vector3 initialTorque;
     [SerializeField]
     private float radius;
     [SerializeField]

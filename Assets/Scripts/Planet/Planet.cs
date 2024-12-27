@@ -10,13 +10,18 @@ public class Planet : MonoBehaviour
     private Queue<ChunkTask> chunkTasks;
     private Chunk[] chunks;
     public Material sharedMat;
+    public Material atmosphereMat;
+    public float AtmosphereRadius = 0f;
+    public float PlanetAtmRad;
     public ComputeShader cs;
     private ChunkNHMapCSManager csMan;
+    public float BiomeScale;
+    public float BiomeMultiplier;
+    public Vector3 BiomeOffset = new();
+    public Biome[] biomes = new Biome[0];
+
     [SerializeField]
     public ChunkNHMapCSManager.Instr[] instructions = new ChunkNHMapCSManager.Instr[0];
-
-
-
     public float radius;
     [SerializeField]
     private int mLOD;

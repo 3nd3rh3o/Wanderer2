@@ -3,11 +3,12 @@ using UnityEngine;
 public class SolarSystemManager : MonoBehaviour
 {
     private Vector3 playerPosition = new();
+    private Vector3 playerRotation = new();
     //private Vector3 playerRotation = new();
     private SolarSystemsData solarSystemsData;
 
     //Solar system
-    private Planet[] planets;
+    private GameObject currentSys;
 
     void OnEnable()
     {
@@ -23,8 +24,12 @@ public class SolarSystemManager : MonoBehaviour
     void Start()
     {
         // spawn nearest solar system
-        SolarSystemData currentSystem = solarSystemsData.GetCurrentFromPPos(playerPosition);
-        
+        SolarSystemData currentSystemData = solarSystemsData.GetCurrentFromPPos(playerPosition);
+        GameObject solarSystem = new(currentSystemData.GetName());
+        solarSystem.transform.position = currentSystemData.GetPosition();
+        currentSys = solarSystem;
+        solarSystem.transform.rotation = Quaternion.Euler(currentSystemData.GetOrientation());
+        solarSystem.AddComponent<SolarSystem>();        
     }
 
     void Update()

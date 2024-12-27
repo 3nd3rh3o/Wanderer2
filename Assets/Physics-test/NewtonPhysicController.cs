@@ -25,7 +25,6 @@ public class NewtonPhysicController : MonoBehaviour
     //TODO apply gravity
     void FixedUpdate()
     {
-        const float G = 6.67384e-11f;
         for (int i = 0; i < physicObjects.Count; i++)
         {
             Vector3 f = new();
@@ -37,11 +36,11 @@ public class NewtonPhysicController : MonoBehaviour
                 {
                     float m2 = physicObjects[j].mass;
                     Vector3 p2 = physicObjects[j].position;
-                    f +=  - (m1 * m2 / Mathf.Pow((p1 - p2).magnitude, 3)) * (p1 - p2);
+                    f += - (m1 * m2 / Mathf.Pow((p1 - p2).magnitude, 3)) * (p1 - p2);
                 }
             }
             f /= physicObjects.Count - 1;
-            physicObjects[i].AddRelativeForce(f, ForceMode.Force);
+            physicObjects[i].AddForce(f, ForceMode.Force);
         }
     }
 
