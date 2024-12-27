@@ -8,7 +8,7 @@ public class SolarSystemManager : MonoBehaviour
     private SolarSystemsData solarSystemsData;
 
     //Solar system
-    private GameObject currentSys;
+    private SolarSystem currentSys;
 
     void OnEnable()
     {
@@ -16,7 +16,8 @@ public class SolarSystemManager : MonoBehaviour
     }
     void OnDisable()
     {
-        solarSystemsData=null;
+        currentSys.Kill();
+        currentSys = null;
     }
 
 
@@ -25,11 +26,12 @@ public class SolarSystemManager : MonoBehaviour
     {
         // spawn nearest solar system
         SolarSystemData currentSystemData = solarSystemsData.GetCurrentFromPPos(playerPosition);
-        GameObject solarSystem = new(currentSystemData.GetName());
-        solarSystem.transform.position = currentSystemData.GetPosition();
-        currentSys = solarSystem;
-        solarSystem.transform.rotation = Quaternion.Euler(currentSystemData.GetOrientation());
-        solarSystem.AddComponent<SolarSystem>();        
+        GameObject solarSystemGO = new GameObject(currentSystemData.GetName());
+        solarSystemGO.transform.SetParent(transform);
+        solarSystemGO.transform.position = currentSystemData.GetPosition();
+        solarSystemGO.transform.rotation = Quaternion.Euler(currentSystemData.GetOrientation());
+        SolarSystem solarSystem = solarSystemGO.AddComponent<SolarSystem>();
+        solarSystem.LoadData(currentSystemData);
     }
 
     void Update()

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-#if UNITY_EDITOR
-[ExecuteInEditMode]
-#endif
+
 [Serializable]
 public class SolarSystemsData : MonoBehaviour
 {
@@ -13,7 +11,7 @@ public class SolarSystemsData : MonoBehaviour
 
     public SolarSystemData GetCurrentFromPPos(Vector3 position)
     {
-        SolarSystemData result = null;
+        SolarSystemData result = data[0];
         float min = data[0].DistanceFrom(position);
         foreach (SolarSystemData system in data)
         {
@@ -47,13 +45,18 @@ public class SolarSystemData
     {
         return orientationE;
     }
-    public String GetName()
+    public string GetName()
     {
         return name;
     }
     public float DistanceFrom(Vector3 position)
     {
         return (this.position - position).magnitude;
+    }
+
+    public List<PlanetData> GetPlanets()
+    {
+        return planets;
     }
 }
 [Serializable]
@@ -73,8 +76,16 @@ public class PlanetData
     private Vector3 orientationE;
     [SerializeField]
     private List<MoonData> moons = new();
-    
 
+    internal string GetName()
+    {
+        return name;
+    }
+
+    internal float GetRadius()
+    {
+        return radius;
+    }
 }
 [Serializable]
 public class MoonData

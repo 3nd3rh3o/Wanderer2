@@ -107,4 +107,9 @@ public class Planet : MonoBehaviour
     {
 
     }
+
+    internal void LoadData(PlanetData p)
+    {
+        this.radius = p.GetRadius();
+    }
 }
