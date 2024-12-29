@@ -102,5 +102,13 @@ public class MoonData
     private float radius;
     [SerializeField]
     private Vector3 orientationE;
-
+}
+public class AtmoData
+{
+    public Vector3 _lightDirection;
+    public Vector3 _lightColor;
+    public Vector3 _ScatteringCoeafficients;
+    public Vector3 _PlanetPosition;
+    public float _AtmosphereRadius;
+    public float _PlanetRadius;
 }

@@ -38,7 +38,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
             float _PlanetRadius;
             float _numScatteringPoints;
             float _numOpticalDepthPoints;
-            float3 sunDir;
+            float3 _LightDirection;
 
 
 
@@ -101,8 +101,8 @@ Shader "Wanderer/Volumetric/Atmosphere"
                 float viewRayOpticalDepth = 0;
                 for (int i = 0; i < _numScatteringPoints; i++)
                 {
-                    float sunRayLength = raySphere(_PlanetPosition, _AtmosphereRadius, inScatterPoint, sunDir).y;
-                    float sunRayOpticalDepth = opticalDepth(inScatterPoint, sunDir, sunRayLength);
+                    float sunRayLength = raySphere(_PlanetPosition, _AtmosphereRadius, inScatterPoint, _LightDirection).y;
+                    float sunRayOpticalDepth = opticalDepth(inScatterPoint, _LightDirection, sunRayLength);
                     viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
                     float3 transmitance = exp( - (sunRayOpticalDepth + viewRayOpticalDepth) * _ScatteringCoefficients);
                     float localDensity = densityAtPoint(inScatterPoint);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,5 +37,16 @@ public class SolarSystem : MonoBehaviour
     public void Kill()
     {
         
+    }
+
+    public List<AtmoData> GetAtmoData()
+    {
+        List<AtmoData> res = new();
+        planets.ForEach(p => 
+        {
+            if (p.HasAtmo()) res.Add(p.GetAtmoData());
+            if (p.HasMoon()) p.GetAtmoDataForMoons(res);
+        });
+        return res;
     }
 }

@@ -119,11 +119,10 @@ public class PlanetPrototype : MonoBehaviour
         Vector3 scatteringCoefficients = new Vector3(scatterR, scatterG, scatterB);
 
 
-        sharedMat?.SetVector("_LightDirection", (transform.position).normalized);
+        sharedMat?.SetVector("_LightDirection", (-transform.position).normalized);
         sharedMat?.SetVector("_LightColor", new Vector3(1, 1 , 1));
         atmosphereMat?.SetVector("_ScatteringCoefficients", scatteringCoefficients);
         atmosphereMat?.SetVector("_PlanetPosition", transform.position);
-        atmosphereMat?.SetVector("sunDir", (-transform.position).normalized);
         atmosphereMat?.SetFloat("_AtmosphereRadius", AtmosphereRadius);
         atmosphereMat?.SetFloat("_PlanetRadius", PlanetAtmRad);
         

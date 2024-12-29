@@ -1,9 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SolarSystemManager : MonoBehaviour
 {
     private Vector3 playerPosition = new();
     private Vector3 playerRotation = new();
+    
+    public ComputeShader TellicPlanetSurfaceGeometryShader;
+    public Shader TelluricPlanetSurfaceShader;
+    public Material PlanetAtmosphereShader;
+    [SerializeField]
+    public AtmosphereFullScreenPassRendererFeature atmosphereRFClose;
+    [SerializeField]
+    public AtmosphereFullScreenPassRendererFeature atmosphereRFFar;
+
     //private Vector3 playerRotation = new();
     private SolarSystemsData solarSystemsData;
 
@@ -36,7 +46,21 @@ public class SolarSystemManager : MonoBehaviour
 
     void Update()
     {
-        //move planet
-        //handle playermotions?
+        //Handle registration of planets in atmosphere shader.
+        List<AtmoData> atmoDatas = currentSys.GetAtmoData();
+        if (atmoDatas.Count == 0) {
+            atmosphereRFClose.enabled = false;
+            atmosphereRFFar.enabled = false;
+        } else {
+            atmosphereRFClose.enabled = true;
+            atmosphereRFFar.enabled = true;
+        }
+        //Construct arrays to send to the atmosphere shader.
+
+
+
+        //Handle player relative positions.
+        currentSys.transform.position = -playerPosition;
+        currentSys.transform.rotation = Quaternion.Inverse(Quaternion.Euler(playerRotation));
     }
 }

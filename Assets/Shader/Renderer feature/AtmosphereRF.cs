@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.Experimental.Rendering;
 
 
-
+[Serializable]
 public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendererFeature
 {
     /// <summary>

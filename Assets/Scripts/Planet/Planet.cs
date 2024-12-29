@@ -19,12 +19,15 @@ public class Planet : MonoBehaviour
     public float BiomeMultiplier;
     public Vector3 BiomeOffset = new();
     public Biome[] biomes = new Biome[0];
+    public bool hasAtmo;
 
     [SerializeField]
     public ChunkNHMapCSManager.Instr[] instructions = new ChunkNHMapCSManager.Instr[0];
     public float radius;
     [SerializeField]
     private int mLOD;
+
+    private Planet[] moons;
 
     protected void Build()
     {
@@ -111,5 +114,25 @@ public class Planet : MonoBehaviour
     internal void LoadData(PlanetData p)
     {
         this.radius = p.GetRadius();
+    }
+
+    internal bool HasAtmo()
+    {
+        return hasAtmo;
+    }
+    internal bool HasMoon()
+    {
+        return moons.Length > 0;
+    }
+
+
+    internal AtmoData GetAtmoData()
+    {
+        return new();
+    }
+
+    internal void GetAtmoDataForMoons(List<AtmoData> res)
+    {
+        throw new NotImplementedException();
     }
 }
