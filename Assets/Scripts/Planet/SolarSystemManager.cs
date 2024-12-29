@@ -56,7 +56,7 @@ public class SolarSystemManager : MonoBehaviour
             atmosphereRFFar.enabled = true;
         }
         //Construct arrays to send to the atmosphere shader.
-
+        
 
 
         //Handle player relative positions.
