@@ -15,27 +15,67 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
     private ComputeShader geometryGen;
     private int mLOD;
     private Queue<ChunkTask> queue;
+    private bool hasAtmosphere;
+    private AtmoData atmoData;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    new void Start()
+    public override void Start()
     {
         base.Start();
     }
 
     // Update is called once per frame
-    new void Update()
+    public override void Update()
     {
         base.Update();
     }
 
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+    }
+
+    public override void OnDisable()
+    {
+
+    }
+    public override void Kill()
+    {
+        base.Kill();
+        this.OnDisable();
+        Destroy(gameObject);
+    }
+
     public void Init(
+        float radius, float mass,
+        Vector3 initialVelocity, Vector3 initialPosition,
+        Vector3 initialTorque, Vector3 initialOrientation,
+        bool IsKynematic,
         TerrainAtlas atlas, Material terrainMaterial,
-        float AtmosphereRadius, float PlanetAtmRadius, 
+        AtmoData atmoData, 
         float BiomeScale, float BiomeMul, 
         Vector3 BiomeOffset, Biome[] biomes,
         ComputeShader geometryGen, int mLOD
     )
     {
+        base.Init(radius, mass, initialVelocity, initialPosition, initialTorque, initialOrientation, IsKynematic);
         this.atlas = atlas;
+        this.terrainMaterial = terrainMaterial;
+        if (atmoData == null)
+        {
+            hasAtmosphere = false;
+        }
+        else
+        {
+            hasAtmosphere = true;
+            this.atmoData = atmoData;
+        }
+        this.BiomeScale = BiomeScale;
+        this.BiomeMul = BiomeMul;
+        this.BiomeOffset = BiomeOffset;
+        this.biomes = biomes;
+        this.geometryGen = geometryGen;
+        this.mLOD = mLOD;
     }
 }

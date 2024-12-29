@@ -35,7 +35,7 @@ public class SolarSystemData
     [SerializeField]
     private Vector3 orientationE;
     [SerializeField]
-    private List<PlanetData> planets = new();
+    private List<MajorCelestialBodyData> MCB = new();
 
     public Vector3 GetPosition()
     {
@@ -54,16 +54,32 @@ public class SolarSystemData
         return (this.position - position).magnitude;
     }
 
-    public List<PlanetData> GetPlanets()
+    public List<MajorCelestialBodyData> GetPlanets()
     {
-        return planets;
+        return MCB;
     }
 }
 [Serializable]
-public class PlanetData
+public enum MCBType
+{
+    STAR,
+    TELURIC_PLANET,
+    GAZEOUS_PLANET
+}
+[Serializable]
+public class MajorCelestialBodyData : MajorCelestialBodyMoonData
+{
+    [SerializeField]
+    private List<MajorCelestialBodyMoonData> moons = new();
+}
+
+[Serializable]
+public class MajorCelestialBodyMoonData
 {
     [SerializeField]
     private string name;
+    [SerializeField]
+    private MCBType type;
     [SerializeField]
     private Vector3 position;
     [SerializeField]
@@ -73,9 +89,23 @@ public class PlanetData
     [SerializeField]
     private float radius;
     [SerializeField]
+    private float mass;
+    [SerializeField]
     private Vector3 orientationE;
     [SerializeField]
-    private List<MoonData> moons = new();
+    private bool isKynematic;
+    [SerializeField]
+    private bool hasAtmo;
+    [SerializeField]
+    private AtmoData atmoData;
+    [SerializeField]
+    private Vector2 BiomeScaleAndMultiplier;
+    [SerializeField]
+    private Vector3 BiomeOffset;
+    [SerializeField]
+    private int MaxLOD;
+    [SerializeField]
+    private List<Biome> biomes;
 
     internal string GetName()
     {
@@ -86,29 +116,79 @@ public class PlanetData
     {
         return radius;
     }
+    internal MCBType GetMCBType()
+    {
+        return type;
+    }
+
+    internal float GetMass()
+    {
+        return mass;
+    }
+    internal Vector3 GetInitialVelocity()
+    {
+        return initialVelocity;
+    }
+    internal Vector3 GetInitialPosition()
+    {
+        return position;
+    }
+    internal Vector3 GetInitialTorque()
+    {
+        return initialTorque;
+    }
+    internal Vector3 GetInitialOrientation()
+    {
+        return orientationE;
+    }
+    internal bool IsKynematic()
+    {
+        return isKynematic;
+    }
+    internal bool HasAtmosphere()
+    {
+        return hasAtmo;
+    }
+
+    internal AtmoData GetAtmoData()
+    {
+        return atmoData;
+    }
+
+    internal float GetBiomeScale()
+    {
+        return BiomeScaleAndMultiplier.x;
+    }
+    internal float GetBiomeMul()
+    {
+        return BiomeScaleAndMultiplier.y;
+    }
+    internal Vector3 GetBiomeOffset()
+    {
+        return BiomeOffset;
+    }
+    internal List<Biome> GetBiomes()
+    {
+        return biomes;
+    }
+    internal int GetMLOD()
+    {
+        return MaxLOD;
+    }
 }
 [Serializable]
-public class MoonData
-{
-    [SerializeField]
-    private string name;
-    [SerializeField]
-    private Vector3 position;
-    [SerializeField]
-    private Vector3 initialVelocity;
-    [SerializeField]
-    private Vector3 initialTorque;
-    [SerializeField]
-    private float radius;
-    [SerializeField]
-    private Vector3 orientationE;
-}
 public class AtmoData
 {
-    public Vector3 _lightDirection;
-    public Vector3 _lightColor;
-    public Vector3 _ScatteringCoeafficients;
-    public Vector3 _PlanetPosition;
-    public float _AtmosphereRadius;
-    public float _PlanetRadius;
+    [SerializeField]
+    private Vector3 _lightDirection;
+    [SerializeField]
+    private Vector3 _lightColor;
+    [SerializeField]
+    private Vector3 _ScatteringCoeafficients;
+    [SerializeField]
+    private Vector3 _PlanetPosition;
+    [SerializeField]
+    private float _AtmosphereRadius;
+    [SerializeField]
+    private float _PlanetRadius;
 }

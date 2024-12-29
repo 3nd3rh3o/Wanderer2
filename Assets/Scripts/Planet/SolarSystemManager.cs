@@ -5,16 +5,15 @@ public class SolarSystemManager : MonoBehaviour
 {
     private Vector3 playerPosition = new();
     private Vector3 playerRotation = new();
-    
-    public ComputeShader TellicPlanetSurfaceGeometryShader;
-    public Shader TelluricPlanetSurfaceShader;
+
+    public TerrainAtlas telluricAtlas;
+    public ComputeShader TelluricPlanetSurfaceGeometryShader;
+    public Material TelluricPlanetSurfaceShader;
     public Material PlanetAtmosphereShader;
     [SerializeField]
     public AtmosphereFullScreenPassRendererFeature atmosphereRFClose;
     [SerializeField]
     public AtmosphereFullScreenPassRendererFeature atmosphereRFFar;
-
-    //private Vector3 playerRotation = new();
     private SolarSystemsData solarSystemsData;
 
     //Solar system
@@ -23,25 +22,20 @@ public class SolarSystemManager : MonoBehaviour
     void OnEnable()
     {
         solarSystemsData = GetComponent<SolarSystemsData>();
-    }
-    void OnDisable()
-    {
-        currentSys.Kill();
-        currentSys = null;
-    }
-
-
-
-    void Start()
-    {
-        // spawn nearest solar system
         SolarSystemData currentSystemData = solarSystemsData.GetCurrentFromPPos(playerPosition);
         GameObject solarSystemGO = new GameObject(currentSystemData.GetName());
         solarSystemGO.transform.SetParent(transform);
         solarSystemGO.transform.position = currentSystemData.GetPosition();
         solarSystemGO.transform.rotation = Quaternion.Euler(currentSystemData.GetOrientation());
         SolarSystem solarSystem = solarSystemGO.AddComponent<SolarSystem>();
-        solarSystem.LoadData(currentSystemData);
+        solarSystem.LoadData(currentSystemData, telluricAtlas, TelluricPlanetSurfaceGeometryShader, TelluricPlanetSurfaceShader);
+        currentSys = solarSystem;
+    }
+    void OnDisable()
+    {
+        currentSys.Kill();
+        Destroy(transform.GetChild(0).gameObject);
+        currentSys = null;
     }
 
     void Update()
@@ -56,7 +50,7 @@ public class SolarSystemManager : MonoBehaviour
             atmosphereRFFar.enabled = true;
         }
         //Construct arrays to send to the atmosphere shader.
-        
+
 
 
         //Handle player relative positions.

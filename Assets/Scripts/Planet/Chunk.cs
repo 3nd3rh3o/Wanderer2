@@ -321,6 +321,7 @@ public class Chunk
             height = null;
         }
         chunks?.ToList().ForEach(c => c.Kill()); // Nettoie les enfants
+        chunks=null;
         if (cachedMesh != null) MonoBehaviour.DestroyImmediate(cachedMesh); // Libère la mémoire GPU
         cachedMesh = null;
     }

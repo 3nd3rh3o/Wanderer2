@@ -434,20 +434,94 @@ MonoBehaviour:
   - name: Helios
     position: {x: 0, y: 0, z: 0}
     orientationE: {x: 0, y: 0, z: 0}
-    planets:
-    - name: DullRock
+    MCB:
+    - name: Helios
+      type: 0
       position: {x: 0, y: 0, z: 0}
       initialVelocity: {x: 0, y: 0, z: 0}
       initialTorque: {x: 0, y: 0, z: 0}
-      radius: 10
+      radius: 0
+      mass: 1000
       orientationE: {x: 0, y: 0, z: 0}
+      isKynematic: 1
+      hasAtmo: 0
+      atmoData:
+        _lightDirection: {x: 0, y: 0, z: 0}
+        _lightColor: {x: 0, y: 0, z: 0}
+        _ScatteringCoeafficients: {x: 0, y: 0, z: 0}
+        _PlanetPosition: {x: 0, y: 0, z: 0}
+        _AtmosphereRadius: 0
+        _PlanetRadius: 0
+      BiomeScaleAndMultiplier: {x: 0, y: 0}
+      BiomeOffset: {x: 0, y: 0, z: 0}
+      MaxLOD: 0
+      biomes: []
+      moons: []
+    - name: DULLROCK
+      type: 1
+      position: {x: 500, y: 0, z: 0}
+      initialVelocity: {x: 0, y: 0, z: 10}
+      initialTorque: {x: 0, y: 0, z: 0}
+      radius: 100
+      mass: 10
+      orientationE: {x: 0, y: 0, z: 0}
+      isKynematic: 0
+      hasAtmo: 1
+      atmoData:
+        _lightDirection: {x: 0, y: 0, z: 0}
+        _lightColor: {x: 0, y: 0, z: 0}
+        _ScatteringCoeafficients: {x: 0, y: 0, z: 0}
+        _PlanetPosition: {x: 0, y: 0, z: 0}
+        _AtmosphereRadius: 0
+        _PlanetRadius: 0
+      BiomeScaleAndMultiplier: {x: 1, y: 0.04}
+      BiomeOffset: {x: 0, y: 0, z: 0}
+      MaxLOD: 0
+      biomes:
+      - name: Ocean
+        PredicateMin:
+          altitude: -1
+          temperature: -1
+          humidity: -1
+          latitude: -1
+        PredicateMax:
+          altitude: 1
+          temperature: 1
+          humidity: 1
+          latitude: 1
+        carver: 1
+        carverArguments:
+        - 0.3
+        - 0.36
+        - -0.12
+        - 0.74
+        - -0.44
+        - 1
+        blendingFactor: 0
+        surfaceMaterial: 0
+        DebugColor: {r: 0, g: 0, b: 0, a: 0}
       moons:
       - name: KAREN
+        type: 1
         position: {x: 0, y: 0, z: 0}
         initialVelocity: {x: 0, y: 0, z: 0}
         initialTorque: {x: 0, y: 0, z: 0}
         radius: 0
+        mass: 0
         orientationE: {x: 0, y: 0, z: 0}
+        isKynematic: 0
+        hasAtmo: 0
+        atmoData:
+          _lightDirection: {x: 0, y: 0, z: 0}
+          _lightColor: {x: 0, y: 0, z: 0}
+          _ScatteringCoeafficients: {x: 0, y: 0, z: 0}
+          _PlanetPosition: {x: 0, y: 0, z: 0}
+          _AtmosphereRadius: 0
+          _PlanetRadius: 0
+        BiomeScaleAndMultiplier: {x: 0, y: 0}
+        BiomeOffset: {x: 0, y: 0, z: 0}
+        MaxLOD: 0
+        biomes: []
 --- !u!114 &1300275860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,8 +534,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 985a6a7b5b9ae424f8628742d3d4e5d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TellicPlanetSurfaceGeometryShader: {fileID: 7200000, guid: 861bb91b47f1b604991bd6d405f522d0, type: 3}
-  TelluricPlanetSurfaceShader: {fileID: 4800000, guid: 1e79fa8e462c7934d816c9ce4819e2c3, type: 3}
+  telluricAtlas:
+    types:
+    - name: Rock
+      terrainLOD: []
+    - name: 
+      terrainLOD:
+      - albedo: {fileID: 0}
+        normalMap: {fileID: 0}
+        height: {fileID: 0}
+        metalic: {fileID: 0}
+        roughness: {fileID: 0}
+        occlusion: {fileID: 0}
+    bake: 0
+  TelluricPlanetSurfaceGeometryShader: {fileID: 7200000, guid: 861bb91b47f1b604991bd6d405f522d0, type: 3}
+  TelluricPlanetSurfaceShader: {fileID: 2100000, guid: 81b198c87a0911848b04dde1e0fd0e10, type: 2}
   PlanetAtmosphereShader: {fileID: 2100000, guid: a42fa05f9c5565e47822f73ecb2aadc6, type: 2}
   atmosphereRFClose: {fileID: -3629894772201072773, guid: 828c4b3a7b492aa48a600b7141223941, type: 2}
   atmosphereRFFar: {fileID: -3629894772201072773, guid: d3b406d8fc7006248a0fe94404f5701f, type: 2}

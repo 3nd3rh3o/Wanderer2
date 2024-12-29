@@ -1,27 +1,47 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 
 public class SolarSystem : MonoBehaviour
 {
+    public 
     SolarSystemData data;
-    List<Planet> planets = new();
-    void Start()
+    private TerrainAtlas telluricAtlas;
+    private ComputeShader geoTelluricCS;
+    private Material telluricTerrainMat;
+
+    List<IMajorCellestialBody> planets;
+    void OnEnable()
     {
-        //TODO spawn star(s)
-        // assign materials
-
-
-        data.GetPlanets().ForEach(p => 
+        planets = new();
+        data?.GetPlanets().ForEach(p => 
         {
             GameObject planetGO = new(p.GetName());
             planetGO.transform.parent = transform;
-            Planet planet = planetGO.AddComponent<Planet>();
-            planet.LoadData(p);
-            planets.Add(planet);
+            switch (p.GetMCBType())
+            {
+                case MCBType.TELURIC_PLANET:
+                    planetGO.AddComponent<Rigidbody>();
+                    TelluricMajorCelestialBody planet = planetGO.AddComponent<TelluricMajorCelestialBody>();
+                    planet.Init(p.GetRadius(), p.GetMass(), p.GetInitialVelocity(), p.GetInitialPosition(), p.GetInitialTorque(), p.GetInitialOrientation(), p.IsKynematic(), telluricAtlas, telluricTerrainMat, p.HasAtmosphere()? p.GetAtmoData() : null, p.GetBiomeScale(), p.GetBiomeMul(), p.GetBiomeOffset(), p.GetBiomes().ToArray(), geoTelluricCS, p.GetMLOD());
+                    
+                    planets.Add(planet);
+                    break;
+            }
         });
+    }
+
+    void OnDisable()
+    {
+        planets?.ForEach(p => p.Kill());
+        planets = null;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Destroy(transform.GetChild(0).gameObject);
+        }
     }
 
     void Update()
@@ -29,23 +49,32 @@ public class SolarSystem : MonoBehaviour
 
     }
 
-    public void LoadData(SolarSystemData data)
+    public void LoadData(SolarSystemData data, TerrainAtlas telluricAtlas, ComputeShader geoTelluricCS, Material telluricTerrainMat)
     {
         this.data = data;
+        this.telluricAtlas = telluricAtlas;
+        this.geoTelluricCS = geoTelluricCS;
+        this.telluricTerrainMat = telluricTerrainMat;
+        OnEnable();
     }
 
     public void Kill()
     {
+        planets?.ForEach(p => p.Kill());
+        planets = null;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Destroy(transform.GetChild(0).gameObject);
+        }
         
     }
 
     public List<AtmoData> GetAtmoData()
     {
         List<AtmoData> res = new();
-        planets.ForEach(p => 
+        planets?.ForEach(p => 
         {
-            if (p.HasAtmo()) res.Add(p.GetAtmoData());
-            if (p.HasMoon()) p.GetAtmoDataForMoons(res);
+            
         });
         return res;
     }

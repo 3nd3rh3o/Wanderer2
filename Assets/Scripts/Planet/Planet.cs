@@ -111,7 +111,7 @@ public class Planet : MonoBehaviour
 
     }
 
-    internal void LoadData(PlanetData p)
+    internal void LoadData(MajorCelestialBodyData p)
     {
         this.radius = p.GetRadius();
     }

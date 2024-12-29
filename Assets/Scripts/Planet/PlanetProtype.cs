@@ -104,6 +104,7 @@ public class PlanetPrototype : MonoBehaviour
     void OnDisable()
     {
         chunks?.ToList().ForEach(c => c.Kill());
+        chunks=null;
         GetComponent<MeshFilter>().mesh = null;
         GetComponent<MeshRenderer>().SetMaterials(new());
         atlas.Cleanup();
