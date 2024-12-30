@@ -20,6 +20,7 @@ public class SolarSystem : MonoBehaviour
         data?.GetPlanets().ForEach(p => 
         {
             GameObject planetGO = new(p.GetName());
+            planetGO.SetActive(false);
             planetGO.transform.parent = transform;
             switch (p.GetMCBType())
             {
@@ -55,7 +56,7 @@ public class SolarSystem : MonoBehaviour
         this.telluricAtlas = telluricAtlas;
         this.geoTelluricCS = geoTelluricCS;
         this.telluricTerrainMat = telluricTerrainMat;
-        OnEnable();
+        gameObject.SetActive(true);
     }
 
     public void Kill()

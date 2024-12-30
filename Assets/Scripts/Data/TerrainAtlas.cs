@@ -51,9 +51,11 @@ public class TerrainAtlas
     public void Init()
     {
         //TODO ENSURE TEXSIZE AND mLOD ARE COHERENT!!!
+        //LOD = 0, noise
+        //LOD = 1, details
         if (atlas != null) Cleanup();
         int texSize = 256;
-        int mLod = 6;
+        int mLod = 2;
 
         atlas = new Texture3D[6][];
         atlas[0] = new Texture3D[mLod];

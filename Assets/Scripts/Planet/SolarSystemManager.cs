@@ -24,6 +24,7 @@ public class SolarSystemManager : MonoBehaviour
         solarSystemsData = GetComponent<SolarSystemsData>();
         SolarSystemData currentSystemData = solarSystemsData.GetCurrentFromPPos(playerPosition);
         GameObject solarSystemGO = new GameObject(currentSystemData.GetName());
+        solarSystemGO.SetActive(false);
         solarSystemGO.transform.SetParent(transform);
         solarSystemGO.transform.position = currentSystemData.GetPosition();
         solarSystemGO.transform.rotation = Quaternion.Euler(currentSystemData.GetOrientation());

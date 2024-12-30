@@ -77,5 +77,6 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
         this.biomes = biomes;
         this.geometryGen = geometryGen;
         this.mLOD = mLOD;
+        gameObject.SetActive(true);
     }
 }

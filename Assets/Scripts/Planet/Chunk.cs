@@ -178,8 +178,8 @@ public class Chunk
         iMesh.colors = new Color[iMesh.vertices.Length];
         if (csMan != null)
         {
-            if (isRoot) csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, lvl, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes, null, -1);
-            else csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, lvl, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes, parent_tex, posRelToParent);
+            if (isRoot) csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, LOD, lvl, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes, null, -1);
+            else csMan.GenMap(refs, albedo, ambientOcclusion, metalic, roughness, normalMap, height, LOD, lvl, iMesh.vertices, iMesh.normals, iMesh.colors, iMesh.origin, iMesh.mx, iMesh.my, gRad, BSca, BMul, BOff, biomes, parent_tex, posRelToParent);
         }
         return iMesh;
     }
