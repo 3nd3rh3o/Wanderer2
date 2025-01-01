@@ -6,7 +6,7 @@ public class IMajorCellestialBody : MonoBehaviour
     public Rigidbody rb;
     public Collider rbCollider;
     public PhysicsMaterial physicMaterial;
-    float radius;
+    protected float radius;
     float mass;
     Vector3 initialVelocity;
     Vector3 initialPosition;

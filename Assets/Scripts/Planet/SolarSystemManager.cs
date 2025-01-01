@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class SolarSystemManager : MonoBehaviour
 {
-    private Vector3 playerPosition = new();
-    private Vector3 playerRotation = new();
+    public Vector3 playerPosition = new();
+    public Vector3 playerRotation = new();
 
     public TerrainAtlas telluricAtlas;
     public ComputeShader TelluricPlanetSurfaceGeometryShader;
@@ -21,6 +21,7 @@ public class SolarSystemManager : MonoBehaviour
 
     void OnEnable()
     {
+        telluricAtlas.Init();
         solarSystemsData = GetComponent<SolarSystemsData>();
         SolarSystemData currentSystemData = solarSystemsData.GetCurrentFromPPos(playerPosition);
         GameObject solarSystemGO = new GameObject(currentSystemData.GetName());
@@ -37,6 +38,7 @@ public class SolarSystemManager : MonoBehaviour
         currentSys.Kill();
         Destroy(transform.GetChild(0).gameObject);
         currentSys = null;
+        telluricAtlas.Cleanup();
     }
 
     void Update()
@@ -51,11 +53,11 @@ public class SolarSystemManager : MonoBehaviour
             atmosphereRFFar.enabled = true;
         }
         //Construct arrays to send to the atmosphere shader.
-
+        
 
 
         //Handle player relative positions.
-        currentSys.transform.position = -playerPosition;
+        currentSys.transform.position = Quaternion.Inverse(Quaternion.Euler(playerRotation))*-playerPosition;
         currentSys.transform.rotation = Quaternion.Inverse(Quaternion.Euler(playerRotation));
     }
 }

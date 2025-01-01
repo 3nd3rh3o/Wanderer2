@@ -134,6 +134,7 @@ public class ChunkNHMapCSManager
             cs.SetTexture(0, "_roughness_parent", albedo);
             cs.SetTexture(0, "_ambientOclusion_parent", albedo);
         }
+        cs.SetInt("lvl", lvl);
         
         cs.SetTexture(0, "_ref_albedo", refs[0][LOD==0?1:0]);
         cs.SetTexture(0, "_ref_normalMap", refs[1][LOD==0?1:0]);

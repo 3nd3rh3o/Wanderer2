@@ -26,6 +26,8 @@ public class SolarSystem : MonoBehaviour
             {
                 case MCBType.TELURIC_PLANET:
                     planetGO.AddComponent<Rigidbody>();
+                    planetGO.AddComponent<MeshFilter>();
+                    planetGO.AddComponent<MeshRenderer>();
                     TelluricMajorCelestialBody planet = planetGO.AddComponent<TelluricMajorCelestialBody>();
                     planet.Init(p.GetRadius(), p.GetMass(), p.GetInitialVelocity(), p.GetInitialPosition(), p.GetInitialTorque(), p.GetInitialOrientation(), p.IsKynematic(), telluricAtlas, telluricTerrainMat, p.HasAtmosphere()? p.GetAtmoData() : null, p.GetBiomeScale(), p.GetBiomeMul(), p.GetBiomeOffset(), p.GetBiomes().ToArray(), geoTelluricCS, p.GetMLOD());
                     
