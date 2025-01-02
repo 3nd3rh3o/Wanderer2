@@ -126,10 +126,18 @@ float4 processBiomes(float3 sPoint, float4 chann, float4 minp, float4 maxp, uint
     return h != 0.0 ? ph.x != 0 ? float4(smoothMax(h, ph.x, lf), c) : float4(h, c) : ph;
 }
 
-int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id)
+int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id, float tol)
 {
-    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x >= chann.x && maxp.y >= chann.y && maxp.z >= chann.z && maxp.w >= chann.w) return _biomeTexIDs[id];
+    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x + tol >= chann.x && maxp.y + tol >= chann.y && maxp.z + tol >= chann.z && maxp.w + tol >= chann.w) return _biomeTexIDs[id];
     return -1;
+}
+
+float eucDist(float3 sPoint, float4 chann, float4 maxp, float tol)
+{
+    //is offshot? no => -1
+    int numMatch = (chann.x > maxp.x ? 1 : 0) + (chann.y > maxp.y ? 1 : 0) + (chann.z > maxp.z ? 1 : 0) + (chann.w > maxp.w ? 1 : 0);
+    
+    return numMatch == 0? 0 : ((chann.x > maxp.x ? (chann.x - maxp.x) / tol : 0) + (chann.y > maxp.y ? (chann.y - maxp.y) / tol : 0) + (chann.z > maxp.z ? (chann.z - maxp.z) / tol : 0) + (chann.w > maxp.w ? (chann.w - maxp.w) / tol : 0)) / numMatch;
 }
 
 // FOR FRAGMENT
@@ -138,22 +146,41 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
 {
     float3 dX = (_mx - _origin) / 256;
     float3 dY = (_my - _origin) / 256;
-    int bToUse = 0;
+    int bToUse = -1;
     float3 vPos = normalize(_origin + (dX * id.x) + (dY * id.y));
     float4 bChann = getBiomeChannels(vPos, _scale, 0.75, _offset);
+    float3 col;
+    float blend;
     //TODO integrate tolerance here! and put color computation also here
     for (int i = 0; i < _numBiomes; i++)
     {
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
         float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
-        int b = getBiome(vPos, bChann, mP, MP, i);
-        bToUse = b == -1 ? bToUse : b;
+        int b = getBiome(vPos, bChann, mP, MP, i, _blendingFactor[i]);
+        if (b!=-1)
+        {
+            if (bToUse != -1)
+            {
+                float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl+1, _bTexOffset[i]);
+                float3 nCol = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);
+                col = lerp(col, nCol, blend);
+            }
+            else
+            {
+                blend = eucDist(vPos, bChann, MP, _blendingFactor[i]);
+                float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl+1, _bTexOffset[i]);
+                col = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);
+            }
+            bToUse = b;
+        }
     }
-    float tint = simpleNoise(vPos, _bTexScale[bToUse], 1, lvl+1, _bTexOffset[bToUse]);
+    bToUse = bToUse == -1? 0 : bToUse;
+    _albedo[id.xy] = float4(col, 1.);
+    
     if (_isRoot)
     {
         //_albedo[id.xy] = float4(_ref_albedo[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        _albedo[id.xy] = float4(lerp(_bPCol[bToUse], _bSCol[bToUse], tint * 0.5 + 0.5),1.);
+        
 
 
         _normalMap[id.xy] = float4(_ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
@@ -167,7 +194,7 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
         uint2 parentOffset = _posRelToParent == 0 ? uint2(0, 0) : _posRelToParent == 1 ? uint2(128, 0) : _posRelToParent == 2 ? uint2(0, 128) : uint2(128, 128);
 
         //_albedo[id.xy] = float4((_albedo_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_albedo[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
-        _albedo[id.xy] = float4(lerp(_bPCol[bToUse], _bSCol[bToUse], tint * 0.5 + 0.5),1.);
+        
         _normalMap[id.xy] = float4((_normalMap_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
         _height[id.xy] = float4((_height_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_height[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
         _metalic[id.xy] = float4((_metalic_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_metalic[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);

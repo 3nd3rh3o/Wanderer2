@@ -487,6 +487,36 @@ MonoBehaviour:
             humidity: -1
             latitude: -1
           PredicateMax:
+            altitude: -0.044
+            temperature: 1
+            humidity: 1
+            latitude: 1
+          blendingFactor: 0.067
+        carver: 1
+        carverArguments:
+        - 0.3
+        - 0.36
+        - -0.12
+        - 0.74
+        - -0.44
+        - 1
+        SurfaceTexture:
+          TextureScale: 1
+          offset: {x: 0, y: 0, z: 0}
+          PrimaryColor: {r: 0.5660378, g: 0.388891, b: 0.26966894, a: 0}
+          SecondaryColor: {r: 0.9617281, g: 1, b: 0.7216981, a: 0}
+          heightScale: 0
+          heightMul: 0
+          surfaceDetailMaterial: 0
+          DebugColor: {r: 0.8522732, g: 1, b: 0, a: 0}
+      - name: Beach
+        IntegrationParams:
+          PredicateMin:
+            altitude: -0.044
+            temperature: -1
+            humidity: -1
+            latitude: -1
+          PredicateMax:
             altitude: 1
             temperature: 1
             humidity: 1
@@ -501,13 +531,14 @@ MonoBehaviour:
         - -0.44
         - 1
         SurfaceTexture:
-          TextureScale: 1
-          PrimaryColor: {r: 0.5660378, g: 0.388891, b: 0.26966894, a: 0}
-          SecondaryColor: {r: 0.9617281, g: 1, b: 0.7216981, a: 0}
+          TextureScale: 1.478
+          offset: {x: 0, y: 0, z: 0}
+          PrimaryColor: {r: 0.21888566, g: 1, b: 0, a: 0}
+          SecondaryColor: {r: 0.95696735, g: 0, b: 1, a: 0}
           heightScale: 0
           heightMul: 0
           surfaceDetailMaterial: 0
-          DebugColor: {r: 0.8522732, g: 1, b: 0, a: 0}
+          DebugColor: {r: 1, g: 0.04843266, b: 0, a: 0}
       moons:
       - name: KAREN
         type: 1
