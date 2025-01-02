@@ -70,14 +70,12 @@ public class Chunk
             // Chunk terminal, ajoute son mesh
             if (cachedMesh != null)
             {
-                
                 combineData = new CombineInstance
                 {
                     mesh = cachedMesh,
                     transform = Matrix4x4.identity // Identité si tout est en local space
                 };
                 combineInstances.Add(new(combineData, albedo, normalMap, height, metalic, roughness, ambientOcclusion));
-
             }
         }
         else

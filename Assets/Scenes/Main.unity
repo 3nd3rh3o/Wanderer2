@@ -480,16 +480,18 @@ MonoBehaviour:
       MaxLOD: 4
       biomes:
       - name: Ocean
-        PredicateMin:
-          altitude: -1
-          temperature: -1
-          humidity: -1
-          latitude: -1
-        PredicateMax:
-          altitude: 1
-          temperature: 1
-          humidity: 1
-          latitude: 1
+        IntegrationParams:
+          PredicateMin:
+            altitude: -1
+            temperature: -1
+            humidity: -1
+            latitude: -1
+          PredicateMax:
+            altitude: 1
+            temperature: 1
+            humidity: 1
+            latitude: 1
+          blendingFactor: 0
         carver: 1
         carverArguments:
         - 0.3
@@ -498,12 +500,14 @@ MonoBehaviour:
         - 0.74
         - -0.44
         - 1
-        blendingFactor: 0
-        TextureScale: 0
-        PrimaryColor: {r: 0.6132076, g: 0.5234325, b: 0.41362587, a: 0}
-        SecondaryColor: {r: 1, g: 0.9885996, b: 0.6084906, a: 0}
-        surfaceMaterial: 0
-        DebugColor: {r: 0.9379643, g: 1, b: 0, a: 0}
+        SurfaceTexture:
+          TextureScale: 1
+          PrimaryColor: {r: 0.5660378, g: 0.388891, b: 0.26966894, a: 0}
+          SecondaryColor: {r: 0.9617281, g: 1, b: 0.7216981, a: 0}
+          heightScale: 0
+          heightMul: 0
+          surfaceDetailMaterial: 0
+          DebugColor: {r: 0.8522732, g: 1, b: 0, a: 0}
       moons:
       - name: KAREN
         type: 1
@@ -539,7 +543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPosition: {x: 0, y: 0, z: 0}
-  playerRotation: {x: 0, y: 0, z: 0}
+  playerRotation: {x: 0, y: 90, z: 0}
   telluricAtlas:
     types:
     - name: Sand

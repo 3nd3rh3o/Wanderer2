@@ -2,18 +2,34 @@ using System;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
+
+[Serializable]
+public class BiomeTextureData
+{
+    [Range(0.001f, 2f)] [Tooltip("Scale of the noise texture")] public float TextureScale;
+    [Tooltip("offset of the noise texture")] public Vector3 offset;
+    [Tooltip("Biome primary color")] public Color PrimaryColor;
+    [Tooltip("Biome secondary color")] public Color SecondaryColor;
+    [Tooltip("Scale of the height of the texture")] [Range(0f, 1f)] public float heightScale;
+    [Range(0f, 1f)] [Tooltip("Multiplier of the height of the texture")] public float heightMul;
+    [Tooltip("Detail pool to fetch")] public int surfaceDetailMaterial;
+    [Tooltip("Chunk debug color(written in vertex color channel)")] public Color DebugColor;
+}
+
+[Serializable]
+public class BiomeIntegrator
+{
+    [Tooltip("min gradients values to spawn")] public BiomePredicate PredicateMin;
+    [Tooltip("max gradients values to spawn")] public BiomePredicate PredicateMax;
+    [Tooltip("Tolerance, or how much this predicate can 'overshoot'")] [Range(0f, 1f)] public float blendingFactor = 0f;
+}
+
 [Serializable]
 public class Biome
 {
-    [Tooltip("for conveniance")]
-    public string name;
-    [Tooltip("min gradients values to spawn")]
-    public BiomePredicate PredicateMin;
-    [Tooltip("max gradients values to spawn")]
-    public BiomePredicate PredicateMax;
-    
-    [Tooltip("What material to use, and when we use them in this biome(normals, color....)")]
-    public BiomeMaterial[] biomeMaterials;
+    [Tooltip("Name of the biome")] public string name;
+    [SerializeField] public BiomeIntegrator IntegrationParams = new();
+
     [FormerlySerializedAs("Carver")]
     [SerializeField]
     private BiomeCarver carver;
@@ -31,44 +47,32 @@ public class Biome
     }
     [Tooltip("arguments given to the driver")]
     public float[] carverArguments = new float[0];
-    [Range(0f, 1f)]
-    public float blendingFactor = 0f;
-    [Range(0f, 1f)]
-    [Tooltip("Scale of the noise texture")]
-    public float TextureScale;
-    [Tooltip("Biome primary color")]
-    public Color PrimaryColor;
-    [Tooltip("Biome secondary color")]
-    public Color SecondaryColor;
-    [Tooltip("Surface texture to use")]
-    public int surfaceMaterial;
-
-    [Tooltip("Chunk debug color(written in vertex color channel)")]
-    public Color DebugColor;
     
+    [SerializeField] public BiomeTextureData SurfaceTexture = new();
 
     internal float4 GetMinPreds()
     {
-        return new float4(PredicateMin.altitude, PredicateMin.temperature, PredicateMin.humidity, PredicateMin.latitude);
+        return new float4(IntegrationParams.PredicateMin.altitude, IntegrationParams.PredicateMin.temperature, IntegrationParams.PredicateMin.humidity, IntegrationParams.PredicateMin.latitude);
     }
     internal float4 GetMaxPreds()
     {
-        return new float4(PredicateMax.altitude, PredicateMax.temperature, PredicateMax.humidity, PredicateMax.latitude);
+        return new float4(IntegrationParams.PredicateMax.altitude, IntegrationParams.PredicateMax.temperature, IntegrationParams.PredicateMax.humidity, IntegrationParams.PredicateMax.latitude);
     }
 
     internal float3 GetColor()
     {
-        return new float3(DebugColor.r, DebugColor.g, DebugColor.b);
+        return new float3(SurfaceTexture.DebugColor.r, SurfaceTexture.DebugColor.g, SurfaceTexture.DebugColor.b);
     }
 
     internal int GetTexIds()
     {
-        return surfaceMaterial;
+        return SurfaceTexture.surfaceDetailMaterial;
     }
 
     internal int GetGenToUse()
     {
-        return carver switch {
+        return carver switch
+        {
             BiomeCarver.NONE => 0,
             BiomeCarver.FRAC_SIMPLEX => 1,
             _ => 0
@@ -82,8 +86,8 @@ public class Biome
         {
             for (int y = 0; y < 4; y++)
             {
-                if (4*x+y == carverArguments.Length) return res;
-                res[x][y] = carverArguments[4*x+y];
+                if (4 * x + y == carverArguments.Length) return res;
+                res[x][y] = carverArguments[4 * x + y];
             }
         }
         return res;
@@ -91,17 +95,27 @@ public class Biome
 
     internal float3 GetMainCol()
     {
-        return new(PrimaryColor.r, PrimaryColor.g, PrimaryColor.b);
+        return new(SurfaceTexture.PrimaryColor.r, SurfaceTexture.PrimaryColor.g, SurfaceTexture.PrimaryColor.b);
     }
 
     internal float3 GetSecCol()
     {
-        return new(SecondaryColor.r, SecondaryColor.g, SecondaryColor.b);
+        return new(SurfaceTexture.SecondaryColor.r, SurfaceTexture.SecondaryColor.g, SurfaceTexture.SecondaryColor.b);
     }
 
     internal float GetTexScale()
     {
-        return TextureScale;
+        return SurfaceTexture.TextureScale;
+    }
+
+    internal float GetTolerance()
+    {
+        return IntegrationParams.blendingFactor;
+    }
+
+    internal float3 GetBiomeTexOffset()
+    {
+        return new float3(SurfaceTexture.offset.x, SurfaceTexture.offset.y, SurfaceTexture.offset.z);
     }
 }
 

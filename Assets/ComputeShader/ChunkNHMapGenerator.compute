@@ -35,8 +35,8 @@ StructuredBuffer<int> _biomeTexIDs;
 int lvl;
 StructuredBuffer<float3> _bPCol;
 StructuredBuffer<float3> _bSCol;
+StructuredBuffer<float3> _bTexOffset;
 StructuredBuffer<float> _bTexScale;
-
 
 //kernel 1, per vertex
 RWStructuredBuffer<float3> _vertices;
@@ -141,7 +141,7 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
     int bToUse = 0;
     float3 vPos = normalize(_origin + (dX * id.x) + (dY * id.y));
     float4 bChann = getBiomeChannels(vPos, _scale, 0.75, _offset);
-    
+    //TODO integrate tolerance here! and put color computation also here
     for (int i = 0; i < _numBiomes; i++)
     {
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
@@ -149,11 +149,13 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
         int b = getBiome(vPos, bChann, mP, MP, i);
         bToUse = b == -1 ? bToUse : b;
     }
-    float tint = simpleNoise(vPos, 1+_bTexScale[bToUse], 1, lvl+1, float3(0, 0, 0));
+    float tint = simpleNoise(vPos, _bTexScale[bToUse], 1, lvl+1, _bTexOffset[bToUse]);
     if (_isRoot)
     {
         //_albedo[id.xy] = float4(_ref_albedo[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
         _albedo[id.xy] = float4(lerp(_bPCol[bToUse], _bSCol[bToUse], tint * 0.5 + 0.5),1.);
+
+
         _normalMap[id.xy] = float4(_ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
         _height[id.xy] = float4(_ref_height[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
         _metalic[id.xy] = float4(_ref_metalic[float3(id.xy, bToUse + 0.5)].rgb, 1.0);

@@ -66,6 +66,7 @@ public class ChunkNHMapCSManager
         ComputeBuffer bDebugColorBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
         ComputeBuffer bPColBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
         ComputeBuffer bSColBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bTexOffsetBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
         ComputeBuffer bTexScaleBuff = new ComputeBuffer(biomes.Length, sizeof(float));
         ComputeBuffer bTexIdsBuff = new ComputeBuffer(biomes.Length, sizeof(int));
 
@@ -81,6 +82,7 @@ public class ChunkNHMapCSManager
         
         float3[] bPCol = new float3[biomes.Length];
         float3[] bSCol = new float3[biomes.Length];
+        float3[] bTexOffset = new float3[biomes.Length];
         float[] biomeTexScale = new float[biomes.Length];
         int[] bGen = new int[biomes.Length];
         float4x4[] bGenP = new float4x4[biomes.Length];
@@ -100,10 +102,11 @@ public class ChunkNHMapCSManager
             bMaxPreds[i] = biomes[i].GetMaxPreds();
             bGen[i] = biomes[i].GetGenToUse();
             bGenP[i] = biomes[i].GetGenParams();
-            bBlend[i] = biomes[i].blendingFactor;
+            bBlend[i] = biomes[i].GetTolerance();
             bDebugColor[i] = biomes[i].GetColor();
             bPCol[i] = biomes[i].GetMainCol();
             bSCol[i] = biomes[i].GetSecCol();
+            bTexOffset[i] = biomes[i].GetBiomeTexOffset();
             biomeTexScale[i] = biomes[i].GetTexScale();
             bTexIds[i] = biomes[i].GetTexIds();
         }
@@ -118,6 +121,7 @@ public class ChunkNHMapCSManager
         bDebugColorBuff.SetData(bDebugColor);
         bPColBuff.SetData(bPCol);
         bSColBuff.SetData(bSCol);
+        bTexOffsetBuff.SetData(bTexOffset);
         bTexScaleBuff.SetData(biomeTexScale);
         bTexIdsBuff.SetData(bTexIds);
 
@@ -166,6 +170,7 @@ public class ChunkNHMapCSManager
 
         cs.SetBuffer(0, "_bPCol", bPColBuff);
         cs.SetBuffer(0, "_bSCol", bSColBuff);
+        cs.SetBuffer(0, "_bTexOffset", bTexOffsetBuff);
         cs.SetBuffer(0, "_bTexScale", bTexScaleBuff);
 
 
@@ -219,6 +224,7 @@ public class ChunkNHMapCSManager
         bTexIdsBuff.Release();
         bPColBuff.Release();
         bSColBuff.Release();
+        bTexOffsetBuff.Release();
         bTexScaleBuff.Release();
     }
 
