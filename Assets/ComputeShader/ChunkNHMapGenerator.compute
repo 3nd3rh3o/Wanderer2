@@ -33,7 +33,9 @@ StructuredBuffer<int> _biomeTexIDs;
 
 //TODO attempt at noise base tex;
 int lvl;
-float3 baseColor;
+StructuredBuffer<float3> _bPCol;
+StructuredBuffer<float3> _bSCol;
+StructuredBuffer<float> _bTexScale;
 
 
 //kernel 1, per vertex
@@ -139,10 +141,7 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
     int bToUse = 0;
     float3 vPos = normalize(_origin + (dX * id.x) + (dY * id.y));
     float4 bChann = getBiomeChannels(vPos, _scale, 0.75, _offset);
-    float tint = simpleNoise(vPos, 1, 1, lvl+1, float3(0, 0, 0));
     
-
-
     for (int i = 0; i < _numBiomes; i++)
     {
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
@@ -150,10 +149,11 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
         int b = getBiome(vPos, bChann, mP, MP, i);
         bToUse = b == -1 ? bToUse : b;
     }
+    float tint = simpleNoise(vPos, 1+_bTexScale[bToUse], 1, lvl+1, float3(0, 0, 0));
     if (_isRoot)
     {
         //_albedo[id.xy] = float4(_ref_albedo[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
-        _albedo[id.xy] = float4(tint.xxx * 0.5 + 0.5 ,1.);
+        _albedo[id.xy] = float4(lerp(_bPCol[bToUse], _bSCol[bToUse], tint * 0.5 + 0.5),1.);
         _normalMap[id.xy] = float4(_ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
         _height[id.xy] = float4(_ref_height[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
         _metalic[id.xy] = float4(_ref_metalic[float3(id.xy, bToUse + 0.5)].rgb, 1.0);
@@ -165,7 +165,7 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
         uint2 parentOffset = _posRelToParent == 0 ? uint2(0, 0) : _posRelToParent == 1 ? uint2(128, 0) : _posRelToParent == 2 ? uint2(0, 128) : uint2(128, 128);
 
         //_albedo[id.xy] = float4((_albedo_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_albedo[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
-        _albedo[id.xy] = float4(tint.xxx * 0.5 + 0.5 ,1.);
+        _albedo[id.xy] = float4(lerp(_bPCol[bToUse], _bSCol[bToUse], tint * 0.5 + 0.5),1.);
         _normalMap[id.xy] = float4((_normalMap_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_normalMap[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
         _height[id.xy] = float4((_height_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_height[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);
         _metalic[id.xy] = float4((_metalic_parent[float2(id.xy * .5 + parentOffset)].rgb + _ref_metalic[float3(id.xy, bToUse + 0.5)].rgb) * .5, 1.0);

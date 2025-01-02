@@ -64,6 +64,9 @@ public class ChunkNHMapCSManager
         ComputeBuffer paramsOfGenBuff = new ComputeBuffer(biomes.Length, sizeof(float)*16);
         ComputeBuffer bBlendBuff = new ComputeBuffer(biomes.Length, sizeof(float));
         ComputeBuffer bDebugColorBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bPColBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bSColBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bTexScaleBuff = new ComputeBuffer(biomes.Length, sizeof(float));
         ComputeBuffer bTexIdsBuff = new ComputeBuffer(biomes.Length, sizeof(int));
 
 
@@ -75,6 +78,10 @@ public class ChunkNHMapCSManager
         float4[] bMinPreds = new float4[biomes.Length];
         float4[] bMaxPreds = new float4[biomes.Length];
         float3[] bDebugColor = new float3[biomes.Length];
+        
+        float3[] bPCol = new float3[biomes.Length];
+        float3[] bSCol = new float3[biomes.Length];
+        float[] biomeTexScale = new float[biomes.Length];
         int[] bGen = new int[biomes.Length];
         float4x4[] bGenP = new float4x4[biomes.Length];
         float[] bBlend = new float[biomes.Length];
@@ -95,6 +102,9 @@ public class ChunkNHMapCSManager
             bGenP[i] = biomes[i].GetGenParams();
             bBlend[i] = biomes[i].blendingFactor;
             bDebugColor[i] = biomes[i].GetColor();
+            bPCol[i] = biomes[i].GetMainCol();
+            bSCol[i] = biomes[i].GetSecCol();
+            biomeTexScale[i] = biomes[i].GetTexScale();
             bTexIds[i] = biomes[i].GetTexIds();
         }
 
@@ -106,6 +116,9 @@ public class ChunkNHMapCSManager
         paramsOfGenBuff.SetData(bGenP);
         bBlendBuff.SetData(bBlend);
         bDebugColorBuff.SetData(bDebugColor);
+        bPColBuff.SetData(bPCol);
+        bSColBuff.SetData(bSCol);
+        bTexScaleBuff.SetData(biomeTexScale);
         bTexIdsBuff.SetData(bTexIds);
 
         cs.SetTexture(0, "_albedo", albedo);
@@ -150,6 +163,11 @@ public class ChunkNHMapCSManager
         cs.SetBuffer(1, "_minPredicates", bMinPredsBuff);
         cs.SetBuffer(1, "_maxPredicates", bMaxPredsBuff);
         cs.SetBuffer(1, "_blendingFactor", bBlendBuff);
+
+        cs.SetBuffer(0, "_bPCol", bPColBuff);
+        cs.SetBuffer(0, "_bSCol", bSColBuff);
+        cs.SetBuffer(0, "_bTexScale", bTexScaleBuff);
+
 
         cs.SetBuffer(1, "_vertices", vBuff);
         cs.SetBuffer(1, "_normals", nBuff);
@@ -199,6 +217,9 @@ public class ChunkNHMapCSManager
         bBlendBuff.Release();
         bDebugColorBuff.Release();
         bTexIdsBuff.Release();
+        bPColBuff.Release();
+        bSColBuff.Release();
+        bTexScaleBuff.Release();
     }
 
     [Serializable]

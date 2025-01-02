@@ -5,3 +5,4 @@ userSettings/*
 *.csproj
 .vscode/
 *.sln
+MemoryCaptures/*

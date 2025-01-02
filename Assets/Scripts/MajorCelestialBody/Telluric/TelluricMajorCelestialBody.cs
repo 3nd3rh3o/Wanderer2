@@ -21,29 +21,34 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
     private bool hasAtmosphere;
     private AtmoData atmoData;
     private Chunk[] chunks;
-
+    private CombineInstance[] combines;
 
     private void Build()
     {
         List<Tuple<CombineInstance, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture>> chunkData = new();
 
         // Parcourt les faces principales (chunks racines)
+
         foreach (var face in chunks)
         {
             face.CollectCombineData(chunkData);
         }
-        CombineInstance[] combines = new CombineInstance[chunkData.Count];
+        if (combines == null) combines = new CombineInstance[chunkData.Count];
+        if (combines.Length != chunkData.Count) combines = new CombineInstance[chunkData.Count];
         RenderTexture[] albedosTextures = new RenderTexture[chunkData.Count];
         RenderTexture[] normalsTextures = new RenderTexture[chunkData.Count];
         RenderTexture[] heightsTextures = new RenderTexture[chunkData.Count];
         RenderTexture[] metalicsTextures = new RenderTexture[chunkData.Count];
         RenderTexture[] rougnesssTextures = new RenderTexture[chunkData.Count];
         RenderTexture[] occlusionsTextures = new RenderTexture[chunkData.Count];
-        for (int i = 0; i < chunkData.Count; i++) (combines[i], albedosTextures[i], normalsTextures[i], heightsTextures[i], metalicsTextures[i], rougnesssTextures[i], occlusionsTextures[i]) = chunkData[i];
+        for (int i = 0; i < chunkData.Count; i++)
+        {
+            (combines[i], albedosTextures[i], normalsTextures[i], heightsTextures[i], metalicsTextures[i], rougnesssTextures[i], occlusionsTextures[i]) = chunkData[i];
+        }
         // Crée un mesh global combiné
-        Mesh combinedMesh = new Mesh();
+        Mesh combinedMesh = GetComponent<MeshFilter>().mesh;
+        combinedMesh.Clear();
         combinedMesh.CombineMeshes(combines, false, true);
-
 
         // ajuste le renderer
         Material[] m = new Material[combines.Length];
@@ -55,8 +60,8 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
             MaterialPropertyBlock mpb = new();
             mpb.SetTexture("_BaseMap", albedosTextures[i]);
             mpb.SetTexture("_BumpMap", normalsTextures[i]);
-            mpb.SetVector("_LightDirection", transform.parent.rotation*(transform.localPosition).normalized);
-            mpb.SetVector("_LightColor", new Vector3(1, 1 , 1));
+            mpb.SetVector("_LightDirection", transform.parent.rotation * (transform.localPosition).normalized);
+            mpb.SetVector("_LightColor", new Vector3(1, 1, 1));
             //TODO fix me?
             //mpb.SetTexture("_ParallaxMap", heightsTextures[i]);
             GetComponent<MeshRenderer>().SetPropertyBlock(mpb, i);
@@ -82,12 +87,13 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
             t.chunk.ConsumeChunkTask(t);
         }
         Build();
+        
     }
 
 
     public override void OnEnable()
     {
-        
+
         base.OnEnable();
         if (geometryGen) csMan = new(geometryGen);
         chunks = new Chunk[]{
@@ -104,9 +110,17 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
     public override void OnDisable()
     {
         chunks?.ToList().ForEach(c => c.Kill());
-        chunks=null;
+        chunks = null;
+#if UNITY_EDITOR
+        combines.ToList().ForEach(c => DestroyImmediate(c.mesh));
+        DestroyImmediate(GetComponent<MeshFilter>().mesh);
+#else
+        combines.ToList().Foreach(c => Destroy(c.mesh));
+        Destroy(GetComponent<MeshFilter>().mesh);
+#endif
         GetComponent<MeshFilter>().mesh = null;
         GetComponent<MeshRenderer>().SetMaterials(new());
+        Resources.UnloadUnusedAssets();
     }
     public override void Kill()
     {
@@ -122,7 +136,7 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
         bool IsKynematic,
         TerrainAtlas atlas, Material terrainMaterial,
         AtmoData atmoData,
-        float BiomeScale, float BiomeMul, 
+        float BiomeScale, float BiomeMul,
         Vector3 BiomeOffset, Biome[] biomes,
         ComputeShader geometryGen, int mLOD
     )

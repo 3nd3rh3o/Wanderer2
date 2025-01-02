@@ -33,6 +33,13 @@ public class Biome
     public float[] carverArguments = new float[0];
     [Range(0f, 1f)]
     public float blendingFactor = 0f;
+    [Range(0f, 1f)]
+    [Tooltip("Scale of the noise texture")]
+    public float TextureScale;
+    [Tooltip("Biome primary color")]
+    public Color PrimaryColor;
+    [Tooltip("Biome secondary color")]
+    public Color SecondaryColor;
     [Tooltip("Surface texture to use")]
     public int surfaceMaterial;
 
@@ -80,6 +87,21 @@ public class Biome
             }
         }
         return res;
+    }
+
+    internal float3 GetMainCol()
+    {
+        return new(PrimaryColor.r, PrimaryColor.g, PrimaryColor.b);
+    }
+
+    internal float3 GetSecCol()
+    {
+        return new(SecondaryColor.r, SecondaryColor.g, SecondaryColor.b);
+    }
+
+    internal float GetTexScale()
+    {
+        return TextureScale;
     }
 }
 
