@@ -31,10 +31,10 @@ Shader "Wanderer/Volumetric/Atmosphere"
             #include "fullscreenPassSetup.hlsl"
 
 
-            StructuredBuffer<float3> _PlanetPosition;
-            StructuredBuffer<float> _AtmosphereRadius;
-            StructuredBuffer<float> _PlanetRadius;
-            StructuredBuffer<float3> _lightDirection;
+            float3 _PlanetPosition;
+            float _AtmosphereRadius;
+            float _PlanetRadius;
+            float3 _LightDirection;
 
             float3 _ScatteringCoefficients;
             float _DensityFallOff;
@@ -74,7 +74,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
             {
                 
                 float heightAboveSurface = length(densitySamplePoint - _PlanetPosition) - _PlanetRadius;
-				float height01 = heightAboveSurface / (_AtmosphereRadius - _PlanetRadius);
+				float height01 = ((heightAboveSurface) / (_AtmosphereRadius - _PlanetRadius));
 				float localDensity = exp(-height01 * _DensityFallOff) * (1 - height01);
 				return localDensity;
             }
@@ -100,7 +100,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
                 float stepSize = rayLength / (_numScatteringPoints - 1);
                 float3 inScatteredLight = 0;
                 float viewRayOpticalDepth = 0;
-                for (int i = 0; i < _numScatteringPoints; i++)
+                /* for (int i = 0; i < _numScatteringPoints; i++)
                 {
                     float sunRayLength = raySphere(_PlanetPosition, _AtmosphereRadius, inScatterPoint, _LightDirection).y;
                     float sunRayOpticalDepth = opticalDepth(inScatterPoint, _LightDirection, sunRayLength);
@@ -111,7 +111,19 @@ Shader "Wanderer/Volumetric/Atmosphere"
                     inScatterPoint += rayDir * stepSize;
                 }
                 float originalColTransmittance = exp(-viewRayOpticalDepth);
-                return originalCol * originalColTransmittance + inScatteredLight;
+                return originalCol * originalColTransmittance + inScatteredLight; */
+                for (int i = 0; i < _numScatteringPoints; i++)
+                {
+                    float sunRayLength = raySphere(_PlanetPosition, _AtmosphereRadius, inScatterPoint, _LightDirection).y;
+                    float sunRayOpticalDepth = opticalDepth(inScatterPoint, _LightDirection, sunRayLength);
+                    viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
+                    float3 transmitance = exp(- (sunRayOpticalDepth + viewRayOpticalDepth) * _ScatteringCoefficients) ;
+                    float localDensity = densityAtPoint(inScatterPoint);
+                    inScatterPoint += rayDir * stepSize;
+                    inScatteredLight += localDensity * transmitance * stepSize * _ScatteringCoefficients;
+                }
+
+                return ((exp(-viewRayOpticalDepth) * originalCol) + inScatteredLight);
             }
 
             SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
@@ -131,12 +143,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
                 float dstThroughAtmosphere = min(hitInfo.y, dstToSurface - dstToAtmosphere);
 
                 //missed atmo
-                if (dstToAtmosphere == Max_float()|| 0>dstToSurface - hitInfo.x)
-                {
-                    surface.BaseColor = SampleSceneColor(IN.ScreenPosition.xy);
-                    surface.Alpha = float(1);
-                    return surface;
-                }
+                
                 float3 color = SampleSceneColor(IN.ScreenPosition.xy);
                /*  if (dstThroughAtmosphere > 0)
                 {
@@ -147,7 +154,9 @@ Shader "Wanderer/Volumetric/Atmosphere"
                 } */
                 if (dstThroughAtmosphere > 0)
                 {
-                    color = float3(1, 1, 1);
+                    float3 pointInAtmosphere = rayOrigin + rayDir * dstToAtmosphere;
+                    float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere, color);
+                    color = light;
                 }
 
                 surface.BaseColor = color;

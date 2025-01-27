@@ -102,7 +102,7 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
             
             atmosphereMat.SetVector("_ScatteringCoefficients", scattCoefs);
             atmosphereMat.SetFloat("_PlanetRadius", atmoData._PlanetRadius);
-            atmosphereMat.SetFloat("_AtmosphereRadius", atmoData._AtmosphereRadius);
+            atmosphereMat.SetFloat("_AtmosphereRadius", (1 + atmoData._AtmosphereRadius * .1f) * atmoData._PlanetRadius);
             atmosphereMat.SetFloat("_DensityFallOff", atmoData._DensityFalloff);
         }
         
