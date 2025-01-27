@@ -2,7 +2,6 @@ Shader "Wanderer/Volumetric/Atmosphere"
 {
     Properties
     {
-        _AtmosphereRadius ("Radius", Range(0, 1000)) = 100
         _numScatteringPoints ("Number of scattering points", Range(1, 100)) = 1
         _numOpticalDepthPoints ("Number of Optical Depth points", Range(1, 100)) = 1
         _DensityFallOff ("Atmosphere density falloff", Range(-10, 60)) = 1
@@ -31,14 +30,16 @@ Shader "Wanderer/Volumetric/Atmosphere"
 
             #include "fullscreenPassSetup.hlsl"
 
-            float3 _PlanetPosition;
+
+            StructuredBuffer<float3> _PlanetPosition;
+            StructuredBuffer<float> _AtmosphereRadius;
+            StructuredBuffer<float> _PlanetRadius;
+            StructuredBuffer<float3> _lightDirection;
+
             float3 _ScatteringCoefficients;
-            float _AtmosphereRadius;
             float _DensityFallOff;
-            float _PlanetRadius;
             float _numScatteringPoints;
             float _numOpticalDepthPoints;
-            float3 _LightDirection;
 
 
 
@@ -117,6 +118,8 @@ Shader "Wanderer/Volumetric/Atmosphere"
             {
                 SurfaceDescription surface = (SurfaceDescription)0;
                 float dstToSurface = length(IN.WorldSpacePosition - _WorldSpaceCameraPos);
+
+                
                 
                 
                 float3 rayOrigin = _WorldSpaceCameraPos;
@@ -135,16 +138,19 @@ Shader "Wanderer/Volumetric/Atmosphere"
                     return surface;
                 }
                 float3 color = SampleSceneColor(IN.ScreenPosition.xy);
-                if (dstThroughAtmosphere > 0)
+               /*  if (dstThroughAtmosphere > 0)
                 {
                     float3 pointInAtmosphere = rayOrigin + rayDir * dstToAtmosphere;
                     float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere, color);
                     color = light; 
+                } */
+                if (dstThroughAtmosphere > 0)
+                {
+                    color = float3(1, 1, 1);
                 }
 
-
                 surface.BaseColor = color;
-                surface.Alpha = float(dstThroughAtmosphere/(2*_AtmosphereRadius));
+                surface.Alpha = 1;
                 return surface;
             }
             
