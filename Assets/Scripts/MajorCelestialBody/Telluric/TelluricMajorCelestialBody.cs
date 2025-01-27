@@ -123,14 +123,14 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
 
         base.OnEnable();
         if (geometryGen) csMan = new(geometryGen);
-        chunks = new Chunk[]{
+/*         chunks = new Chunk[]{
             new(new Vector3(0, radius, 0), radius * 2, 0, mLOD, radius, csMan, BiomeScale, BiomeMul, BiomeOffset, biomes, atlas.atlas, 0),
             new(new Vector3(0, -radius, 0), radius * 2, 1, mLOD, radius, csMan, BiomeScale, BiomeMul, BiomeOffset, biomes, atlas.atlas, 0),
             new(new Vector3(0, 0, radius), radius * 2, 2, mLOD, radius, csMan, BiomeScale, BiomeMul, BiomeOffset, biomes, atlas.atlas, 0),
             new(new Vector3(0, 0, -radius), radius * 2, 3, mLOD, radius, csMan, BiomeScale, BiomeMul, BiomeOffset, biomes, atlas.atlas, 0),
             new(new Vector3(radius, 0, 0), radius * 2, 4, mLOD, radius, csMan, BiomeScale, BiomeMul, BiomeOffset, biomes, atlas.atlas, 0),
             new(new Vector3(-radius, 0, 0), radius * 2, 5, mLOD, radius, csMan, BiomeScale, BiomeMul, BiomeOffset, biomes, atlas.atlas, 0)
-        };
+        }; */
         Build();
     }
 

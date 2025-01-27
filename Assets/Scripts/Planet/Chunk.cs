@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Unity.Collections;
+using Wanderer;
 
 
 public class Chunk
@@ -61,7 +62,7 @@ public class Chunk
     private float BMul;
     private Vector3 BOff;
 
-    private Biome[] biomes;
+    private BiomePool biomes;
 
     public void CollectCombineData(List<Tuple<CombineInstance, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture, RenderTexture>> combineInstances)
     {
@@ -89,7 +90,7 @@ public class Chunk
     }
 
 
-    public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, Biome[] biomes, Texture3D[][] refs, int lvl)
+    public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, BiomePool biomes, Texture3D[][] refs, int lvl)
     {
         this.lvl = lvl;
         this.gRad = gRad;
@@ -129,7 +130,7 @@ public class Chunk
         cachedMesh = ToMesh(GenNHMap(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, size))))));
     }
 
-    public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, Biome[] biomes, Texture3D[][] refs, int lvl, RenderTexture[] parent_tex, int posRelToParent)
+    public Chunk(Vector3 center, float size, int Dir, int LOD, float gRad, ChunkNHMapCSManager csMan, float BSca, float BMul, Vector3 BOff, BiomePool biomes, Texture3D[][] refs, int lvl, RenderTexture[] parent_tex, int posRelToParent)
     {
         this.lvl = lvl;
         this.gRad = gRad;

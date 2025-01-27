@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
+using Wanderer;
 
 
 public static class ChunkNHMapCSManagerUtils
@@ -53,22 +54,22 @@ public class ChunkNHMapCSManager
     }
 
 
-    public void GenMap(Texture3D[][] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, int LOD, int lvl, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, Biome[] biomes, RenderTexture[] parent_tex, int posRelToParent)
+    public void GenMap(Texture3D[][] refs, RenderTexture albedo, RenderTexture ambientOclusion, RenderTexture metalic, RenderTexture roughness, RenderTexture normalMap, RenderTexture height, int LOD, int lvl, Vector3[] v, Vector3[] n, Color[] c, Vector3 origin, Vector3 mx, Vector3 my, float gRad, float scale, float multiplier, Vector3 offset, BiomePool biomes, RenderTexture[] parent_tex, int posRelToParent)
     {
         ComputeBuffer vBuff = new ComputeBuffer(v.Length, sizeof(float)*3);
         ComputeBuffer nBuff = new ComputeBuffer(n.Length, sizeof(float)*3);
         ComputeBuffer cBuff = new ComputeBuffer(c.Length, sizeof(float)*4);
-        ComputeBuffer bMinPredsBuff = new ComputeBuffer(biomes.Length, sizeof(float)*4);
-        ComputeBuffer bMaxPredsBuff = new ComputeBuffer(biomes.Length, sizeof(float)*4);
-        ComputeBuffer genToUseBuff = new ComputeBuffer(biomes.Length, sizeof(int));
-        ComputeBuffer paramsOfGenBuff = new ComputeBuffer(biomes.Length, sizeof(float)*16);
-        ComputeBuffer bBlendBuff = new ComputeBuffer(biomes.Length, sizeof(float));
-        ComputeBuffer bDebugColorBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
-        ComputeBuffer bPColBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
-        ComputeBuffer bSColBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
-        ComputeBuffer bTexOffsetBuff = new ComputeBuffer(biomes.Length, sizeof(float) * 3);
-        ComputeBuffer bTexScaleBuff = new ComputeBuffer(biomes.Length, sizeof(float));
-        ComputeBuffer bTexIdsBuff = new ComputeBuffer(biomes.Length, sizeof(int));
+        ComputeBuffer bMinPredsBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float)*4);
+        ComputeBuffer bMaxPredsBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float)*4);
+        ComputeBuffer genToUseBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(int));
+        ComputeBuffer paramsOfGenBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float)*16);
+        ComputeBuffer bBlendBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float));
+        ComputeBuffer bDebugColorBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bPColBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bSColBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bTexOffsetBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float) * 3);
+        ComputeBuffer bTexScaleBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(float));
+        ComputeBuffer bTexIdsBuff = new ComputeBuffer(biomes.biomes.Length, sizeof(int));
 
 
 
@@ -76,18 +77,18 @@ public class ChunkNHMapCSManager
         float3[] vA = new float3[v.Length];
         float3[] nA = new float3[n.Length];
         float4[] cA = new float4[c.Length];
-        float4[] bMinPreds = new float4[biomes.Length];
-        float4[] bMaxPreds = new float4[biomes.Length];
-        float3[] bDebugColor = new float3[biomes.Length];
+        float4[] bMinPreds = new float4[biomes.biomes.Length];
+        float4[] bMaxPreds = new float4[biomes.biomes.Length];
+        float3[] bDebugColor = new float3[biomes.biomes.Length];
         
-        float3[] bPCol = new float3[biomes.Length];
-        float3[] bSCol = new float3[biomes.Length];
-        float3[] bTexOffset = new float3[biomes.Length];
-        float[] biomeTexScale = new float[biomes.Length];
-        int[] bGen = new int[biomes.Length];
-        float4x4[] bGenP = new float4x4[biomes.Length];
-        float[] bBlend = new float[biomes.Length];
-        int[] bTexIds = new int[biomes.Length];
+        float3[] bPCol = new float3[biomes.biomes.Length];
+        float3[] bSCol = new float3[biomes.biomes.Length];
+        float3[] bTexOffset = new float3[biomes.biomes.Length];
+        float[] biomeTexScale = new float[biomes.biomes.Length];
+        int[] bGen = new int[biomes.biomes.Length];
+        float4x4[] bGenP = new float4x4[biomes.biomes.Length];
+        float[] bBlend = new float[biomes.biomes.Length];
+        int[] bTexIds = new int[biomes.biomes.Length];
 
         for (int i = 0; i < v.Length; i++)
         {
@@ -96,19 +97,19 @@ public class ChunkNHMapCSManager
             cA[i] = new float4(c[i].r * 2f - 1f, c[i].g * 2f - 1f, c[i].b * 2f - 1f, c[i].a * 2f - 1f);
         };
 
-        for (int i = 0; i < biomes.Length; i++)
+        for (int i = 0; i < biomes.biomes.Length; i++)
         {
-            bMinPreds[i] = biomes[i].GetMinPreds();
-            bMaxPreds[i] = biomes[i].GetMaxPreds();
-            bGen[i] = biomes[i].GetGenToUse();
-            bGenP[i] = biomes[i].GetGenParams();
-            bBlend[i] = biomes[i].GetTolerance();
-            bDebugColor[i] = biomes[i].GetColor();
-            bPCol[i] = biomes[i].GetMainCol();
-            bSCol[i] = biomes[i].GetSecCol();
-            bTexOffset[i] = biomes[i].GetBiomeTexOffset();
-            biomeTexScale[i] = biomes[i].GetTexScale();
-            bTexIds[i] = biomes[i].GetTexIds();
+            bMinPreds[i] = biomes.biomes[i].GetMinPreds();
+            bMaxPreds[i] = biomes.biomes[i].GetMaxPreds();
+            bGen[i] = 1;
+            bGenP[i] = biomes.biomes[i].GetGenParams();
+            bBlend[i] = biomes.biomes[i].GetTolerance();
+            bDebugColor[i] = biomes.biomes[i].GetColor();
+            bPCol[i] = biomes.biomes[i].GetMainCol();
+            bSCol[i] = biomes.biomes[i].GetSecCol();
+            bTexOffset[i] = biomes.biomes[i].GetBiomeTexOffset();
+            biomeTexScale[i] = biomes.biomes[i].GetTexScale();
+            bTexIds[i] = biomes.biomes[i].GetTexIds();
         }
 
         vBuff.SetData(vA);
@@ -191,7 +192,7 @@ public class ChunkNHMapCSManager
         cs.SetVector("_offset", new Vector4(offset.x, offset.y, offset.z, 0));
 
 
-        cs.SetInt("_numBiomes", biomes.Length);
+        cs.SetInt("_numBiomes", biomes.biomes.Length);
         cs.SetBuffer(1, "_genToUse", genToUseBuff);
         cs.SetBuffer(1, "_paramsOfGen", paramsOfGenBuff);
         cs.SetBuffer(1, "_biomeDebugColor", bDebugColorBuff);
