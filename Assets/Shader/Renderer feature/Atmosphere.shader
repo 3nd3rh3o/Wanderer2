@@ -18,7 +18,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
             
             // Render State
             Cull Off
-            Blend One Zero, One Zero
+            Blend SrcColor One, OneMinusSrcAlpha One
             ZTest Off
             ZWrite Off
             
@@ -137,6 +137,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
                 float3 color = SampleSceneColor(IN.ScreenPosition.xy);
                 if (dstThroughAtmosphere > 0)
                 {
+                    const float epsilon = 0.0001;
                     float3 pointInAtmosphere = rayOrigin + rayDir * dstToAtmosphere;
                     float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere, color);
                     color = light; 
@@ -144,7 +145,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
 
 
                 surface.BaseColor = color;
-                surface.Alpha = float(dstThroughAtmosphere/(2*_AtmosphereRadius));
+                surface.Alpha = float(dstThroughAtmosphere/(2*_AtmosphereRadius*dstThroughAtmosphere));
                 return surface;
             }
             

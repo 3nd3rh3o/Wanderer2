@@ -69,4 +69,14 @@ public class IMajorCellestialBody : MonoBehaviour
         this.initialOrientation = initialOrientation;
         this.IsKynematic = IsKynematic;
     }
+
+    public virtual bool HasAtmo()
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual Material GetAtmoMat()
+    {
+        throw new NotImplementedException();
+    }
 }

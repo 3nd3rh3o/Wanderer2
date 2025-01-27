@@ -19,9 +19,11 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
     private Queue<ChunkTask> queue = new();
     private ChunkNHMapCSManager csMan;
     private bool hasAtmosphere;
-    private AtmoData atmoData;
+    public AtmoData atmoData;
+    private Material atmosphereMat;
     private Chunk[] chunks;
     private CombineInstance[] combines;
+    private Transform ParentTransform;
 
     private void Build()
     {
@@ -87,9 +89,34 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
             t.chunk.ConsumeChunkTask(t);
         }
         Build();
+        if (atmoData != null)
+        {
+            atmoData._lightDirection = (ParentTransform.position-transform.position).normalized;
+            atmoData._PlanetPosition = transform.position;
+        }
+        if (atmosphereMat != null)
+        {
+            atmosphereMat.SetVector("_PlanetPosition", this.transform.position);
+            atmosphereMat.SetVector("_LightDirection", atmoData._lightDirection);
+            Vector3 scattCoefs = new Vector3(Mathf.Pow(1/atmoData._ScatteringCoefficients.x, 4), Mathf.Pow(1/atmoData._ScatteringCoefficients.y, 4), Mathf.Pow(1/atmoData._ScatteringCoefficients.z, 4)) * atmoData._ScatteringStrenght;
+            
+            atmosphereMat.SetVector("_ScatteringCoefficients", scattCoefs);
+            atmosphereMat.SetFloat("_PlanetRadius", atmoData._PlanetRadius);
+            atmosphereMat.SetFloat("_AtmosphereRadius", atmoData._AtmosphereRadius);
+            atmosphereMat.SetFloat("_DensityFallOff", atmoData._DensityFalloff);
+        }
         
     }
 
+    public override bool HasAtmo()
+    {
+        return hasAtmosphere;
+    }
+
+    public override Material GetAtmoMat()
+    {
+        return atmosphereMat;
+    }
 
     public override void OnEnable()
     {
@@ -135,10 +162,11 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
         Vector3 initialTorque, Vector3 initialOrientation,
         bool IsKynematic,
         TerrainAtlas atlas, Material terrainMaterial,
-        AtmoData atmoData,
+        AtmoData atmoData, Material atmoMat,
         float BiomeScale, float BiomeMul,
         Vector3 BiomeOffset, Biome[] biomes,
-        ComputeShader geometryGen, int mLOD
+        ComputeShader geometryGen, int mLOD,
+        Transform parentTransform
     )
     {
         base.Init(radius, mass, initialVelocity, initialPosition, initialTorque, initialOrientation, IsKynematic);
@@ -151,7 +179,9 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
         else
         {
             hasAtmosphere = true;
+            atmosphereMat = new Material(atmoMat);
             this.atmoData = atmoData;
+            
         }
         this.BiomeScale = BiomeScale;
         this.BiomeMul = BiomeMul;
@@ -159,6 +189,7 @@ public class TelluricMajorCelestialBody : IMajorCellestialBody
         this.biomes = biomes;
         this.geometryGen = geometryGen;
         this.mLOD = mLOD;
+        this.ParentTransform = parentTransform;
         gameObject.SetActive(true);
     }
 }

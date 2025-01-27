@@ -97,6 +97,7 @@ Shader "Wanderer/Terrain/Planet"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
 
             #include "UnityCG.cginc"
             struct VertexInput
@@ -156,8 +157,11 @@ Shader "Wanderer/Terrain/Planet"
 
                 // Ajout d'une dispersion atmosphérique (optionnel)
                 surface.lighting = ApplyAtmosphericScattering(surface.lighting, input.positionCS);
-
+                #ifdef _MAIN_LIGHT_SHADOWS
                 col = half4(surface.baseColor * surface.lighting, 1.0);
+                #else
+                col = half4(surface.baseColor, 1.0);
+                #endif
             }
             ENDHLSL
         }

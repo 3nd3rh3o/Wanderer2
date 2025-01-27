@@ -11,9 +11,9 @@ public class SolarSystemManager : MonoBehaviour
     public Material TelluricPlanetSurfaceShader;
     public Material PlanetAtmosphereShader;
     [SerializeField]
-    public AtmosphereFullScreenPassRendererFeature atmosphereRFClose;
+    public MultiMaterialFullScreenPassRendererFeature atmosphereRFClose;
     [SerializeField]
-    public AtmosphereFullScreenPassRendererFeature atmosphereRFFar;
+    public MultiMaterialFullScreenPassRendererFeature atmosphereRFFar;
     private SolarSystemsData solarSystemsData;
 
     //Solar system
@@ -30,7 +30,7 @@ public class SolarSystemManager : MonoBehaviour
         solarSystemGO.transform.position = currentSystemData.GetPosition();
         solarSystemGO.transform.rotation = Quaternion.Euler(currentSystemData.GetOrientation());
         SolarSystem solarSystem = solarSystemGO.AddComponent<SolarSystem>();
-        solarSystem.LoadData(currentSystemData, telluricAtlas, TelluricPlanetSurfaceGeometryShader, TelluricPlanetSurfaceShader);
+        solarSystem.LoadData(currentSystemData, telluricAtlas, TelluricPlanetSurfaceGeometryShader, TelluricPlanetSurfaceShader, PlanetAtmosphereShader);
         currentSys = solarSystem;
     }
     void OnDisable()
@@ -39,18 +39,24 @@ public class SolarSystemManager : MonoBehaviour
         Destroy(transform.GetChild(0).gameObject);
         currentSys = null;
         telluricAtlas.Cleanup();
+        atmosphereRFClose.passMaterial = new Material[0];
+        atmosphereRFFar.passMaterial = new Material[0];
     }
 
     void Update()
     {
         //Handle registration of planets in atmosphere shader.
-        List<AtmoData> atmoDatas = currentSys.GetAtmoData();
+        List<Material> atmoDatas = currentSys.GetAtmoData();
         if (atmoDatas.Count == 0) {
             atmosphereRFClose.enabled = false;
             atmosphereRFFar.enabled = false;
+            atmosphereRFClose.passMaterial = new Material[0];
+            atmosphereRFFar.passMaterial = new Material[0];
         } else {
             atmosphereRFClose.enabled = true;
             atmosphereRFFar.enabled = true;
+            atmosphereRFClose.passMaterial = atmoDatas.ToArray();
+            atmosphereRFFar.passMaterial = atmoDatas.ToArray();
         }
         //Construct arrays to send to the atmosphere shader.
         

@@ -438,25 +438,55 @@ MonoBehaviour:
     MCB:
     - name: Helios
       type: 0
-      position: {x: 0, y: 0, z: 0}
+      position: {x: -15.56, y: 0, z: 0}
       initialVelocity: {x: 0, y: 0, z: 0}
       initialTorque: {x: 0, y: 0, z: 0}
-      radius: 0
+      radius: 100
       mass: 1000
       orientationE: {x: 0, y: 0, z: 0}
       isKynematic: 1
       hasAtmo: 0
       atmoData:
         _lightDirection: {x: 0, y: 0, z: 0}
-        _lightColor: {x: 0, y: 0, z: 0}
-        _ScatteringCoeafficients: {x: 0, y: 0, z: 0}
+        _ScatteringCoefficients: {x: 150, y: 430, z: 500}
         _PlanetPosition: {x: 0, y: 0, z: 0}
-        _AtmosphereRadius: 0
-        _PlanetRadius: 0
-      BiomeScaleAndMultiplier: {x: 0, y: 0}
+        _AtmosphereRadius: 50
+        _PlanetRadius: 90
+        _DensityFalloff: 10
+        _ScatteringStrenght: 1
+      BiomeScaleAndMultiplier: {x: 1, y: 0.07}
       BiomeOffset: {x: 0, y: 0, z: 0}
-      MaxLOD: 0
-      biomes: []
+      MaxLOD: 3
+      biomes:
+      - name: ee
+        IntegrationParams:
+          PredicateMin:
+            altitude: -1
+            temperature: -1
+            humidity: -1
+            latitude: -1
+          PredicateMax:
+            altitude: 1
+            temperature: 1
+            humidity: 1
+            latitude: 1
+          blendingFactor: 0.383
+        carver: 1
+        carverArguments:
+        - 1
+        - 0.05
+        - 0
+        - 0
+        - 0
+        SurfaceTexture:
+          TextureScale: 0.675
+          offset: {x: 0, y: 0, z: 0}
+          PrimaryColor: {r: 1, g: 1, b: 1, a: 0}
+          SecondaryColor: {r: 1, g: 1, b: 1, a: 0}
+          heightScale: 0.278
+          heightMul: 0.462
+          surfaceDetailMaterial: 0
+          DebugColor: {r: 1, g: 1, b: 1, a: 0}
       moons: []
     - name: DULLROCK
       type: 1
@@ -470,11 +500,12 @@ MonoBehaviour:
       hasAtmo: 1
       atmoData:
         _lightDirection: {x: 0, y: 0, z: 0}
-        _lightColor: {x: 0, y: 0, z: 0}
-        _ScatteringCoeafficients: {x: 0, y: 0, z: 0}
+        _ScatteringCoefficients: {x: 700, y: 530, z: 440}
         _PlanetPosition: {x: 0, y: 0, z: 0}
-        _AtmosphereRadius: 0
-        _PlanetRadius: 0
+        _AtmosphereRadius: 321
+        _PlanetRadius: 231
+        _DensityFalloff: 10
+        _ScatteringStrenght: 142.9
       BiomeScaleAndMultiplier: {x: 1, y: 0.04}
       BiomeOffset: {x: 0, y: 0, z: 0}
       MaxLOD: 4
@@ -552,11 +583,12 @@ MonoBehaviour:
         hasAtmo: 0
         atmoData:
           _lightDirection: {x: 0, y: 0, z: 0}
-          _lightColor: {x: 0, y: 0, z: 0}
-          _ScatteringCoeafficients: {x: 0, y: 0, z: 0}
+          _ScatteringCoefficients: {x: 0, y: 0, z: 0}
           _PlanetPosition: {x: 0, y: 0, z: 0}
           _AtmosphereRadius: 0
           _PlanetRadius: 0
+          _DensityFalloff: 0
+          _ScatteringStrenght: 0
         BiomeScaleAndMultiplier: {x: 0, y: 0}
         BiomeOffset: {x: 0, y: 0, z: 0}
         MaxLOD: 0
