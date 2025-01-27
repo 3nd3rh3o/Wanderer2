@@ -502,7 +502,7 @@ MonoBehaviour:
         _lightDirection: {x: 0, y: 0, z: 0}
         _ScatteringCoefficients: {x: 700, y: 530, z: 440}
         _PlanetPosition: {x: 0, y: 0, z: 0}
-        _AtmosphereRadius: 1.5
+        _AtmosphereRadius: 1
         _PlanetRadius: 231
         _DensityFalloff: 10
         _ScatteringStrenght: 142.9

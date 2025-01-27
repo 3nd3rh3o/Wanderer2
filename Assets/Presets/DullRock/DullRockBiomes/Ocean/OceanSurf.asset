@@ -9,6 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9c62f5bd66d3ad41916722b6344c1fc, type: 3}
-  m_Name: DullRockAtmo
+  m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
+  m_Name: OceanSurf
   m_EditorClassIdentifier: 
+  Scale: 0.108
+  Multiplier: 0.261
+  VerticalShift: 0
+  Offset: {x: 0, y: 0, z: 0}
+  NumLayers: 4
+  Lacunarity: 0
+  DebugColor: {r: 0, g: 0.5001211, b: 1, a: 1}

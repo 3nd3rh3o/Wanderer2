@@ -1,7 +1,12 @@
 using UnityEngine;
-
-[CreateAssetMenu(fileName = "BiomeSetting", menuName = "Scriptable Objects/BiomeSetting")]
-public class BiomeSetting : ScriptableObject
+namespace Wanderer
 {
-    
+    [CreateAssetMenu(fileName = "BiomeSetting", menuName = "Wanderer/Planet/BiomeSetting")]
+    public class BiomeSetting : ScriptableObject
+    {
+        public string Name;
+        public BiomePredicate MinPredicate;
+        public BiomePredicate MaxPredicate;
+        public NoiseSettings TopologySettings;
+    }
 }

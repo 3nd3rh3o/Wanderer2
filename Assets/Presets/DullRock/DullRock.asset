@@ -20,3 +20,4 @@ MonoBehaviour:
   mass: 10
   isKynematic: 0
   atmosphereSettings: {fileID: 11400000, guid: c68874f769983d544bb90cde42cf79c5, type: 2}
+  biomes: {fileID: 11400000, guid: aec5ebdb43dd06047bb412be58c839f1, type: 2}
