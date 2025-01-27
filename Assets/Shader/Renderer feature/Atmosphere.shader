@@ -2,7 +2,6 @@ Shader "Wanderer/Volumetric/Atmosphere"
 {
     Properties
     {
-        _AtmosphereRadius ("Radius", Range(0, 1000)) = 100
         _numScatteringPoints ("Number of scattering points", Range(1, 100)) = 1
         _numOpticalDepthPoints ("Number of Optical Depth points", Range(1, 100)) = 1
         _DensityFallOff ("Atmosphere density falloff", Range(-10, 60)) = 1
@@ -31,14 +30,16 @@ Shader "Wanderer/Volumetric/Atmosphere"
 
             #include "fullscreenPassSetup.hlsl"
 
+
             float3 _PlanetPosition;
-            float3 _ScatteringCoefficients;
             float _AtmosphereRadius;
-            float _DensityFallOff;
             float _PlanetRadius;
+            float3 _LightDirection;
+
+            float3 _ScatteringCoefficients;
+            float _DensityFallOff;
             float _numScatteringPoints;
             float _numOpticalDepthPoints;
-            float3 _LightDirection;
 
 
 
@@ -73,7 +74,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
             {
                 
                 float heightAboveSurface = length(densitySamplePoint - _PlanetPosition) - _PlanetRadius;
-				float height01 = heightAboveSurface / (_AtmosphereRadius - _PlanetRadius);
+				float height01 = ((heightAboveSurface) / (_AtmosphereRadius - _PlanetRadius));
 				float localDensity = exp(-height01 * _DensityFallOff) * (1 - height01);
 				return localDensity;
             }
@@ -99,7 +100,7 @@ Shader "Wanderer/Volumetric/Atmosphere"
                 float stepSize = rayLength / (_numScatteringPoints - 1);
                 float3 inScatteredLight = 0;
                 float viewRayOpticalDepth = 0;
-                for (int i = 0; i < _numScatteringPoints; i++)
+                /* for (int i = 0; i < _numScatteringPoints; i++)
                 {
                     float sunRayLength = raySphere(_PlanetPosition, _AtmosphereRadius, inScatterPoint, _LightDirection).y;
                     float sunRayOpticalDepth = opticalDepth(inScatterPoint, _LightDirection, sunRayLength);
@@ -110,13 +111,27 @@ Shader "Wanderer/Volumetric/Atmosphere"
                     inScatterPoint += rayDir * stepSize;
                 }
                 float originalColTransmittance = exp(-viewRayOpticalDepth);
-                return originalCol * originalColTransmittance + inScatteredLight;
+                return originalCol * originalColTransmittance + inScatteredLight; */
+                for (int i = 0; i < _numScatteringPoints; i++)
+                {
+                    float sunRayLength = raySphere(_PlanetPosition, _AtmosphereRadius, inScatterPoint, _LightDirection).y;
+                    float sunRayOpticalDepth = opticalDepth(inScatterPoint, _LightDirection, sunRayLength);
+                    viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
+                    float3 transmitance = exp(- (sunRayOpticalDepth + viewRayOpticalDepth) * _ScatteringCoefficients) ;
+                    float localDensity = densityAtPoint(inScatterPoint);
+                    inScatterPoint += rayDir * stepSize;
+                    inScatteredLight += localDensity * transmitance * stepSize * _ScatteringCoefficients;
+                }
+
+                return ((exp(-viewRayOpticalDepth) * originalCol) + inScatteredLight);
             }
 
             SurfaceDescription SurfaceDescriptionFunction(SurfaceDescriptionInputs IN)
             {
                 SurfaceDescription surface = (SurfaceDescription)0;
                 float dstToSurface = length(IN.WorldSpacePosition - _WorldSpaceCameraPos);
+
+                
                 
                 
                 float3 rayOrigin = _WorldSpaceCameraPos;
@@ -128,24 +143,24 @@ Shader "Wanderer/Volumetric/Atmosphere"
                 float dstThroughAtmosphere = min(hitInfo.y, dstToSurface - dstToAtmosphere);
 
                 //missed atmo
-                if (dstToAtmosphere == Max_float()|| 0>dstToSurface - hitInfo.x)
-                {
-                    surface.BaseColor = SampleSceneColor(IN.ScreenPosition.xy);
-                    surface.Alpha = float(1);
-                    return surface;
-                }
+                
                 float3 color = SampleSceneColor(IN.ScreenPosition.xy);
-                if (dstThroughAtmosphere > 0)
+               /*  if (dstThroughAtmosphere > 0)
                 {
                     const float epsilon = 0.0001;
                     float3 pointInAtmosphere = rayOrigin + rayDir * dstToAtmosphere;
                     float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere, color);
                     color = light; 
+                } */
+                if (dstThroughAtmosphere > 0)
+                {
+                    float3 pointInAtmosphere = rayOrigin + rayDir * dstToAtmosphere;
+                    float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere, color);
+                    color = light;
                 }
 
-
                 surface.BaseColor = color;
-                surface.Alpha = float(dstThroughAtmosphere/(2*_AtmosphereRadius*dstThroughAtmosphere));
+                surface.Alpha = 1;
                 return surface;
             }
             

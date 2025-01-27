@@ -186,6 +186,7 @@ public class AtmoData
     [SerializeField]
     public Vector3 _PlanetPosition;
     [SerializeField]
+    [Range(0f, 1f)]
     public float _AtmosphereRadius;
     [SerializeField]
     public float _PlanetRadius;
