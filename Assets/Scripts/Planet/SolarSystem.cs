@@ -12,6 +12,7 @@ public class SolarSystem : MonoBehaviour
     private TerrainAtlas telluricAtlas;
     private ComputeShader geoTelluricCS;
     private Material telluricTerrainMat;
+    private Material atmosphereMat;
 
     List<IMajorCellestialBody> planets;
     void OnEnable()
@@ -29,7 +30,7 @@ public class SolarSystem : MonoBehaviour
                     planetGO.AddComponent<MeshFilter>();
                     planetGO.AddComponent<MeshRenderer>();
                     TelluricMajorCelestialBody planet = planetGO.AddComponent<TelluricMajorCelestialBody>();
-                    planet.Init(p.GetRadius(), p.GetMass(), p.GetInitialVelocity(), p.GetInitialPosition(), p.GetInitialTorque(), p.GetInitialOrientation(), p.IsKynematic(), telluricAtlas, telluricTerrainMat, p.HasAtmosphere()? p.GetAtmoData() : null, p.GetBiomeScale(), p.GetBiomeMul(), p.GetBiomeOffset(), p.GetBiomes().ToArray(), geoTelluricCS, p.GetMLOD());
+                    planet.Init(p.GetRadius(), p.GetMass(), p.GetInitialVelocity(), p.GetInitialPosition(), p.GetInitialTorque(), p.GetInitialOrientation(), p.IsKynematic(), telluricAtlas, telluricTerrainMat, p.HasAtmosphere()? p.GetAtmoData() : null, p.HasAtmosphere()? atmosphereMat : null , p.GetBiomeScale(), p.GetBiomeMul(), p.GetBiomeOffset(), p.GetBiomes().ToArray(), geoTelluricCS, p.GetMLOD(), transform);
                     
                     planets.Add(planet);
                     break;
@@ -52,12 +53,13 @@ public class SolarSystem : MonoBehaviour
 
     }
 
-    public void LoadData(SolarSystemData data, TerrainAtlas telluricAtlas, ComputeShader geoTelluricCS, Material telluricTerrainMat)
+    public void LoadData(SolarSystemData data, TerrainAtlas telluricAtlas, ComputeShader geoTelluricCS, Material telluricTerrainMat, Material atmosphereMat)
     {
         this.data = data;
         this.telluricAtlas = telluricAtlas;
         this.geoTelluricCS = geoTelluricCS;
         this.telluricTerrainMat = telluricTerrainMat;
+        this.atmosphereMat = atmosphereMat;
         gameObject.SetActive(true);
     }
 
@@ -72,12 +74,12 @@ public class SolarSystem : MonoBehaviour
         
     }
 
-    public List<AtmoData> GetAtmoData()
+    public List<Material> GetAtmoData()
     {
-        List<AtmoData> res = new();
+        List<Material> res = new();
         planets?.ForEach(p => 
         {
-            
+            if (p.HasAtmo()) res.Add(p.GetAtmoMat());
         });
         return res;
     }

@@ -180,15 +180,15 @@ public class MajorCelestialBodyMoonData
 public class AtmoData
 {
     [SerializeField]
-    private Vector3 _lightDirection;
+    public Vector3 _lightDirection;
     [SerializeField]
-    private Vector3 _lightColor;
+    public Vector3 _ScatteringCoefficients;
     [SerializeField]
-    private Vector3 _ScatteringCoeafficients;
+    public Vector3 _PlanetPosition;
     [SerializeField]
-    private Vector3 _PlanetPosition;
+    public float _AtmosphereRadius;
     [SerializeField]
-    private float _AtmosphereRadius;
-    [SerializeField]
-    private float _PlanetRadius;
+    public float _PlanetRadius;
+    public float _DensityFalloff;
+    public float _ScatteringStrenght;
 }

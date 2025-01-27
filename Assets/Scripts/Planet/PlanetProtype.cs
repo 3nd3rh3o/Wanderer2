@@ -13,7 +13,7 @@ public class PlanetPrototype : MonoBehaviour
     public Material sharedMat;
     public Material atmosphereMat;
     public float AtmosphereRadius = 0f;
-    public AtmosphereFullScreenPassRendererFeature atmosphere;
+    public MultiMaterialFullScreenPassRendererFeature atmosphere;
     public float PlanetAtmRad;
     public ComputeShader cs;
     private ChunkNHMapCSManager csMan;

@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5870bcae04f971248bef59fb6d6c0257, type: 3}
   m_Name: AtmosphereFullScreenPassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 550
   fetchColorBuffer: 1
   requirements: 4
-  passMaterial: {fileID: 2100000, guid: a42fa05f9c5565e47822f73ecb2aadc6, type: 2}
+  passMaterial: []
   passIndex: 0
   bindDepthStencilAttachment: 0
-  enabled: 0
+  enabled: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,26 +7,12 @@ using UnityEngine.Experimental.Rendering;
 
 
 [Serializable]
-public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendererFeature
+public partial class MultiMaterialFullScreenPassRendererFeature : ScriptableRendererFeature
 {
-    /// <summary>
-    /// An injection point for the full screen pass. This is similar to the RenderPassEvent enum but limited to only supported events.
-    /// </summary>
     public enum InjectionPoint
     {
-        /// <summary>
-        /// Inject a full screen pass before transparents are rendered.
-        /// </summary>
         BeforeRenderingTransparents = RenderPassEvent.BeforeRenderingTransparents,
-
-        /// <summary>
-        /// Inject a full screen pass before post processing is rendered.
-        /// </summary>
         BeforeRenderingPostProcessing = RenderPassEvent.BeforeRenderingPostProcessing,
-
-        /// <summary>
-        /// Inject a full screen pass after post processing is rendered.
-        /// </summary>
         AfterRenderingPostProcessing = RenderPassEvent.AfterRenderingPostProcessing
     }
 
@@ -51,7 +37,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
     /// <summary>
     /// The material used to render the full screen pass (typically based on the Fullscreen Shader Graph target).
     /// </summary>
-    public Material passMaterial;
+    public Material[] passMaterial;
 
     /// <summary>
     /// The shader pass index that should be used when rendering the assigned material.
@@ -65,12 +51,12 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
     public bool bindDepthStencilAttachment = false;
     public bool enabled = false;
 
-    private AtmosphereRenderPass m_FullScreenPass;
+    private MultiMatRenderPass m_FullScreenPass;
 
     /// <inheritdoc/>
     public override void Create()
     {
-        m_FullScreenPass = new AtmosphereRenderPass(name);
+        m_FullScreenPass = new MultiMatRenderPass(name);
     }
 
     /// <inheritdoc/>
@@ -87,7 +73,7 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
             return;
         }
 
-        if (passIndex < 0 || passIndex >= passMaterial.passCount)
+        if (passIndex < 0)
         {
             Debug.LogWarningFormat("The full screen feature \"{0}\" will not execute - the pass index is out of bounds for the material.", name);
             return;
@@ -108,9 +94,9 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
         m_FullScreenPass.Dispose();
     }
 
-    internal class AtmosphereRenderPass : ScriptableRenderPass
+    internal class MultiMatRenderPass : ScriptableRenderPass
     {
-        private Material m_Material;
+        private Material[] m_Material;
         private int m_PassIndex;
         private bool m_FetchActiveColor;
         private bool m_BindDepthStencilAttachment;
@@ -119,12 +105,12 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
 
         private static MaterialPropertyBlock s_SharedPropertyBlock = new MaterialPropertyBlock();
 
-        public AtmosphereRenderPass(string passName)
+        public MultiMatRenderPass(string passName)
         {
             profilingSampler = new ProfilingSampler(passName);
         }
 
-        public void SetupMembers(Material material, int passIndex, bool fetchActiveColor, bool bindDepthStencilAttachment, bool enabled)
+        public void SetupMembers(Material[] material, int passIndex, bool fetchActiveColor, bool bindDepthStencilAttachment, bool enabled)
         {
             m_Material = material;
             m_PassIndex = passIndex;
@@ -212,7 +198,6 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
             {
                 passData.material = m_Material;
                 passData.passIndex = m_PassIndex;
-                passData.enabled = m_enabled;
 
                 passData.inputTexture = source;
 
@@ -257,9 +242,12 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
 
                 builder.SetRenderFunc((MainPassData data, RasterGraphContext rgContext) =>
                 {
-                    if (data.enabled)
-                    ExecuteMainPass(rgContext.cmd, data.inputTexture, data.material, data.passIndex);
-                });                
+                    foreach(Material mat in data.material)
+                    {
+                        ExecuteMainPass(rgContext.cmd, data.inputTexture, mat, data.passIndex);
+                    }
+                    
+                });
             }
         }
 
@@ -270,10 +258,9 @@ public partial class AtmosphereFullScreenPassRendererFeature : ScriptableRendere
 
         private class MainPassData
         {
-            internal Material material;
+            internal Material[] material;
             internal int passIndex;
             internal TextureHandle inputTexture;
-            internal bool enabled;
         }
     }
 }
