@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class SolarSystem : MonoBehaviour
 {
+    #if !UNITY_EDITOR
     public 
     SolarSystemData data;
     private TerrainAtlas telluricAtlas;
@@ -83,4 +84,5 @@ public class SolarSystem : MonoBehaviour
         });
         return res;
     }
+    #endif
 }

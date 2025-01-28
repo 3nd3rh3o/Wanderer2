@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+/* 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -132,13 +133,13 @@ public class PlanetPrototype : MonoBehaviour
         update = false;
         OnDisable();
         OnEnable();
-        /*for (int i = 0; i <= LOD; i++) chunks?.ToList().ForEach(c => c.Update(LOD));
-        Build();*/
+        for (int i = 0; i <= LOD; i++) chunks?.ToList().ForEach(c => c.Update(LOD));
+        Build();
     }
 
     void LateUpdate()
     {
 
     }
-}
-#endif
+}*/
+#endif 

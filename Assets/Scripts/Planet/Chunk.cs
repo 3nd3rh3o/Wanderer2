@@ -1,3 +1,4 @@
+#if !UNITY_EDITOR
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -542,3 +543,4 @@ public class Chunk
         return mesh;
     }
 }
+#endif

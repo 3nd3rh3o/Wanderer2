@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SolarSystemManager : MonoBehaviour
 {
+    #if !UNITY_EDITOR
     public Vector3 playerPosition = new();
     public Vector3 playerRotation = new();
 
@@ -66,4 +67,5 @@ public class SolarSystemManager : MonoBehaviour
         currentSys.transform.position = Quaternion.Inverse(Quaternion.Euler(playerRotation))*-playerPosition;
         currentSys.transform.rotation = Quaternion.Inverse(Quaternion.Euler(playerRotation));
     }
+    #endif
 }

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 #if UNITY_EDITOR
-[ExecuteInEditMode]
+
 #endif
+
+#if !UNITY_EDITOR
 public class Planet : MonoBehaviour
 {
     private Queue<ChunkTask> chunkTasks;
@@ -136,3 +138,4 @@ public class Planet : MonoBehaviour
         throw new NotImplementedException();
     }
 }
+#endif

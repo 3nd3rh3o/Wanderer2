@@ -1,3 +1,5 @@
+#if !UNITY_EDITOR
+
 public class ChunkTask
 {
     public enum TYPE
@@ -13,3 +15,4 @@ public class ChunkTask
         this.chunk = chunk;
     }
 }
+#endif
