@@ -120,7 +120,7 @@ namespace Wanderer
                 MaterialPropertyBlock mpb = new();
                 mpb.SetTexture("_BaseMap", albedosTextures[i]);
                 mpb.SetTexture("_BumpMap", normalsTextures[i]);
-                mpb.SetVector("_LightDirection", Vector3.for) ;
+                mpb.SetVector("_LightDirection", Vector3.forward) ;
                 mpb.SetVector("_LightColor", new Vector3(1, 1, 1));
                 //TODO fix me?
                 //mpb.SetTexture("_ParallaxMap", heightsTextures[i]);
