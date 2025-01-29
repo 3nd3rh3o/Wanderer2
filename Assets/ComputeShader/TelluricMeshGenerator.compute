@@ -1,8 +1,109 @@
 #pragma kernel VertexRecompute
-#pragma kernel GenTextures
+//#pragma kernel GenTextures
+
+#include "../Libs/FractalNoise.cginc"
 
 
+// Mesh buffer
+// Used for deformation
+RWStructuredBuffer<float3> _vertices;
+RWStructuredBuffer<float3> _normals;
+RWStructuredBuffer<float4> _color;
+StructuredBuffer<float4> _minPredicates;
+StructuredBuffer<float4> _maxPredicates;
+uint _vNum; // avoid out of bound
+uint _numBiomes;
 
+float _scale; //Biome scale
+float _offset; //Biome offset
+float _bRad; // Base planet radius
+
+StructuredBuffer<float> _blendingFactor;
+StructuredBuffer<float> _BiomeScale;
+StructuredBuffer<float> _BiomeMul;
+StructuredBuffer<float> _BiomeNL;
+StructuredBuffer<float3> _BiomeOffset;
+StructuredBuffer<float> _BiomePersistence;
+StructuredBuffer<float> _BiomeLacunarity;
+StructuredBuffer<float> _BiomeVShift;
+StructuredBuffer<float3> _BiomeCol;
+
+
+float simpleNoise(float3 pos, float scale, float multiplier, int numLayers, float3 offset, float persistence, float lacunarity, float verticalShift)
+{
+    float4 params[3];
+    params[0] = float4(offset, numLayers);
+    params[1] = float4(persistence, lacunarity, scale, multiplier);
+    params[2] = float4(verticalShift, 0, 0, 0);
+    return simpleNoise(pos, params);
+}
+
+// helper for simplexNoise generator
+float simpleNoise(float3 pos, float scale, float multiplier, float3 offset)
+{
+    float4 params[3];
+    params[0] = float4(offset, 1);
+    params[1] = float4(.5, 2, scale, multiplier);
+    params[2] = float4(0, 0, 0, 0);
+    return simpleNoise(pos, params);
+}
+
+float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset)
+{
+    //NOTE 4 dim noise map
+    return float4(
+        clamp(simpleNoise(pos + offset, scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset +float3(2, 0, 0), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset +float3(0, 0, 2), scale, multiplier), -1, 1),
+        dot(pos, float3(0, 1, 0))
+    );
+}
+
+int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id, float tol)
+{
+    if (minp.x <= chann.x && minp.y <= chann.y && minp.z <= chann.z && minp.w <= chann.w && maxp.x + tol >= chann.x && maxp.y + tol >= chann.y && maxp.z + tol >= chann.z && maxp.w + tol >= chann.w) return id;
+    return -1;
+}
+
+float eucDist(float3 sPoint, float4 chann, float4 maxp, float tol)
+{
+    //is offshot? no => -1
+    int numMatch = (chann.x > maxp.x ? 1 : 0) + (chann.y > maxp.y ? 1 : 0) + (chann.z > maxp.z ? 1 : 0) + (chann.w > maxp.w ? 1 : 0);
+    
+    return numMatch == 0? 0 : ((chann.x > maxp.x ? (chann.x - maxp.x) / tol : 0) + (chann.y > maxp.y ? (chann.y - maxp.y) / tol : 0) + (chann.z > maxp.z ? (chann.z - maxp.z) / tol : 0) + (chann.w > maxp.w ? (chann.w - maxp.w) / tol : 0)) / numMatch;
+}
+
+float4 sampleHeight(float3 pos, float scale, float offset)
+{
+    float3 n = normalize(pos);
+    float4 bChan = getBiomeChannels(n, scale, 0.75, offset);
+    float4 res;
+    int bToUse = -1;
+    float blend;
+    for (uint i = 0; i < _numBiomes; i++)
+    {
+        float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
+        float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
+        int b = getBiome(n, bChan, mP, MP, i, _blendingFactor[i]);
+        if (b != -1)
+        {
+            if (bToUse != -1)
+            {
+                float nRes = simpleNoise(n, _BiomeScale[i], _BiomeMul[i], _BiomeNL[i], _BiomeOffset[i], _BiomePersistence[i], _BiomeLacunarity[i], _BiomeVShift[i]);
+                res.x = lerp(res.x, nRes, blend);
+                res.gba = lerp(res.gba, _BiomeCol[i], blend);
+            }
+            else
+            {
+                res.x = simpleNoise(n, _BiomeScale[i], _BiomeMul[i], _BiomeNL[i], _BiomeOffset[i], _BiomePersistence[i], _BiomeLacunarity[i], _BiomeVShift[i]);
+                res.gba =  _BiomeCol[i];
+            }
+            blend = eucDist(n, bChan, MP, _blendingFactor[i]);
+            bToUse = b;
+        }
+    }
+    return res;
+}
 
 [numthreads(8, 1, 1)]
 void VertexRecompute(uint id : SV_DISPATCHTHREADID)
@@ -14,51 +115,21 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 
         const float Noffset = 0.002;
         
+        
         float3 posXPlus = normalize(vPos + float3(Noffset, 0.0, 0.0));
         float3 posXMinus = normalize(vPos - float3(Noffset, 0.0, 0.0));
         float3 posYPlus = normalize(vPos + float3(0.0, Noffset, 0.0));
         float3 posYMinus = normalize(vPos - float3(0.0, Noffset, 0.0));
         float3 posZPlus = normalize(vPos + float3(0.0, 0.0, Noffset));
+        float3 posZMinus = normalize(vPos - float3(0.0, 0.0, Noffset));
 
-        float4 bChan = getBiomeChannels(vPos, _scale, 0.75, _offset);
-        float4 bChanXP = getBiomeChannels(posXPlus, _scale, 0.75, _offset);
-        float4 bChanXM = getBiomeChannels(posXMinus, _scale, 0.75, _offset);
-        float4 bChanYP = getBiomeChannels(posYPlus, _scale, 0.75, _offset);
-        float4 bChanYM = getBiomeChannels(posYMinus, _scale, 0.75, _offset);
-        float4 bChanZP = getBiomeChannels(posZPlus, _scale, 0.75, _offset);
-        float4 bChanZM = getBiomeChannels(posZMinus, _scale, 0.75, _offset);
-
-        float4 res;
-        float4 resXP;
-        float4 resXM;
-        float4 resYP;
-        float4 resYM;
-        float4 resZP;
-        float4 resZM;
-
-
-        // get only the predicates matching => send them to sampleHeight as additional params => final position is the lerped sum of biome layers.
-        for (int i = 0; i < _numBiomes; i++)
-        {
-            float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
-            float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
-            res = processBiomes(vPos, bChan, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], res, _biomeDebugColor[i]);
-            resXP = processBiomes(posXPlus, bChanXP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXP, _biomeDebugColor[i]);
-            resXM = processBiomes(posXMinus, bChanXM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resXM, _biomeDebugColor[i]);
-            resYP = processBiomes(posYPlus, bChanYP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYP, _biomeDebugColor[i]);
-            resYM = processBiomes(posYMinus, bChanYM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resYM, _biomeDebugColor[i]);
-            resZP = processBiomes(posZPlus, bChanZP, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZP, _biomeDebugColor[i]);
-            resZM = processBiomes(posZMinus, bChanZM, mP, MP, _genToUse[i], _paramsOfGen[i], _blendingFactor[i], resZM, _biomeDebugColor[i]);
-        }
-
-        res += bChan.x * _multiplier;
-        resXP += bChanXP.x * _multiplier;
-        resXM += bChanXM.x * _multiplier;
-        resYP += bChanYP.x * _multiplier;
-        resYM += bChanYM.x * _multiplier;
-        resZP += bChanZP.x * _multiplier;
-        resZM += bChanZM.x * _multiplier;
-
+        float4 res = sampleHeight(vPos, _scale, _offset);
+        float4 resXP = sampleHeight(posXPlus, _scale, _offset);
+        float4 resXM = sampleHeight(posXMinus, _scale, _offset);
+        float4 resYP = sampleHeight(posYPlus, _scale, _offset);
+        float4 resYM = sampleHeight(posYMinus, _scale, _offset);
+        float4 resZP = sampleHeight(posZPlus, _scale, _offset);
+        float4 resZM = sampleHeight(posZMinus, _scale, _offset);
         // Position finale du vertex après déformation
         float3 vFinalPos = vPos * (1.0 + res.x) * _bRad;
         _vertices[id] = vFinalPos;
@@ -66,15 +137,10 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 
         // Calcul des positions déformées dans les trois directions
         posXPlus = posXPlus * (1.0 + resXP.x) * _bRad;
-
         posXMinus = posXMinus * (1.0 + resXM.x) * _bRad;
-
         posYPlus = posYPlus * (1.0 + resYP.x) * _bRad;
-
         posYMinus = posYMinus * (1.0 + resYM.x) * _bRad;
-
         posZPlus = posZPlus * (1.0 + resZP.x) * _bRad;
-
         posZMinus = posZMinus * (1.0 + resZM.x) * _bRad;
 
         // Calcul des gradients dans chaque direction
@@ -109,6 +175,7 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 }
 
 // FOR FRAGMENT
+/*
 [numthreads(8, 8, 1)]
 void GenTextures(uint2 id : SV_DispatchThreadID)
 {
@@ -125,27 +192,28 @@ void GenTextures(uint2 id : SV_DispatchThreadID)
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
         float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
         int b = getBiome(vPos, bChann, mP, MP, i, _blendingFactor[i]);
-        if (b!=-1)
+        if (b != -1)
         {
             if (bToUse != -1)
             {
-                float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl+1, _bTexOffset[i]);
+                float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl + 1, _bTexOffset[i]);
                 float3 nCol = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);
                 col = lerp(col, nCol, blend);
             }
             else
             {
                 blend = eucDist(vPos, bChann, MP, _blendingFactor[i]);
-                float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl+1, _bTexOffset[i]);
+                float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl + 1, _bTexOffset[i]);
                 col = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);
             }
             bToUse = b;
         }
     }
-    bToUse = bToUse == -1? 0 : bToUse;
+    bToUse = bToUse == -1 ? 0 : bToUse;
     _albedo[id.xy] = float4(col, 1.);
 
     //TODO rework to use simplex noise based texture, with lod = layer !
     // also add a blending, the factor being distance between matching preds normalized => used to lerp between sources.
     // for the detail map, use a predictable generator that choose different tilable tex depending on the position. (Should include bigger tex than one tile?).
-}
+
+}*/

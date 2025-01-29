@@ -22,7 +22,10 @@ namespace Wanderer
 
         void Update()
         {
+            surfGenerator?.Clear();
+            surfGenerator?.UpdateSettings(settings);
             
+            surfGenerator?.Build(GetComponent<MeshFilter>(), TerrainMat, GetComponent<MeshRenderer>());
         }
 
         void OnValidate()

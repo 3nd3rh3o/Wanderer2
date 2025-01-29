@@ -162,14 +162,15 @@ void NHMapGen(uint2 id : SV_DispatchThreadID)
             if (bToUse != -1)
             {
                 float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl+1, _bTexOffset[i]);
-                float3 nCol = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);
+                float3 nCol = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);//res
                 col = lerp(col, nCol, blend);
+                blend = eucDist(vPos, bChann, MP, _blendingFactor[i]);
             }
             else
             {
                 blend = eucDist(vPos, bChann, MP, _blendingFactor[i]);
                 float tint = simpleNoise(vPos, _bTexScale[i], 1, lvl+1, _bTexOffset[i]);
-                col = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);
+                col = lerp(_bPCol[i], _bSCol[i], tint * 0.5 + 0.5);//nRes
             }
             bToUse = b;
         }

@@ -53,7 +53,6 @@ namespace Wanderer
 
             private Chunk[] childrens;
             private Mesh cachedMesh;
-            private QuadMesh quadMesh;
             private CombineInstance combine = new();
 
             private QuadMesh GenInitMesh(int Dir, Vector3 center, float size)
