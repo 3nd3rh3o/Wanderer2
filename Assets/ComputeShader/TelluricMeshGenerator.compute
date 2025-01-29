@@ -9,13 +9,15 @@
 RWStructuredBuffer<float3> _vertices;
 RWStructuredBuffer<float3> _normals;
 RWStructuredBuffer<float4> _color;
+
+
 StructuredBuffer<float4> _minPredicates;
 StructuredBuffer<float4> _maxPredicates;
 uint _vNum; // avoid out of bound
 uint _numBiomes;
 
 float _scale; //Biome scale
-float _offset; //Biome offset
+float3 _offset; //Biome offset
 float _bRad; // Base planet radius
 
 StructuredBuffer<float> _blendingFactor;
@@ -53,8 +55,8 @@ float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset
     //NOTE 4 dim noise map
     return float4(
         clamp(simpleNoise(pos + offset, scale, multiplier), -1, 1),
-        clamp(simpleNoise(pos + offset +float3(2, 0, 0), scale, multiplier), -1, 1),
-        clamp(simpleNoise(pos + offset +float3(0, 0, 2), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset + float3(2, 0, 0), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset + float3(0, 0, 2), scale, multiplier), -1, 1),
         dot(pos, float3(0, 1, 0))
     );
 }

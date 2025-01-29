@@ -1,3 +1,4 @@
+using System;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -24,6 +25,18 @@ namespace Wanderer
             buff.SetData(vB);
             return buff;
         }
+        public static ComputeBuffer Float4Buff(float4[] v)
+        {
+            ComputeBuffer buff = new(v.Length, sizeof(float)*4);
+            buff.SetData(v);
+            return buff;
+        }
+        internal static ComputeBuffer FloatBuff(float[] v)
+        {
+            ComputeBuffer buff = new(v.Length, sizeof(float));
+            buff.SetData(v);
+            return buff;
+        }
 
         public static Vector3[] ExtractVec3Buff(ComputeBuffer buff)
         {
@@ -31,6 +44,5 @@ namespace Wanderer
             buff.GetData(v);
             return v;
         }
-        
     }
 }

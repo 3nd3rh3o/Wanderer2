@@ -9,6 +9,7 @@ namespace Wanderer
         public string Name;
         public BiomePredicate MinPredicate;
         public BiomePredicate MaxPredicate;
+        public float BlendingFactor;
         public NoiseSettings TopologySettings;
 
         internal float4 GetMinPreds()
@@ -21,19 +22,19 @@ namespace Wanderer
             return new float4(MaxPredicate.Altitude, MaxPredicate.Temperature, MaxPredicate.Humidity, MaxPredicate.Latitude);
         }
 
-        internal float4x4 GetGenParams()
+        internal float GetScale()
         {
-            float4x4 res = new();
-            res[0][0] = TopologySettings.Scale;
-            res[0][1] = TopologySettings.Multiplier;
-            res[0][2] = TopologySettings.Offset.x;
-            res[0][3] = TopologySettings.Offset.y;
-            res[1][0] = TopologySettings.Offset.z;
-            res[1][1] = TopologySettings.VerticalShift;
-            res[1][2] = TopologySettings.Lacunarity;
-            return res;
+            return TopologySettings.Scale;
         }
 
-        
+        internal float GetMultiplier()
+        {
+            return TopologySettings.Multiplier;
+        }
+
+        internal float GetBlendingFactor()
+        {
+            return BlendingFactor;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using static Wanderer.TeluricGenerator.Chunk;
 namespace Wanderer
@@ -21,15 +22,43 @@ namespace Wanderer
         {
             
             mesh.vertexColor = new Color[mesh.vertices.Length];
+            //RW
             ComputeBuffer vBuff = CBuffHelper.Vec3Buff(mesh.vertices);
-            ComputeBuffer nBuff = CBuffHelper.Vec3Buff(mesh.normals);
-            ComputeBuffer cBuff = CBuffHelper.ColBuff(mesh.vertexColor);
-            
             cs.SetBuffer(0, "_vertices", vBuff);
-            cs.SetBuffer(0, "", nBuff);
-            cs.SetBuffer(0, "", cBuff);
+
+            ComputeBuffer nBuff = CBuffHelper.Vec3Buff(mesh.normals);
+            cs.SetBuffer(0, "_normals", nBuff);
+            
+            ComputeBuffer cBuff = CBuffHelper.ColBuff(mesh.vertexColor);
+            cs.SetBuffer(0, "_color", cBuff);
+
+            float4[] biomesMinPreds = settings.biomes.CollectMinPreds();
+            ComputeBuffer BminP = CBuffHelper.Float4Buff(biomesMinPreds);
+            cs.SetBuffer(0, "_minPredicates", BminP);
+
+            float4[] biomesMaxPreds = settings.biomes.CollectMaxPreds();
+            ComputeBuffer BmaxP = CBuffHelper.Float4Buff(biomesMaxPreds);
+            cs.SetBuffer(0, "_maxPredicates", BmaxP);
 
             cs.SetInt("_vNum", mesh.vertices.Length);
+            
+            cs.SetInt("_numBiomes", settings.biomes.biomes.Length);
+            
+            cs.SetFloat("_scale", settings.biomes.Scale);
+            
+            cs.SetVector("_offset", settings.biomes.Offset);
+            
+            cs.SetFloat("_bRad", settings.radius);
+            
+
+            float[] blendingFactors = settings.biomes.CollectBlendingFactors();
+            ComputeBuffer blendingFactorBuff = CBuffHelper.FloatBuff(blendingFactors);
+            cs.SetBuffer(0, "_blendingFactor", blendingFactorBuff);
+
+
+            float[] biomeScales = settings.biomes.CollectBiomeScales();
+            ComputeBuffer biomeScaleBuff = CBuffHelper.FloatBuff(biomeScales);
+            cs.SetBuffer(0, "_BiomeSCale", biomeScaleBuff);
 
             cs.Dispatch(0, mesh.vertices.Length, 1, 1);
 
