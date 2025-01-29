@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
 using UnityEngine;
 using static Wanderer.TeluricGenerator.Chunk;
 namespace Wanderer
 {
     public partial class TeluricGenerator
     {
-        public static ComputeShader cs = Resources.Load<ComputeShader>("TelluricMeshGenerator");
         private PlanetSettings settings;
+        private ComputeShader geoCS;
         private Chunk[] chunks;
 
         /// <summary>
@@ -18,25 +17,31 @@ namespace Wanderer
         /// <param name="properties"> Texture holder </param>
         /// <param name="mesh"> Model </param>
         /// <param name="settings"> Global settings of the planet </param>
-        public static void Generate(ChunkTextures properties, QuadMesh mesh, PlanetSettings settings)
+        public static void Generate(ChunkTextures properties, QuadMesh mesh, PlanetSettings settings, ComputeShader cs)
         {
-            return;
+            
+            mesh.vertexColor = new Color[mesh.vertices.Length];
             ComputeBuffer vBuff = CBuffHelper.Vec3Buff(mesh.vertices);
             ComputeBuffer nBuff = CBuffHelper.Vec3Buff(mesh.normals);
             ComputeBuffer cBuff = CBuffHelper.ColBuff(mesh.vertexColor);
-
+            
             cs.SetBuffer(0, "_vertices", vBuff);
             cs.SetBuffer(0, "", nBuff);
             cs.SetBuffer(0, "", cBuff);
 
+            cs.SetInt("_vNum", mesh.vertices.Length);
+
+            cs.Dispatch(0, mesh.vertices.Length, 1, 1);
+
+
+            vBuff.GetData(mesh.vertices);
+            nBuff.GetData(mesh.normals);
+            
+            cBuff.GetData(mesh.vertexColor);
+
             vBuff.Release();
             nBuff.Release();
             cBuff.Release();
-
-
-
-
-
         }
 
 
@@ -70,16 +75,17 @@ namespace Wanderer
         }
 
 
-        public TeluricGenerator(PlanetSettings settings)
+        public TeluricGenerator(PlanetSettings settings, ComputeShader cs)
         {
+            this.geoCS = cs;
             this.settings = settings;
             chunks = new Chunk[]{
-                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings),
-                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings),
-                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings),
-                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings),
-                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings),
-                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings)
+                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings, cs),
+                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings, cs),
+                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings, cs),
+                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings, cs),
+                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings, cs),
+                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings, cs)
             };
         }
 
@@ -94,18 +100,19 @@ namespace Wanderer
         {
             this.settings = settings;
             chunks = new Chunk[]{
-                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings),
-                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings),
-                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings),
-                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings),
-                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings),
-                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings)
+                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings, geoCS),
+                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings, geoCS),
+                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings, geoCS),
+                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings, geoCS),
+                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings, geoCS),
+                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings, geoCS)
             };
         }
 
 
         public partial class Chunk
         {
+            private ComputeShader cs;
             private PlanetSettings settings;
             private ChunkTextures textures;
 
@@ -143,7 +150,7 @@ namespace Wanderer
             /// <param name="center">Initial center of the quad</param>
             /// <param name="settings">Global parameters of the planet</param>
             /// <param name="posRelToParent"> Position of the chunk inside his parent</param>
-            public Chunk(int Dir, float Size, int LOD, int mLOD, Vector3 center, PlanetSettings settings)
+            public Chunk(int Dir, float Size, int LOD, int mLOD, Vector3 center, PlanetSettings settings, ComputeShader cs)
             {
                 this.Dir = Dir;
                 this.Size = Size;
@@ -152,8 +159,9 @@ namespace Wanderer
                 this.center = center;
                 this.settings = settings;
                 textures = new();
+                this.cs = cs;
                 QuadMesh q = SubDivide(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, Size)))));
-                Generate(textures, q, settings);
+                Generate(textures, q, settings, cs);
                 cachedMesh = ToMesh(q);
             }
             /// <summary>

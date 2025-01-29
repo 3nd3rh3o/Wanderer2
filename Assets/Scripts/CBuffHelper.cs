@@ -24,6 +24,13 @@ namespace Wanderer
             buff.SetData(vB);
             return buff;
         }
+
+        public static Vector3[] ExtractVec3Buff(ComputeBuffer buff)
+        {
+            Vector3[] v = new Vector3[buff.count];
+            buff.GetData(v);
+            return v;
+        }
         
     }
 }

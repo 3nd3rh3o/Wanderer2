@@ -10,13 +10,14 @@ namespace Wanderer
     [RequireComponent(typeof(MeshFilter))]
     public class PlanetEditor : MonoBehaviour
     {
+        public ComputeShader cs;
         public PlanetSettings settings;
         public TeluricGenerator surfGenerator;
         public Material TerrainMat;
 
         void OnEnable()
         {
-            surfGenerator = new(settings);
+            surfGenerator = new(settings, cs);
             surfGenerator.Build(GetComponent<MeshFilter>(), TerrainMat, GetComponent<MeshRenderer>());
         }
 
