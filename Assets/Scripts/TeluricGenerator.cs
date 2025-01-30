@@ -28,7 +28,7 @@ namespace Wanderer
 
             ComputeBuffer nBuff = CBuffHelper.Vec3Buff(mesh.normals);
             cs.SetBuffer(0, "_normals", nBuff);
-            
+
             ComputeBuffer cBuff = CBuffHelper.ColBuff(mesh.vertexColor);
             cs.SetBuffer(0, "_color", cBuff);
 
@@ -41,15 +41,15 @@ namespace Wanderer
             cs.SetBuffer(0, "_maxPredicates", BmaxP);
 
             cs.SetInt("_vNum", mesh.vertices.Length);
-            
+
             cs.SetInt("_numBiomes", settings.biomes.biomes.Length);
-            
+
             cs.SetFloat("_scale", settings.biomes.Scale);
-            
+
             cs.SetVector("_offset", settings.biomes.Offset);
-            
+
             cs.SetFloat("_bRad", settings.radius);
-            
+
 
             float[] blendingFactors = settings.biomes.CollectBlendingFactors();
             ComputeBuffer blendingFactorBuff = CBuffHelper.FloatBuff(blendingFactors);
@@ -98,7 +98,7 @@ namespace Wanderer
 
             vBuff.GetData(mesh.vertices);
             nBuff.GetData(mesh.normals);
-            
+
             mesh.vertexColor = CBuffHelper.ExtractColBuff(cBuff);
 
             vBuff.Release();
@@ -166,6 +166,10 @@ namespace Wanderer
             };
         }
 
+        /// <summary>
+        /// Destroy all chunks and free their resources.
+        /// (Set the quadTree on fire).
+        /// </summary>
         public void Clear()
         {
             chunks?.ToList().ForEach(c => c.Kill());
@@ -173,6 +177,11 @@ namespace Wanderer
             chunks = null;
         }
 
+
+        /// <summary>
+        /// Only use In edit mode.
+        /// Force regen of all the chunks.
+        /// </summary>
         public void Regen()
         {
             Clear();
@@ -186,7 +195,18 @@ namespace Wanderer
             };
         }
 
-
+        /// <summary>
+        /// <typeparamref name="Chunk"/> class.
+        /// <br/>
+        ///  - visually it's a tile on the surface of the planet.<br/>
+        ///  - node of the quadtree. 
+        /// 
+        /// if it's lod is equal to mLOD<br/>
+        ///     interpreted as a leaf(no childrens).<br/>
+        ///  else<br/>
+        ///     no visual or logic, it relay update to it's childrens.<bt/>
+        /// A chunk have it's LOD determined by the proximity with the current camera(allow us to have lod updated even in edit mode.).
+        /// </summary>
         public partial class Chunk
         {
             private ComputeShader cs;
