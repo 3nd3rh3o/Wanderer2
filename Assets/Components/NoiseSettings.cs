@@ -10,6 +10,7 @@ namespace Wanderer
         public Vector3 Offset;
         public int NumLayers;
         public float Lacunarity;
+        public float Persistence;
         public Color DebugColor;
     }
 }

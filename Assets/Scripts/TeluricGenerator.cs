@@ -60,6 +60,39 @@ namespace Wanderer
             ComputeBuffer biomeScaleBuff = CBuffHelper.FloatBuff(biomeScales);
             cs.SetBuffer(0, "_BiomeSCale", biomeScaleBuff);
 
+            float[] biomesMul = settings.biomes.CollectBiomeMul();
+            ComputeBuffer biomesMulBuff = CBuffHelper.FloatBuff(biomesMul);
+            cs.SetBuffer(0, "_BiomeMul", biomesMulBuff);
+
+            float[] biomesNL = settings.biomes.CollectBiomeNumLayers();
+            ComputeBuffer biomesNLBuff = CBuffHelper.FloatBuff(biomesNL);
+            cs.SetBuffer(0, "_BiomeNL", biomesNLBuff);
+
+            Vector3[] biomesOffset = settings.biomes.CollectBiomeOffset();
+            ComputeBuffer biomesOffsetBuff = CBuffHelper.Vec3Buff(biomesOffset);
+            cs.SetBuffer(0, "_BiomeOffset", biomesOffsetBuff);
+
+            float[] biomesPersistence = settings.biomes.CollectBiomePersistence();
+            ComputeBuffer biomesPersistenceBuff = CBuffHelper.FloatBuff(biomesPersistence);
+            cs.SetBuffer(0, "_BiomePersistence", biomesPersistenceBuff);
+
+            float[] biomesLacunarity = settings.biomes.CollectBiomeLacunarity();
+            ComputeBuffer biomesLacunarityBuff = CBuffHelper.FloatBuff(biomesLacunarity);
+            cs.SetBuffer(0, "_BiomeLacunarity", biomesLacunarityBuff);
+
+            float[] biomesVShift = settings.biomes.CollectBiomeVShift();
+            ComputeBuffer biomesVShiftBuff = CBuffHelper.FloatBuff(biomesVShift);
+            cs.SetBuffer(0, "_BiomeVShift", biomesVShiftBuff);
+
+
+            Vector3[] biomesDebugCol = settings.biomes.CollectDebugCol();
+            ComputeBuffer biomesDebugColBuff = CBuffHelper.Vec3Buff(biomesDebugCol);
+            cs.SetBuffer(0, "_BiomeCol", biomesDebugColBuff);
+
+
+
+
+
             cs.Dispatch(0, mesh.vertices.Length, 1, 1);
 
 
@@ -71,6 +104,18 @@ namespace Wanderer
             vBuff.Release();
             nBuff.Release();
             cBuff.Release();
+
+            BminP.Release();
+            BmaxP.Release();
+            blendingFactorBuff.Release();
+            biomeScaleBuff.Release();
+            biomesMulBuff.Release();
+            biomesNLBuff.Release();
+            biomesOffsetBuff.Release();
+            biomesPersistenceBuff.Release();
+            biomesLacunarityBuff.Release();
+            biomesVShiftBuff.Release();
+            biomesDebugColBuff.Release();
         }
 
 

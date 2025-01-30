@@ -36,5 +36,35 @@ namespace Wanderer
         {
             return BlendingFactor;
         }
+
+        internal float GetNumLayers()
+        {
+            return TopologySettings.NumLayers;
+        }
+
+        internal Vector3 GetOffset()
+        {
+            return TopologySettings.Offset;
+        }
+
+        internal float GetPersistence()
+        {
+            return TopologySettings.Persistence;
+        }
+
+        internal float GetLacunarity()
+        {
+            return TopologySettings.Lacunarity;
+        }
+
+        internal float GetVShift()
+        {
+            return TopologySettings.VShift;
+        }
+
+        internal Vector3 GetDebugCol()
+        {
+            return new Vector3(TopologySettings.DebugColor.r, TopologySettings.DebugColor.g, TopologySettings.DebugColor.b);
+        }
     }
 }

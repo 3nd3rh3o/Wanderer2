@@ -39,5 +39,54 @@ namespace Wanderer
             for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetScale();
             return b;
         }
+
+        internal float[] CollectBiomeMul()
+        {
+            float[] b = new float[biomes.Length];
+            for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetMultiplier();
+            return b;
+        }
+
+        internal float[] CollectBiomeNumLayers()
+        {
+            float[] b = new float[biomes.Length];
+            for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetNumLayers();
+            return b;
+        }
+
+        internal Vector3[] CollectBiomeOffset()
+        {
+            Vector3[] b = new Vector3[biomes.Length];
+            for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetOffset();
+            return b;
+        }
+
+        internal float[] CollectBiomePersistence()
+        {
+            float[] b = new float[biomes.Length];
+            for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetPersistence();
+            return b;
+        }
+
+        internal float[] CollectBiomeLacunarity()
+        {
+            float[] b = new float[biomes.Length];
+            for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetLacunarity();
+            return b;
+        }
+
+        internal float[] CollectBiomeVShift()
+        {
+            float[] b = new float[biomes.Length];
+            for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetVShift();
+            return b;
+        }
+
+        internal Vector3[] CollectDebugCol()
+        {
+            Vector3[] b = new Vector3[biomes.Length];
+            for (int i = 0; i < biomes.Length; i++) b[i] = biomes[i].GetDebugCol();
+            return b;
+        }
     }
 }
