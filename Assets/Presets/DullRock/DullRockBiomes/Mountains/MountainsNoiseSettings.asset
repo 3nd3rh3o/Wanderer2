@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
-  m_Name: OceanSurf
+  m_Name: MountainsNoiseSettings
   m_EditorClassIdentifier: 
-  Scale: 1.13
-  Multiplier: 0.01
-  VerticalShift: -0.03
-  Offset: {x: 0.32, y: 0, z: 0}
-  NumLayers: 5
-  Lacunarity: 0.07
-  Persistence: 0.04
-  DebugColor: {r: 0, g: 0.50196075, b: 1, a: 1}
+  Scale: 0.95
+  Multiplier: 0.05
+  VerticalShift: -0.01
+  Offset: {x: 0, y: 0, z: 0}
+  NumLayers: 4
+  Lacunarity: -0.37
+  Persistence: -0.84
+  DebugColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}

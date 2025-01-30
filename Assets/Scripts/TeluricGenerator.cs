@@ -21,7 +21,6 @@ namespace Wanderer
         /// <param name="settings"> Global settings of the planet </param>
         public static void Generate(ChunkTextures properties, QuadMesh mesh, PlanetSettings settings, ComputeShader cs)
         {
-            
             mesh.vertexColor = new Color[mesh.vertices.Length];
             //RW
             ComputeBuffer vBuff = CBuffHelper.Vec3Buff(mesh.vertices);

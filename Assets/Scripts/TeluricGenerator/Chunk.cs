@@ -8,7 +8,7 @@ namespace Wanderer
     {
         public partial class Chunk
         {
-            public struct QuadMesh
+            public class QuadMesh
             {
                 public Vector3 origin;
                 public Vector3 U;

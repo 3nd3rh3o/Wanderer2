@@ -9,7 +9,7 @@ namespace Wanderer
         public string Name;
         public BiomePredicate MinPredicate;
         public BiomePredicate MaxPredicate;
-        public float BlendingFactor;
+        [Range(0f, 1f)] public float BlendingFactor;
         public NoiseSettings TopologySettings;
 
         internal float4 GetMinPreds()

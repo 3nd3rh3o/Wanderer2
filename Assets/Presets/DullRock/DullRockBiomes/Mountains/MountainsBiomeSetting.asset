@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35a1dbacfc820404ea91503f48c3dca6, type: 3}
-  m_Name: Ocean
+  m_Name: MountainsBiomeSetting
   m_EditorClassIdentifier: 
-  Name: Ocean
-  MinPredicate: {fileID: 11400000, guid: 859c9188b9d53e44f9eb3f91aab56d03, type: 2}
-  MaxPredicate: {fileID: 11400000, guid: 76a15d34f60868d4491cdd7baaecebd0, type: 2}
-  BlendingFactor: 0.372
-  TopologySettings: {fileID: 11400000, guid: 5fbb7fba0ff2ab24e96ddae83d5d8197, type: 2}
+  Name: Mountains
+  MinPredicate: {fileID: 11400000, guid: 2a1ea1679d8775646a6e965b6f2d2a23, type: 2}
+  MaxPredicate: {fileID: 11400000, guid: 7011d8a78fc73de46b98a1ebcdbda913, type: 2}
+  BlendingFactor: 0
+  TopologySettings: {fileID: 11400000, guid: 4f6950afbb68e8b4495c986e78080faf, type: 2}
