@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 namespace Wanderer
@@ -8,6 +7,7 @@ namespace Wanderer
     [CreateAssetMenu(fileName = "BiomePool", menuName = "Wanderer/Planet/BiomePool")]
     public class BiomePool : ScriptableObject
     {
+        public ComputeShader planetTopoCS;
         [Range(0f, 2f)] public float Scale;
         public Vector3 Offset;
         [Range(0, 10)] public int MaxLOD;

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using static Wanderer.TeluricGenerator;
@@ -10,9 +11,9 @@ namespace Wanderer
     [RequireComponent(typeof(MeshFilter))]
     public class PlanetEditor : MonoBehaviour
     {
-        public ComputeShader cs;
         public PlanetSettings settings;
-        public TeluricGenerator surfGenerator;
+        private TeluricGenerator surfGenerator;
+        [Obsolete("Will be moved inside a Scriptable object containing texture params.")]
         public Material TerrainMat;
 
         private MeshFilter meshFilter;
@@ -23,7 +24,7 @@ namespace Wanderer
             meshFilter = GetComponent<MeshFilter>();
             meshRenderer = GetComponent<MeshRenderer>();
             if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();
-            surfGenerator = new(settings, cs);
+            surfGenerator = new(settings);
             surfGenerator.Build(meshFilter, TerrainMat, meshRenderer);
         }
 

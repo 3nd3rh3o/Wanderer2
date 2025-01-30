@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee9cb872357d5514497aba81ae28e414, type: 3}
   m_Name: DullRockPool
   m_EditorClassIdentifier: 
+  planetTopoCS: {fileID: 7200000, guid: fa0ea49c96f4fd04db8d7ab6d30278e4, type: 3}
   Scale: 0.47
   Offset: {x: 0, y: 0, z: 0}
   MaxLOD: 2
