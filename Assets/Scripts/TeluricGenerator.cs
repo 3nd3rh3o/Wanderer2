@@ -154,7 +154,7 @@ namespace Wanderer
 
         public TeluricGenerator(PlanetSettings settings, ComputeShader cs)
         {
-            this.geoCS = cs;
+            geoCS = cs;
             this.settings = settings;
             chunks = new Chunk[]{
                 new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings, cs),
@@ -173,9 +173,17 @@ namespace Wanderer
             chunks = null;
         }
 
-        public void UpdateSettings()
+        public void Regen()
         {
-            
+            Clear();
+            chunks = chunks = new Chunk[]{
+                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings, geoCS),
+                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings, geoCS),
+                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings, geoCS),
+                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings, geoCS),
+                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings, geoCS),
+                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings, geoCS)
+            };
         }
 
 
@@ -239,11 +247,11 @@ namespace Wanderer
             public void Kill()
             {
                 textures.Clear();
-                textures = null;
                 cachedMesh.Clear();
                 combine.mesh.Clear();
                 childrens?.ToList().ForEach(c => c.Kill());
                 childrens?.ToList().ForEach(c => c = null);
+                textures = null;
                 childrens = null;
 #if UNITY_EDITOR
                 MonoBehaviour.DestroyImmediate(cachedMesh);

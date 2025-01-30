@@ -29,7 +29,8 @@ namespace Wanderer
 
         void Update()
         {
-            surfGenerator?.Build(meshFilter, TerrainMat, meshRenderer);
+            surfGenerator.Regen();
+            surfGenerator.Build(meshFilter, TerrainMat, meshRenderer);
         }
 
 

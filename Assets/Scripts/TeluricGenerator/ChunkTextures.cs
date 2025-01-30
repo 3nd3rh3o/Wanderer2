@@ -21,6 +21,11 @@ namespace Wanderer
             public void Clear()
             {
                 albedo?.Release();
+#if UNITY_EDITOR
+                MonoBehaviour.DestroyImmediate(albedo);
+#else
+                MonoBehaviour.Destroy(albedo);
+#endif
                 albedo = null;
             }
         }

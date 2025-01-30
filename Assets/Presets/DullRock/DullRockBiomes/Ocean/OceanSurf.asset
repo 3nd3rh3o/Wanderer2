@@ -18,5 +18,5 @@ MonoBehaviour:
   Offset: {x: 0.32, y: 0, z: 0}
   NumLayers: 5
   Lacunarity: 0.07
-  Persistence: 0.04
+  Persistence: 0.29
   DebugColor: {r: 0, g: 0.50196075, b: 1, a: 1}
