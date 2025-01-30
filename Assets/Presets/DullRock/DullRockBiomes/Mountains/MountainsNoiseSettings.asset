@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
   m_Name: MountainsNoiseSettings
   m_EditorClassIdentifier: 
-  Scale: 0.95
+  Scale: 1.31
   Multiplier: 0.05
-  VerticalShift: -0.01
+  VerticalShift: 0.05
   Offset: {x: 0, y: 0, z: 0}
   NumLayers: 4
   Lacunarity: -0.37

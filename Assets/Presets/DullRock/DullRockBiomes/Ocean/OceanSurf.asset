@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Scale: 1.13
   Multiplier: 0.01
-  VerticalShift: -0.03
+  VerticalShift: -0.05
   Offset: {x: 0.32, y: 0, z: 0}
   NumLayers: 5
   Lacunarity: 0.07

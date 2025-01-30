@@ -75,7 +75,7 @@ float eucDist(float3 sPoint, float4 chann, float4 maxp, float tol)
     return numMatch == 0? 0 : ((chann.x > maxp.x ? (chann.x - maxp.x) / tol : 0) + (chann.y > maxp.y ? (chann.y - maxp.y) / tol : 0) + (chann.z > maxp.z ? (chann.z - maxp.z) / tol : 0) + (chann.w > maxp.w ? (chann.w - maxp.w) / tol : 0)) / numMatch;
 }
 
-float4 sampleHeight(float3 pos, float scale, float offset)
+float4 sampleHeight(float3 pos, float scale, float3 offset)
 {
     float3 n = normalize(pos);
     float4 bChan = getBiomeChannels(n, scale, 0.75, offset);
