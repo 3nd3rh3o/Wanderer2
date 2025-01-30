@@ -8,9 +8,9 @@ namespace Wanderer
         [Range(0f, 2f)] public float Multiplier;
         public float VerticalShift;
         public Vector3 Offset;
-        public int NumLayers;
-        public float Lacunarity;
-        public float Persistence;
+        [Range(0, 10)] public int NumLayers;
+        [Range(-1f, 1f)] public float Lacunarity;
+        [Range(-1f, 1f)] public float Persistence;
         public Color DebugColor;
     }
 }

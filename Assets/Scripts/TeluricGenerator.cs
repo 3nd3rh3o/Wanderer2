@@ -11,6 +11,7 @@ namespace Wanderer
         private PlanetSettings settings;
         private ComputeShader geoCS;
         private Chunk[] chunks;
+        private Material[] surfmats;
 
         /// <summary>
         /// Compute shader caller, will deform mesh and generate textures
@@ -58,7 +59,7 @@ namespace Wanderer
 
             float[] biomeScales = settings.biomes.CollectBiomeScales();
             ComputeBuffer biomeScaleBuff = CBuffHelper.FloatBuff(biomeScales);
-            cs.SetBuffer(0, "_BiomeSCale", biomeScaleBuff);
+            cs.SetBuffer(0, "_BiomeScale", biomeScaleBuff);
 
             float[] biomesMul = settings.biomes.CollectBiomeMul();
             ComputeBuffer biomesMulBuff = CBuffHelper.FloatBuff(biomesMul);
@@ -99,7 +100,7 @@ namespace Wanderer
             vBuff.GetData(mesh.vertices);
             nBuff.GetData(mesh.normals);
             
-            cBuff.GetData(mesh.vertexColor);
+            mesh.vertexColor = CBuffHelper.ExtractColBuff(cBuff);
 
             vBuff.Release();
             nBuff.Release();
@@ -122,8 +123,10 @@ namespace Wanderer
         public void Build(MeshFilter meshFilter, Material m, MeshRenderer meshRenderer)
         {
 #if UNITY_EDITOR
+            if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();
             Mesh mesh = meshFilter.sharedMesh;
 #else
+            meshFilter.mesh == null) meshFilter.mesh = new();
             Mesh mesh = meshFilter.mesh;
 #endif
             mesh.Clear();
@@ -134,18 +137,19 @@ namespace Wanderer
                 face.CollectCombineData(chunkData);
             }
             CombineInstance[] combines = new CombineInstance[chunkData.Count];
-            meshRenderer.sharedMaterials = new Material[chunkData.Count];
+            surfmats = new Material[chunkData.Count];
+            for (int i = 0; i < chunkData.Count; i++) surfmats[i] = m;
+            meshRenderer.sharedMaterials = surfmats;
             for (int i = 0; i < chunkData.Count; i++)
             {
                 //Mesh
                 combines[i] = chunkData[i].Item1;
                 //Mat
-                meshRenderer.sharedMaterials[i] = m;
                 MaterialPropertyBlock mpb = new();
-                mpb.SetTexture("_BaseMap", chunkData[i].Item2.albedo);
+                //mpb.SetTexture("_BaseMap", chunkData[i].Item2.albedo);
                 meshRenderer.SetPropertyBlock(mpb, i);
             }
-            mesh.CombineMeshes(combines.ToArray(), false, true);
+            mesh.CombineMeshes(combines.ToArray(), false, false, false);
         }
 
 

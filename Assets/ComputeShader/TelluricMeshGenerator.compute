@@ -93,12 +93,12 @@ float4 sampleHeight(float3 pos, float scale, float offset)
             {
                 float nRes = simpleNoise(n, _BiomeScale[i], _BiomeMul[i], _BiomeNL[i], _BiomeOffset[i], _BiomePersistence[i], _BiomeLacunarity[i], _BiomeVShift[i]);
                 res.x = lerp(res.x, nRes, blend);
-                res.gba = lerp(res.gba, _BiomeCol[i], blend);
+                res.yzw = lerp(res.gba, _BiomeCol[i], blend);
             }
             else
             {
                 res.x = simpleNoise(n, _BiomeScale[i], _BiomeMul[i], _BiomeNL[i], _BiomeOffset[i], _BiomePersistence[i], _BiomeLacunarity[i], _BiomeVShift[i]);
-                res.gba =  _BiomeCol[i];
+                res.yzw =  _BiomeCol[i];
             }
             blend = eucDist(n, bChan, MP, _blendingFactor[i]);
             bToUse = b;

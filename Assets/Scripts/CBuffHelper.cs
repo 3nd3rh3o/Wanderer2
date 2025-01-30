@@ -44,5 +44,14 @@ namespace Wanderer
             buff.GetData(v);
             return v;
         }
+
+        internal static Color[] ExtractColBuff(ComputeBuffer cBuff)
+        {
+            float4[] c = new float4[cBuff.count];
+            Color[] col = new Color[cBuff.count];
+            cBuff.GetData(c);
+            for (int i = 0; i < cBuff.count; i++) col[i] = new Color(c[i].x, c[i].y, c[i].z, c[i].w);
+            return col;
+        }
     }
 }

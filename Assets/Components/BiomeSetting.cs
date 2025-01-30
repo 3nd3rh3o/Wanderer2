@@ -59,7 +59,7 @@ namespace Wanderer
 
         internal float GetVShift()
         {
-            return TopologySettings.VShift;
+            return TopologySettings.VerticalShift;
         }
 
         internal Vector3 GetDebugCol()
