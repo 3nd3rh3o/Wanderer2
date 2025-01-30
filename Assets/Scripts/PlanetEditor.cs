@@ -15,29 +15,28 @@ namespace Wanderer
         public TeluricGenerator surfGenerator;
         public Material TerrainMat;
 
+        private MeshFilter meshFilter;
+        private MeshRenderer meshRenderer;
+
         void OnEnable()
-        {
+        {   
+            meshFilter = GetComponent<MeshFilter>();
+            meshRenderer = GetComponent<MeshRenderer>();
+            if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();
             surfGenerator = new(settings, cs);
-            surfGenerator.Build(GetComponent<MeshFilter>(), TerrainMat, GetComponent<MeshRenderer>());
+            surfGenerator.Build(meshFilter, TerrainMat, meshRenderer);
         }
 
         void Update()
         {
-            surfGenerator?.Clear();
-            surfGenerator?.UpdateSettings(settings);
-            
-            surfGenerator?.Build(GetComponent<MeshFilter>(), TerrainMat, GetComponent<MeshRenderer>());
+            surfGenerator?.Build(meshFilter, TerrainMat, meshRenderer);
         }
 
-        void OnValidate()
-        {
-            surfGenerator?.Build(GetComponent<MeshFilter>(), TerrainMat, GetComponent<MeshRenderer>());
-        }
 
         void OnDisable()
         {
+            meshFilter.sharedMesh.Clear();
             surfGenerator?.Clear();
-            surfGenerator = null;
         }
     }
 }

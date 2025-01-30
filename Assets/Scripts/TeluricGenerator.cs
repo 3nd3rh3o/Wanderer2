@@ -122,10 +122,10 @@ namespace Wanderer
         public void Build(MeshFilter meshFilter, Material m, MeshRenderer meshRenderer)
         {
 #if UNITY_EDITOR
-            if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();
+            if (meshFilter.sharedMesh == null) return;
             Mesh mesh = meshFilter.sharedMesh;
 #else
-            meshFilter.mesh == null) meshFilter.mesh = new();
+            meshFilter.mesh == null) return;
             Mesh mesh = meshFilter.mesh;
 #endif
             mesh.Clear();
@@ -173,17 +173,9 @@ namespace Wanderer
             chunks = null;
         }
 
-        public void UpdateSettings(PlanetSettings settings)
+        public void UpdateSettings()
         {
-            this.settings = settings;
-            chunks = new Chunk[]{
-                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings, geoCS),
-                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings, geoCS),
-                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings, geoCS),
-                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings, geoCS),
-                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings, geoCS),
-                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings, geoCS)
-            };
+            
         }
 
 
@@ -247,10 +239,9 @@ namespace Wanderer
             public void Kill()
             {
                 textures.Clear();
+                textures = null;
                 cachedMesh.Clear();
-                cachedMesh = null;
                 combine.mesh.Clear();
-                combine.mesh = null;
                 childrens?.ToList().ForEach(c => c.Kill());
                 childrens?.ToList().ForEach(c => c = null);
                 childrens = null;
@@ -260,7 +251,7 @@ namespace Wanderer
 #else
                 
                 MonoBehaviour.Destroy(cachedMesh);
-                MonoBehaviour.Destroy(combine.mesh);
+                MonoBehaviour.Destroy(combine);
 #endif
             }
 

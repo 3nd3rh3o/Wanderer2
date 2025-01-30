@@ -20,7 +20,7 @@ namespace Wanderer
 
             public void Clear()
             {
-                albedo.Release();
+                albedo?.Release();
                 albedo = null;
             }
         }
