@@ -182,7 +182,7 @@ namespace Wanderer
         /// <param name="position of the transform of planet"></param>
         public void Regen(Vector3 planetPosition, MeshFilter meshFilter, MeshRenderer meshRenderer)
         {
-            if (chunks == null) return;
+            if (Camera.current == null || chunks == null || queue == null) return;
             // check if we need a split or not.
             chunks.ToList().ForEach(c => c.Update(Camera.current.transform.position - planetPosition, queue));
             // execute a change in quadTree
@@ -322,7 +322,7 @@ namespace Wanderer
             /// <returns></returns>
             protected bool playerInBound(Vector3 position)
             {
-                return (position - geoCenter).sqrMagnitude <= Mathf.Pow(settings.radius, 2);
+                return (position - geoCenter).sqrMagnitude <= Mathf.Pow(2 * Size, 2);
             }
 
             /// <summary>

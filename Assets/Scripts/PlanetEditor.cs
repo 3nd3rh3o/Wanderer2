@@ -13,6 +13,15 @@ namespace Wanderer
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
 
+        void Start()
+        {
+            meshFilter = GetComponent<MeshFilter>();
+            meshRenderer = GetComponent<MeshRenderer>();
+            if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();
+            surfGenerator = new(settings);
+            surfGenerator.Build(meshFilter, meshRenderer);
+        }
+
         void OnEnable()
         {   
             meshFilter = GetComponent<MeshFilter>();
@@ -24,8 +33,8 @@ namespace Wanderer
 
         void Update()
         {
-            surfGenerator.Regen(transform.position, meshFilter, meshRenderer);
-            surfGenerator.Build(meshFilter, meshRenderer);
+            surfGenerator?.Regen(transform.position, meshFilter, meshRenderer);
+            surfGenerator?.Build(meshFilter, meshRenderer);
         }
         void OnDisable()
         {
