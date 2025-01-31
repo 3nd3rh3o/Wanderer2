@@ -11,6 +11,7 @@ namespace Wanderer
         private PlanetSettings settings;
         private Chunk[] chunks;
         private Material[] surfmats;
+        private Queue<ChunkTask> queue;
 
         /// <summary>
         /// Compute shader caller, will deform mesh and generate textures
@@ -114,7 +115,7 @@ namespace Wanderer
         }
 
 
-        public void Build(MeshFilter meshFilter, Material m, MeshRenderer meshRenderer)
+        public void Build(MeshFilter meshFilter, MeshRenderer meshRenderer)
         {
 #if UNITY_EDITOR
             if (meshFilter.sharedMesh == null) return;
@@ -132,7 +133,7 @@ namespace Wanderer
             }
             CombineInstance[] combines = new CombineInstance[chunkData.Count];
             surfmats = new Material[chunkData.Count];
-            for (int i = 0; i < chunkData.Count; i++) surfmats[i] = m;
+            for (int i = 0; i < chunkData.Count; i++) surfmats[i] = settings.biomes.surfaceMaterial;
             meshRenderer.sharedMaterials = surfmats;
             for (int i = 0; i < chunkData.Count; i++)
             {
@@ -149,14 +150,15 @@ namespace Wanderer
 
         public TeluricGenerator(PlanetSettings settings)
         {
+            queue = new();
             this.settings = settings;
             chunks = new Chunk[]{
-                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings),
-                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings),
-                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings),
-                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings),
-                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings),
-                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings)
+                new(0, settings.radius * 2f, 0, new Vector3(0, settings.radius, 0), settings),
+                new(1, settings.radius * 2f, 0, new Vector3(0, -settings.radius, 0), settings),
+                new(2, settings.radius * 2f, 0, new Vector3(0, 0, settings.radius), settings),
+                new(3, settings.radius * 2f, 0, new Vector3(0, 0, -settings.radius), settings),
+                new(4, settings.radius * 2f, 0, new Vector3(settings.radius, 0, 0), settings),
+                new(5, settings.radius * 2f, 0, new Vector3(-settings.radius, 0, 0), settings)
             };
         }
 
@@ -166,6 +168,7 @@ namespace Wanderer
         /// </summary>
         public void Clear()
         {
+            queue = null;
             chunks?.ToList().ForEach(c => c.Kill());
             chunks?.ToList().ForEach(c => c = null);
             chunks = null;
@@ -173,20 +176,19 @@ namespace Wanderer
 
 
         /// <summary>
-        /// Only use In edit mode.
-        /// Force regen of all the chunks.
+        /// Only use In edit mode.<br/>
+        /// Meshs Rebuilt at each frame.
         /// </summary>
-        public void Regen()
+        /// <param name="position of the transform of planet"></param>
+        public void Regen(Vector3 planetPosition, MeshFilter meshFilter, MeshRenderer meshRenderer)
         {
-            Clear();
-            chunks = chunks = new Chunk[]{
-                new(0, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, settings.radius, 0), settings),
-                new(1, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, -settings.radius, 0), settings),
-                new(2, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, settings.radius), settings),
-                new(3, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(0, 0, -settings.radius), settings),
-                new(4, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(settings.radius, 0, 0), settings),
-                new(5, settings.radius * 2f, 0, settings.biomes.MaxLOD, new Vector3(-settings.radius, 0, 0), settings)
-            };
+            if (chunks == null) return;
+            // check if we need a split or not.
+            chunks.ToList().ForEach(c => c.Update(Camera.current.transform.position - planetPosition, queue));
+            // execute a change in quadTree
+            if (queue.Count > 0) queue.Dequeue().Execute();
+            chunks.ToList().ForEach(c => c.Regen());
+            Build(meshFilter, meshRenderer);
         }
 
         /// <summary>
@@ -205,6 +207,12 @@ namespace Wanderer
         {
             private PlanetSettings settings;
             private ChunkTextures textures;
+
+
+            /// <summary>
+            /// Chunk registered a task in queue? <br/> If <c> true </c> the chunk will not be updated, nor will be it's childrens.
+            /// </summary>
+            private bool pending = false;
 
             /// <summary>
             /// Used to collect sub-chunks meshs and pass them to the parent chunk, or the planet if we are on top level.
@@ -240,19 +248,17 @@ namespace Wanderer
             /// <param name="center">Initial center of the quad</param>
             /// <param name="settings">Global parameters of the planet</param>
             /// <param name="posRelToParent"> Position of the chunk inside his parent</param>
-            public Chunk(int Dir, float Size, int LOD, int mLOD, Vector3 center, PlanetSettings settings)
+            public Chunk(int Dir, float Size, int LOD, Vector3 center, PlanetSettings settings)
             {
                 this.Dir = Dir;
                 this.Size = Size;
                 this.LOD = LOD;
-                this.mLOD = mLOD;
                 this.center = center;
                 this.settings = settings;
                 textures = new();
-                QuadMesh q = SubDivide(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, Size)))));
-                GenerateTopo(textures, q, settings);
-                cachedMesh = ToMesh(q);
+                Regen();
             }
+
             /// <summary>
             /// Destroy this chunk(and it's childrens) and free his resources
             /// </summary>
@@ -274,7 +280,65 @@ namespace Wanderer
                 MonoBehaviour.Destroy(combine);
 #endif
             }
+            
 
+            /// <summary>
+            /// Test if the chunk need to be splitted or not.
+            /// </summary>
+            /// <param name="position"> player position in <c>Object space</c>, relative to the Planet's transform.</param>
+            internal void Update(Vector3 position, Queue<ChunkTask> queue)
+            {
+                if (pending) return;
+                // Not splitted, not maxSplit lvl and player in split Radius
+                if (playerInBound(position) && childrens == null && LOD <= settings.biomes.MaxLOD)
+                {
+                    ChunkTask newTask = new (ChunkTaskTYPE.Split, this);
+                    pending = true;
+                    queue.Enqueue(newTask);
+                }
+                // Splitted
+                else if (childrens != null)
+                {
+                    // if player not clause enough to justify split.
+                    if (!playerInBound(position))
+                    {
+                        ChunkTask newTask = new (ChunkTaskTYPE.UnSplit, this);
+                        pending = true;
+                        queue.Enqueue(newTask);
+                    }
+                    else // Propagate test to childrens
+                    {
+                        childrens.ToList().ForEach(c => c.Update(position, queue));
+                    }
+                }
+            }
+
+            public void Split()
+            {
+                childrens = new Chunk[]{
+
+                };
+            }
+
+            /// <summary>
+            ///    Evaluate if the player is in split bound.
+            /// </summary>
+            /// <param name="position">Player position in <c> Object Space </c>, relative to the Planet's transform.</param>
+            /// <returns></returns>
+            protected bool playerInBound(Vector3 position)
+            {
+                return (position - geoCenter).sqrMagnitude <= Mathf.Pow(settings.radius, 2);
+            }
+
+            /// <summary>
+            /// Run all the proccedural generators of the chunk.
+            /// </summary>
+            internal void Regen()
+            {
+                QuadMesh q = SubDivide(SubDivide(SubDivide(SubDivide(GenInitMesh(Dir, center, Size)))));
+                GenerateTopo(textures, q, settings);
+                cachedMesh = ToMesh(q);
+            }
         }
 
 

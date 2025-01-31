@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
 using UnityEngine;
-using static Wanderer.TeluricGenerator;
-#if UNITY_EDITOR
+
 namespace Wanderer
 {
     
@@ -13,8 +10,6 @@ namespace Wanderer
     {
         public PlanetSettings settings;
         private TeluricGenerator surfGenerator;
-        [Obsolete("Will be moved inside a Scriptable object containing texture params.")]
-        public Material TerrainMat;
 
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
@@ -25,13 +20,13 @@ namespace Wanderer
             meshRenderer = GetComponent<MeshRenderer>();
             if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();
             surfGenerator = new(settings);
-            surfGenerator.Build(meshFilter, TerrainMat, meshRenderer);
+            surfGenerator.Build(meshFilter, meshRenderer);
         }
 
         void Update()
         {
-            surfGenerator.Regen();
-            surfGenerator.Build(meshFilter, TerrainMat, meshRenderer);
+            surfGenerator.Regen(transform.position, meshFilter, meshRenderer);
+            surfGenerator.Build(meshFilter, meshRenderer);
         }
 
 
@@ -42,4 +37,3 @@ namespace Wanderer
         }
     }
 }
-#endif

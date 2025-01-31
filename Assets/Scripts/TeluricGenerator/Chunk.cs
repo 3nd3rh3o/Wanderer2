@@ -242,7 +242,16 @@ namespace Wanderer
             private Mesh ToMesh(QuadMesh qMesh)
             {
                 //TODO From normals and UVs, deduce tangent !
-                Mesh mesh = new();
+                Mesh mesh;
+                if (cachedMesh)
+                {
+                    mesh = cachedMesh;
+                    mesh.Clear();
+                }
+                else 
+                {
+                    mesh = new();
+                }
                 int mF = qMesh.quads.Length;
                 int[] f = qMesh.quads;
                 Vector3[] v = qMesh.vertices;

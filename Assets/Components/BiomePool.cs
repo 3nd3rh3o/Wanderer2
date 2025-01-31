@@ -8,6 +8,7 @@ namespace Wanderer
     public class BiomePool : ScriptableObject
     {
         public ComputeShader planetTopoCS;
+        public Material surfaceMaterial;
         [Range(0f, 2f)] public float Scale;
         public Vector3 Offset;
         [Range(0, 10)] public int MaxLOD;

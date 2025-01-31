@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: DullRockPool
   m_EditorClassIdentifier: 
   planetTopoCS: {fileID: 7200000, guid: fa0ea49c96f4fd04db8d7ab6d30278e4, type: 3}
-  Scale: 0.85
-  Offset: {x: 6.45, y: -3.46, z: 0.27}
+  surfaceMaterial: {fileID: 2100000, guid: 81b198c87a0911848b04dde1e0fd0e10, type: 2}
+  Scale: 0.84
+  Offset: {x: 6.22, y: 1.47, z: -1.01}
   MaxLOD: 2
   biomes:
   - {fileID: 11400000, guid: 6124226acb4b6b14b8886577fd913085, type: 2}
