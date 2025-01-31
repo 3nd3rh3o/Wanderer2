@@ -313,12 +313,7 @@ namespace Wanderer
                 }
             }
 
-            public void Split()
-            {
-                childrens = new Chunk[]{
-
-                };
-            }
+            
 
             /// <summary>
             ///    Evaluate if the player is in split bound.
@@ -339,6 +334,8 @@ namespace Wanderer
                 GenerateTopo(textures, q, settings);
                 cachedMesh = ToMesh(q);
             }
+
+            
         }
 
 

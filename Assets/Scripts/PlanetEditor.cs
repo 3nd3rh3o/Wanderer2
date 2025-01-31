@@ -10,7 +10,6 @@ namespace Wanderer
     {
         public PlanetSettings settings;
         private TeluricGenerator surfGenerator;
-
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
 
@@ -28,8 +27,6 @@ namespace Wanderer
             surfGenerator.Regen(transform.position, meshFilter, meshRenderer);
             surfGenerator.Build(meshFilter, meshRenderer);
         }
-
-
         void OnDisable()
         {
             meshFilter.sharedMesh.Clear();

@@ -346,7 +346,7 @@ public class Chunk
 
     private Chunk[] GenChilds(Vector3 center, int Dir, int LOD, float size, float gRad)
     {
-        float nS = size * 0.5f;
+        float nS = Size * 0.5f;
         float ofs = nS * 0.5f;
         RenderTexture[] prt = new RenderTexture[] { albedo, normalMap, height, metalic, roughness, ambientOcclusion };
         Chunk[] chunks = Dir switch

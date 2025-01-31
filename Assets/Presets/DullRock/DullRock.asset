@@ -16,7 +16,7 @@ MonoBehaviour:
   rotation: {x: 15, y: 0, z: 0}
   linearVelocity: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0.01, y: 0.05, z: 0}
-  radius: 500
+  radius: 402.3
   mass: 10
   isKynematic: 0
   atmosphereSettings: {fileID: 11400000, guid: c68874f769983d544bb90cde42cf79c5, type: 2}

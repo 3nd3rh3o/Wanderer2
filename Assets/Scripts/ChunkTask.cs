@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using static Wanderer.TeluricGenerator;
 
 namespace Wanderer
@@ -15,7 +16,15 @@ namespace Wanderer
 
         internal void Execute()
         {
-            throw new NotImplementedException();
+            switch (type)
+            {
+                case ChunkTaskTYPE.Split:
+                    chunk.Split();
+                    return;
+                case ChunkTaskTYPE.UnSplit:
+                    chunk.UnSplit();
+                    return;
+            };
         }
     }
 

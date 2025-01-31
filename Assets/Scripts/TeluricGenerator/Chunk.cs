@@ -238,6 +238,54 @@ namespace Wanderer
                 return mesh;
             }
 
+            internal void Split()
+            {
+                float nS = Size * 0.5f;
+                float ofs = nS * 0.5f;
+                childrens = Dir switch
+                {
+                    0 => new Chunk[] { new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, 0, -ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, 0, ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, 0, -ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, 0, ofs), settings)
+                                     },
+                    1 => new Chunk[] { new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, 0, ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, 0, -ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, 0, ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, 0, -ofs), settings)
+                                     },
+                    2 => new Chunk[] { new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, ofs, 0), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, ofs, 0), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, -ofs, 0), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, -ofs, 0), settings)
+                                     },
+                    3 => new Chunk[] { new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, ofs, 0), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, ofs, 0), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(-ofs, -ofs, 0), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(ofs, -ofs, 0), settings)
+                                     },
+                    4 => new Chunk[] { new Chunk(Dir, nS, LOD+1, center + new Vector3(0, ofs, -ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(0, ofs, ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(0, -ofs, -ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(0, -ofs, ofs), settings)
+                                     },
+                    5 => new Chunk[] { new Chunk(Dir, nS, LOD+1, center + new Vector3(0, ofs, ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(0, ofs, -ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(0, -ofs, ofs), settings),
+                                       new Chunk(Dir, nS, LOD+1, center + new Vector3(0, -ofs, -ofs), settings)
+                                     },
+                    _ => throw new System.NotImplementedException()
+                };
+                pending = false;
+            }
+
+            internal void UnSplit()
+            {
+                childrens.ToList().ForEach(c => c.Kill());
+                childrens = null;
+                pending = false;
+            }
+
 
             private Mesh ToMesh(QuadMesh qMesh)
             {
@@ -248,7 +296,7 @@ namespace Wanderer
                     mesh = cachedMesh;
                     mesh.Clear();
                 }
-                else 
+                else
                 {
                     mesh = new();
                 }
