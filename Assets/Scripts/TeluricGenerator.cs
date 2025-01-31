@@ -121,7 +121,7 @@ namespace Wanderer
             if (meshFilter.sharedMesh == null) return;
             Mesh mesh = meshFilter.sharedMesh;
 #else
-            meshFilter.mesh == null) return;
+            if (meshFilter.mesh == null) return;
             Mesh mesh = meshFilter.mesh;
 #endif
             mesh.Clear();
