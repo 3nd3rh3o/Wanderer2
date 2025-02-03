@@ -15,5 +15,5 @@ MonoBehaviour:
   Name: Ocean
   MinPredicate: {fileID: 11400000, guid: 859c9188b9d53e44f9eb3f91aab56d03, type: 2}
   MaxPredicate: {fileID: 11400000, guid: 76a15d34f60868d4491cdd7baaecebd0, type: 2}
-  BlendingFactor: 0.292
+  BlendingFactor: 0.333
   TopologySettings: {fileID: 11400000, guid: 5fbb7fba0ff2ab24e96ddae83d5d8197, type: 2}
