@@ -94,19 +94,18 @@ namespace Wanderer
             cs.Dispatch(0, mesh.vertices.Length, 1, 1);
             
             //prep biome tex []
-            RenderTexture[] biomesTempTex = new RenderTexture[settings.biomes.biomes.Length];
-            for (int i = 0; i < biomesTempTex.Length; i++)
-            {
-                biomesTempTex[i] = new RenderTexture(256, 256, 0, RenderTextureFormat.ARGB32);
-                biomesTempTex[i].Create();
-            }
-            
+            RenderTexture biomesTempTex = new RenderTexture(256, 256, 0, RenderTextureFormat.ARGB32);
+            biomesTempTex.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
+            biomesTempTex.volumeDepth = settings.biomes.biomes.Length;
+            biomesTempTex.enableRandomWrite = true;
+            biomesTempTex.Create();
 
 
             // gen each biome tex in the []
-            for (int i = 0; i < biomesTempTex.Length; i++)
+            for (int i = 0; i < settings.biomes.biomes.Length; i++)
             {
-                cs.SetTexture(1, "_tex", biomesTempTex[i]);
+                cs.SetTexture(1, "_tex", biomesTempTex);
+                cs.SetInt("_biomeID", i);
                 int numPasses = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass.Count;
                 for (int j = 0; j < numPasses; j++)
                 {
@@ -121,18 +120,24 @@ namespace Wanderer
                     cs.Dispatch(1, 256/8, 256/8, 1);
                 }
             }
-            //assemble each in a tex3D;
-
-
             //Launch assembly of all rendered tex;
 
 
 
             //Cleanup
             
-            biomesTempTex.ToList().ForEach(t => t.Release());
+            cs.SetTexture(2, "_source", biomesTempTex);
+            cs.SetTexture(2, "_dest", properties.albedo);
+            cs.SetBuffer(2, "_minPredicates", BminP);
+            cs.SetBuffer(2, "_maxPredicates", BmaxP);
+            cs.SetBuffer(2, "_blendingFactor", blendingFactorBuff);    
+
+        
 
 
+            cs.Dispatch(2, 256/8, 256/8, 1);
+
+            biomesTempTex.Release();
             
 
 
@@ -191,7 +196,7 @@ namespace Wanderer
                 combines[i] = chunkData[i].Item1;
                 //Mat
                 MaterialPropertyBlock mpb = new();
-                //mpb.SetTexture("_BaseMap", chunkData[i].Item2.albedo);
+                mpb.SetTexture("_BaseMap", chunkData[i].Item2.albedo);
                 meshRenderer.SetPropertyBlock(mpb, i);
             }
             mesh.CombineMeshes(combines.ToArray(), false, false, false);
