@@ -1,7 +1,13 @@
-#pragma kernel VertexRecompute
+
+
 //#pragma kernel GenTextures
 
 #include "../Libs/FractalNoise.cginc"
+#include "TexBuildingPass.cginc"
+
+#pragma kernel VertexRecompute
+#pragma kernel ExecuteBuildPass
+
 
 
 // Mesh buffer
@@ -9,6 +15,8 @@
 RWStructuredBuffer<float3> _vertices;
 RWStructuredBuffer<float3> _normals;
 RWStructuredBuffer<float4> _color;
+
+
 
 
 StructuredBuffer<float4> _minPredicates;
@@ -29,6 +37,9 @@ StructuredBuffer<float> _BiomePersistence;
 StructuredBuffer<float> _BiomeLacunarity;
 StructuredBuffer<float> _BiomeVShift;
 StructuredBuffer<float3> _BiomeCol;
+
+
+
 
 
 float simpleNoise(float3 pos, float scale, float multiplier, int numLayers, float3 offset, float persistence, float lacunarity, float verticalShift)
@@ -175,6 +186,29 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
         _color[id] = float4(res.gba, 1.);
     }
 }
+
+RWTexture2D<float4> _tex;
+
+float3 _origin; // origin vertex
+float3 _mx; // max U vertex
+float3 _my; // max V vertex
+
+uint _biomeID;
+int _passType;
+float4 _col; // 0
+
+[numthreads(8, 8, 1)]
+void ExecuteBuildPass(uint2 id : SV_DISPATCHTHREADID)
+{
+    switch (_passType)
+    {
+        case 0:
+            FillPass(_tex, _col, id);
+            break;
+    }
+}
+
+
 
 // FOR FRAGMENT
 /*

@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using static Wanderer.TeluricGenerator.Chunk;
+using static Wanderer.TexBuildingPass;
 namespace Wanderer
 {
     public partial class TeluricGenerator
@@ -91,11 +92,60 @@ namespace Wanderer
             cs.SetBuffer(0, "_BiomeCol", biomesDebugColBuff);
 
             cs.Dispatch(0, mesh.vertices.Length, 1, 1);
+            
+            //prep biome tex []
+            RenderTexture[] biomesTempTex = new RenderTexture[settings.biomes.biomes.Length];
+            for (int i = 0; i < biomesTempTex.Length; i++)
+            {
+                biomesTempTex[i] = new RenderTexture(256, 256, 0, RenderTextureFormat.ARGB32);
+                biomesTempTex[i].Create();
+            }
+            
+
+
+            // gen each biome tex in the []
+            for (int i = 0; i < biomesTempTex.Length; i++)
+            {
+                cs.SetTexture(1, "_tex", biomesTempTex[i]);
+                int numPasses = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass.Count;
+                for (int j = 0; j < numPasses; j++)
+                {
+                    PassType passType = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j].passType;
+                    switch (passType)
+                    {
+                        case PassType.Fill:
+                            cs.SetInt("_passType", 0);
+                            cs.SetVector("_col", ((TexBuildingPassFill)settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j]).color);
+                            break;
+                    }
+                    cs.Dispatch(1, 256/8, 256/8, 1);
+                }
+            }
+            //assemble each in a tex3D;
+
+
+            //Launch assembly of all rendered tex;
+
+
+
+            //Cleanup
+            
+            biomesTempTex.ToList().ForEach(t => t.Release());
+
+
+            
+
+
 
             vBuff.GetData(mesh.vertices);
             nBuff.GetData(mesh.normals);
 
             mesh.vertexColor = CBuffHelper.ExtractColBuff(cBuff);
+
+            
+
+
+
 
             vBuff.Release();
             nBuff.Release();

@@ -23,7 +23,7 @@ namespace Wanderer
         }
 
         void OnEnable()
-        {   
+        {
             meshFilter = GetComponent<MeshFilter>();
             meshRenderer = GetComponent<MeshRenderer>();
             if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();

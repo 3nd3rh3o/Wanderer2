@@ -11,6 +11,7 @@ namespace Wanderer
         public BiomePredicate MaxPredicate;
         [Range(0f, 1f)] public float BlendingFactor;
         public NoiseSettings TopologySettings;
+        public TerrainTexBuilders terrainTextureBuilders;
 
         internal float4 GetMinPreds()
         {
