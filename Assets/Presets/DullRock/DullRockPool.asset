@@ -16,7 +16,8 @@ MonoBehaviour:
   surfaceMaterial: {fileID: 2100000, guid: 81b198c87a0911848b04dde1e0fd0e10, type: 2}
   Scale: 0.952
   Offset: {x: 12.05, y: 4.4, z: 4.22}
-  MaxLOD: 2
+  MaxLOD: 4
   biomes:
   - {fileID: 11400000, guid: 6124226acb4b6b14b8886577fd913085, type: 2}
+  - {fileID: 11400000, guid: de0b2abf68946574fa7297854f46e373, type: 2}
   - {fileID: 11400000, guid: f5148135ac47d334aac1fa46fac0196d, type: 2}

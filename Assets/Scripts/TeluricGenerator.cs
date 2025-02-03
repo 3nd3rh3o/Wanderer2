@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using static Wanderer.TeluricGenerator.Chunk;
 using static Wanderer.TexBuildingPass;
@@ -92,7 +94,7 @@ namespace Wanderer
             cs.SetBuffer(0, "_BiomeCol", biomesDebugColBuff);
 
             cs.Dispatch(0, mesh.vertices.Length, 1, 1);
-            
+
             //prep biome tex []
             RenderTexture biomesTempTex = new RenderTexture(256, 256, 0, RenderTextureFormat.ARGB32);
             biomesTempTex.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
@@ -104,12 +106,13 @@ namespace Wanderer
             // gen each biome tex in the []
             for (int i = 0; i < settings.biomes.biomes.Length; i++)
             {
-                cs.SetTexture(1, "_tex", biomesTempTex);
-                cs.SetInt("_biomeID", i);
+
                 int numPasses = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass.Count;
                 for (int j = 0; j < numPasses; j++)
                 {
                     PassType passType = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j].passType;
+                    cs.SetTexture(1, "_tex", biomesTempTex);
+                    cs.SetInt("_biomeID", i);
                     switch (passType)
                     {
                         case PassType.Fill:
@@ -117,7 +120,7 @@ namespace Wanderer
                             cs.SetVector("_col", ((TexBuildingPassFill)settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j]).color);
                             break;
                     }
-                    cs.Dispatch(1, 256/8, 256/8, 1);
+                    cs.Dispatch(1, 256 / 8, 256 / 8, 1);
                 }
             }
             //Launch assembly of all rendered tex;
@@ -125,20 +128,22 @@ namespace Wanderer
 
 
             //Cleanup
-            
+
             cs.SetTexture(2, "_source", biomesTempTex);
             cs.SetTexture(2, "_dest", properties.albedo);
             cs.SetBuffer(2, "_minPredicates", BminP);
             cs.SetBuffer(2, "_maxPredicates", BmaxP);
-            cs.SetBuffer(2, "_blendingFactor", blendingFactorBuff);    
+            cs.SetBuffer(2, "_blendingFactor", blendingFactorBuff);
+            cs.SetInt("_numBiomes", settings.biomes.biomes.Length);
+            cs.SetVector("_origin", mesh.origin);
+            cs.SetVector("_mx", mesh.U);
+            cs.SetVector("_my", mesh.V);
 
-        
 
 
-            cs.Dispatch(2, 256/8, 256/8, 1);
+            cs.Dispatch(2, 256 / 8, 256 / 8, 1);
 
             biomesTempTex.Release();
-            
 
 
 
@@ -147,7 +152,7 @@ namespace Wanderer
 
             mesh.vertexColor = CBuffHelper.ExtractColBuff(cBuff);
 
-            
+
 
 
 
@@ -175,9 +180,11 @@ namespace Wanderer
 #if UNITY_EDITOR
             if (meshFilter.sharedMesh == null) return;
             Mesh mesh = meshFilter.sharedMesh;
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 #else
             if (meshFilter.mesh == null) return;
             Mesh mesh = meshFilter.mesh;
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 #endif
             mesh.Clear();
 
@@ -188,6 +195,7 @@ namespace Wanderer
             }
             CombineInstance[] combines = new CombineInstance[chunkData.Count];
             surfmats = new Material[chunkData.Count];
+            
             for (int i = 0; i < chunkData.Count; i++) surfmats[i] = settings.biomes.surfaceMaterial;
             meshRenderer.sharedMaterials = surfmats;
             for (int i = 0; i < chunkData.Count; i++)
@@ -197,6 +205,13 @@ namespace Wanderer
                 //Mat
                 MaterialPropertyBlock mpb = new();
                 mpb.SetTexture("_BaseMap", chunkData[i].Item2.albedo);
+                if (SceneView.lastActiveSceneView && SceneView.lastActiveSceneView.sceneLighting && SceneView.lastActiveSceneView.cameraMode.drawMode != DrawCameraMode.TexturedWire)
+                {
+                mpb.SetVector("_LightDirection", Vector3.forward);
+                } else {
+                    mpb.SetVector("_LightDirection", Vector3.zero);
+                }
+                mpb.SetVector("_LightColor", new(1f, 1f, 1f));
                 meshRenderer.SetPropertyBlock(mpb, i);
             }
             mesh.CombineMeshes(combines.ToArray(), false, false, false);
@@ -335,7 +350,7 @@ namespace Wanderer
                 MonoBehaviour.Destroy(combine);
 #endif
             }
-            
+
 
             /// <summary>
             /// Test if the chunk need to be splitted or not.
@@ -347,7 +362,7 @@ namespace Wanderer
                 // Not splitted, not maxSplit lvl and player in split Radius
                 if (playerInBound(position) && childrens == null && LOD <= settings.biomes.MaxLOD)
                 {
-                    ChunkTask newTask = new (ChunkTaskTYPE.Split, this);
+                    ChunkTask newTask = new(ChunkTaskTYPE.Split, this);
                     pending = true;
                     queue.Enqueue(newTask);
                 }
@@ -357,7 +372,7 @@ namespace Wanderer
                     // if player not clause enough to justify split.
                     if (!playerInBound(position))
                     {
-                        ChunkTask newTask = new (ChunkTaskTYPE.UnSplit, this);
+                        ChunkTask newTask = new(ChunkTaskTYPE.UnSplit, this);
                         pending = true;
                         queue.Enqueue(newTask);
                     }
@@ -368,7 +383,7 @@ namespace Wanderer
                 }
             }
 
-            
+
 
             /// <summary>
             ///    Evaluate if the player is in split bound.
@@ -390,7 +405,7 @@ namespace Wanderer
                 cachedMesh = ToMesh(q);
             }
 
-            
+
         }
 
 

@@ -12,7 +12,8 @@ namespace Wanderer
             {
                 const int MAX_TEX_SIZE = 256;
 
-                albedo = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 32, RenderTextureFormat.ARGB32);
+                albedo = new(MAX_TEX_SIZE, MAX_TEX_SIZE, 0, RenderTextureFormat.ARGB32);
+                albedo.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
                 albedo.enableRandomWrite = true;
                 albedo.Create();
             }

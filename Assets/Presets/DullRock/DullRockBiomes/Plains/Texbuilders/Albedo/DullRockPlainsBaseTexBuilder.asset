@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e3a9b31d14bdf84292f74e6dc78a2a2, type: 3}
-  m_Name: MountainsMinBiomePredicate
+  m_Script: {fileID: 11500000, guid: 7642f3fe1a50ab64ebf16bcb2c6400c4, type: 3}
+  m_Name: DullRockPlainsBaseTexBuilder
   m_EditorClassIdentifier: 
-  Altitude: 0.515
-  Temperature: -1
-  Humidity: -1
-  Latitude: -1
+  BuildingPass:
+  - {fileID: 11400000, guid: 70fd40a614914c6458c431ad33a36b6f, type: 2}

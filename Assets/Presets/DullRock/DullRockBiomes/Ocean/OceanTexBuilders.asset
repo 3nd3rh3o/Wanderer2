@@ -9,10 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e3a9b31d14bdf84292f74e6dc78a2a2, type: 3}
-  m_Name: MountainsMinBiomePredicate
+  m_Script: {fileID: 11500000, guid: 0353e866268c4b3469595d872ae0fd96, type: 3}
+  m_Name: OceanTexBuilders
   m_EditorClassIdentifier: 
-  Altitude: 0.515
-  Temperature: -1
-  Humidity: -1
-  Latitude: -1
+  baseTexture: {fileID: 11400000, guid: 2a22c1607fed75148896810a98df297e, type: 2}

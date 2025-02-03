@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcbe95f3be275c34fa38d9b03521a027, type: 3}
   m_Name: FillPass
   m_EditorClassIdentifier: 
-  color: {r: 1, g: 0, b: 0, a: 1}
+  color: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}

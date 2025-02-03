@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e3a9b31d14bdf84292f74e6dc78a2a2, type: 3}
-  m_Name: MountainsMinBiomePredicate
+  m_Name: PlainsMax
   m_EditorClassIdentifier: 
   Altitude: 0.515
-  Temperature: -1
-  Humidity: -1
-  Latitude: -1
+  Temperature: 1
+  Humidity: 1
+  Latitude: 1

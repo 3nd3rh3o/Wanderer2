@@ -204,7 +204,7 @@ void ExecuteBuildPass(uint2 id : SV_DISPATCHTHREADID)
     switch (_passType)
     {
         case 0:
-            FillPass(_tex, _col, int3(_biomeID ,id));
+            FillPass(_tex, _col, int3(id, _biomeID));
             break;
     }
 }
@@ -225,7 +225,7 @@ void GenTextures(uint2 id : SV_DispatchThreadID)
     float3 col;
     float blend;
     //TODO integrate tolerance here! and put color computation also here
-    for (int i = 0; i < _numBiomes; i++)
+    for (uint i = 0; i < _numBiomes; i++)
     {
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
         float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
@@ -234,13 +234,13 @@ void GenTextures(uint2 id : SV_DispatchThreadID)
         {
             if (bToUse != -1)
             {
-                float3 nCol = _source[int3(i, id.xy)];
+                float3 nCol = _source[int3(id.xy, i)].rgb;
                 col = lerp(col, nCol, blend);
             }
             else
             {
                 blend = eucDist(vPos, bChann, MP, _blendingFactor[i]);
-                col = _source[int3(i, id.xy)];
+                col = _source[int3(id.xy, i)].rgb;
             }
             bToUse = b;
         }

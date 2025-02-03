@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35a1dbacfc820404ea91503f48c3dca6, type: 3}
+  m_Name: DullRockPlains
+  m_EditorClassIdentifier: 
+  Name: Plains
+  MinPredicate: {fileID: 11400000, guid: 9cd9d705d4896524790f37a05ba78f0a, type: 2}
+  MaxPredicate: {fileID: 11400000, guid: 799bbe245e5810e45871a1f16924c2ec, type: 2}
+  BlendingFactor: 0.123
+  TopologySettings: {fileID: 11400000, guid: ae8fe7af53f3e794dba881f70bd897a6, type: 2}
+  terrainTextureBuilders: {fileID: 11400000, guid: 4a57c5cebd7284a46865666d542931d6, type: 2}

@@ -97,9 +97,9 @@ Shader "Wanderer/Terrain/Planet"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-
             #include "UnityCG.cginc"
+
+            
             struct VertexInput
             {
                 float3 positionOS : POSITION;
@@ -153,15 +153,18 @@ Shader "Wanderer/Terrain/Planet"
                 surface.baseColor = tex2D(_BaseMap, input.uv);
 
                 // Calcul de l'éclairage directionnel
-                surface.lighting = ComputeLighting(input.normalWS, _LightDirection, _LightColor);
+                
 
                 // Ajout d'une dispersion atmosphérique (optionnel)
+                
+                if (length(_LightDirection) == 1.)
+                {
+                surface.lighting = ComputeLighting(input.normalWS, _LightDirection, _LightColor);
                 surface.lighting = ApplyAtmosphericScattering(surface.lighting, input.positionCS);
-                #ifdef _MAIN_LIGHT_SHADOWS
                 col = half4(surface.baseColor * surface.lighting, 1.0);
-                #else
+                }
+                else
                 col = half4(surface.baseColor, 1.0);
-                #endif
             }
             ENDHLSL
         }
