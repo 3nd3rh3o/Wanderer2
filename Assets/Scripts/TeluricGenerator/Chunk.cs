@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -314,10 +315,12 @@ namespace Wanderer
                     int b = f[i + 1];
                     int c = f[i + 2];
                     int d = f[i + 3];
-                    Vector3 tan_a = Vector3.Cross(n[a], v[d] - v[a]).normalized;
-                    Vector3 tan_b = Vector3.Cross(n[b], v[c] - v[b]).normalized;
-                    Vector3 tan_c = Vector3.Cross(n[c], v[d] - v[a]).normalized;
-                    Vector3 tan_d = Vector3.Cross(n[d], v[c] - v[b]).normalized;
+                    Vector3 tan_a, tan_b, tan_c, tan_d;
+
+                    tan_a = Vector3.Cross(n[a], v[d] - v[a]).normalized;
+                    tan_b = Vector3.Cross(n[b], v[c] - v[b]).normalized;
+                    tan_c = Vector3.Cross(n[c], v[d] - v[a]).normalized;
+                    tan_d = Vector3.Cross(n[d], v[c] - v[b]).normalized;
 
                     tan[a] = new Vector4(tan_a.x, tan_a.y, tan_a.z, 1);
                     tan[b] = new Vector4(tan_b.x, tan_b.y, tan_b.z, 1);
@@ -334,7 +337,7 @@ namespace Wanderer
                 mesh.SetUVs(0, uv);
                 mesh.SetColors(qMesh.vertexColor);
                 mesh.RecalculateBounds();
-                mesh.SetTangents(tan);
+                mesh.RecalculateTangents();
                 geoCenter = mesh.bounds.center;
                 return mesh;
             }
