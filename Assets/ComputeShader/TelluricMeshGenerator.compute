@@ -3,7 +3,6 @@
 //#pragma kernel GenTextures
 
 #include "../Libs/FractalNoise.cginc"
-#include "TexBuildingPass.cginc"
 
 #pragma kernel VertexRecompute
 #pragma kernel ExecuteBuildPass
@@ -38,6 +37,27 @@ StructuredBuffer<float> _BiomePersistence;
 StructuredBuffer<float> _BiomeLacunarity;
 StructuredBuffer<float> _BiomeVShift;
 StructuredBuffer<float3> _BiomeCol;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -197,6 +217,26 @@ float3 _my; // max V vertex
 uint _biomeID;
 int _passType;
 float4 _col; // 0
+float4 _sCol;
+float _Scale;
+float _Multiplier;
+float _Lacunarity;
+float _Persistence;
+float3 _Offset;
+float _VerticalShift;
+int _NumLayers;
+
+
+
+void FillPass(RWTexture3D<float4> outTex, float4 col, int3 uv)
+{
+    outTex[uv] = col;
+}
+
+void NoisePass(RWTexture3D<float4> outTex, int3 uv, float3 pos, float scale, float mul, float lac, float per, int nl, float3 off, float vs, float4 col, float4 scol)
+{
+    outTex[uv] = lerp(col, scol, simpleNoise(normalize(pos), scale, mul, nl, off, per, lac, vs));
+}
 
 [numthreads(8, 8, 1)]
 void ExecuteBuildPass(uint2 id : SV_DISPATCHTHREADID)
@@ -205,6 +245,12 @@ void ExecuteBuildPass(uint2 id : SV_DISPATCHTHREADID)
     {
         case 0:
             FillPass(_tex, _col, int3(id, _biomeID));
+            break;
+        case 1:
+            float3 dX = (_mx - _origin) / 256;
+            float3 dY = (_my - _origin) / 256;
+            float3 pos = normalize(_origin + (dX * id.x) + (dY * id.y));
+            NoisePass(_tex, int3(id, _biomeID), pos, _Scale, _Multiplier, _Lacunarity, _Persistence, _NumLayers, _Offset, _VerticalShift, _col, _sCol);
             break;
     }
 }
@@ -220,7 +266,7 @@ void GenTextures(uint2 id : SV_DispatchThreadID)
     float3 dX = (_mx - _origin) / 256;
     float3 dY = (_my - _origin) / 256;
     int bToUse = -1;
-    float3 vPos = normalize(_origin + (dX * id.x) + (dY * id.y));
+    float3 vPos = normalize(_origin + (dX * (id.x)) + (dY * (id.y)));
     float4 bChann = getBiomeChannels(vPos, _scale, 0.75, _offset);
     float3 col;
     float blend;

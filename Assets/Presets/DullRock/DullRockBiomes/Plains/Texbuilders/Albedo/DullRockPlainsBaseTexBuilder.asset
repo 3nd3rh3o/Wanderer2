@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: DullRockPlainsBaseTexBuilder
   m_EditorClassIdentifier: 
   BuildingPass:
-  - {fileID: 11400000, guid: 70fd40a614914c6458c431ad33a36b6f, type: 2}
+  - {fileID: 11400000, guid: ea7a89e2ce8a0c94e9570b1f503cee79, type: 2}

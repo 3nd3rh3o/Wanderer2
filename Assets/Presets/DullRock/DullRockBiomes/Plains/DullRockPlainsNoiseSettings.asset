@@ -16,7 +16,7 @@ MonoBehaviour:
   Multiplier: 0.041
   VerticalShift: 0.01
   Offset: {x: 0, y: 0, z: 0}
-  NumLayers: 1
+  NumLayers: 2
   Lacunarity: 0
   Persistence: 0
   DebugColor: {r: 0.020320605, g: 0.4528302, b: 0, a: 0}

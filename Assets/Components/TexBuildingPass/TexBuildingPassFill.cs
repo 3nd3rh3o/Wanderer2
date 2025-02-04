@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace Wanderer
 {
-    [CreateAssetMenu(fileName = "TexBuildingPassFill", menuName = "Wanderer/Planet/TexBuildingPassFill")]
+    [CreateAssetMenu(fileName = "TexBuildingPassFill", menuName = "Wanderer/Planet/TexBuildingPass/Fill")]
     public class TexBuildingPassFill : TexBuildingPass
     {
         public readonly new PassType passType = PassType.Fill;

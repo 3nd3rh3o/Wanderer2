@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using static Wanderer.TeluricGenerator.Chunk;
@@ -110,15 +109,30 @@ namespace Wanderer
                 int numPasses = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass.Count;
                 for (int j = 0; j < numPasses; j++)
                 {
-                    PassType passType = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j].passType;
+                    var passType = settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j];
                     cs.SetTexture(1, "_tex", biomesTempTex);
                     cs.SetInt("_biomeID", i);
-                    switch (passType)
+                    if (passType.GetType() == typeof(TexBuildingPassFill))
                     {
-                        case PassType.Fill:
-                            cs.SetInt("_passType", 0);
-                            cs.SetVector("_col", ((TexBuildingPassFill)settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j]).color);
-                            break;
+                        cs.SetInt("_passType", 0);
+                        cs.SetVector("_col", ((TexBuildingPassFill)settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j]).color);
+                    }
+                    else if (passType.GetType() == typeof(TexBuildingPassSimplex))
+                    {
+                        cs.SetVector("_origin", mesh.origin);
+                        cs.SetVector("_mx", mesh.U);
+                        cs.SetVector("_my", mesh.V);
+                        cs.SetInt("_passType", 1);
+                        TexBuildingPassSimplex s = (TexBuildingPassSimplex)settings.biomes.biomes[i].terrainTextureBuilders.baseTexture.BuildingPass[j];
+                        cs.SetFloat("_Scale", s._Scale);
+                        cs.SetFloat("_Multiplier", s._Multiplier);
+                        cs.SetFloat("_Lacunarity", s._Lacunarity);
+                        cs.SetFloat("_Persistence", s._Persistence);
+                        cs.SetInt("_NumLayers", s._NumLayers);
+                        cs.SetVector("_Offset", s._Offset);
+                        cs.SetFloat("_VerticalShift", s._VerticalShift);
+                        cs.SetVector("_col", s.mainColor);
+                        cs.SetVector("_sCol", s.secondaryColor);
                     }
                     cs.Dispatch(1, 256 / 8, 256 / 8, 1);
                 }
@@ -195,7 +209,7 @@ namespace Wanderer
             }
             CombineInstance[] combines = new CombineInstance[chunkData.Count];
             surfmats = new Material[chunkData.Count];
-            
+
             for (int i = 0; i < chunkData.Count; i++) surfmats[i] = settings.biomes.surfaceMaterial;
             meshRenderer.sharedMaterials = surfmats;
             for (int i = 0; i < chunkData.Count; i++)
@@ -207,8 +221,10 @@ namespace Wanderer
                 mpb.SetTexture("_BaseMap", chunkData[i].Item2.albedo);
                 if (SceneView.lastActiveSceneView && SceneView.lastActiveSceneView.sceneLighting && SceneView.lastActiveSceneView.cameraMode.drawMode != DrawCameraMode.TexturedWire)
                 {
-                mpb.SetVector("_LightDirection", Vector3.forward);
-                } else {
+                    mpb.SetVector("_LightDirection", Vector3.forward);
+                }
+                else
+                {
                     mpb.SetVector("_LightDirection", Vector3.zero);
                 }
                 mpb.SetVector("_LightColor", new(1f, 1f, 1f));

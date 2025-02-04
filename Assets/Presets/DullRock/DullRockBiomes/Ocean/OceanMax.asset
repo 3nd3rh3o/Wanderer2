@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3a9b31d14bdf84292f74e6dc78a2a2, type: 3}
   m_Name: OceanMax
   m_EditorClassIdentifier: 
-  Altitude: 0
+  Altitude: -0.137
   Temperature: 1
   Humidity: 1
   Latitude: 1

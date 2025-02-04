@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5d9b03a03fd5e44a72826375940910, type: 3}
+  m_Name: BeachSimplexPass
+  m_EditorClassIdentifier: 
+  mainColor: {r: 1, g: 0.9766038, b: 0.7075472, a: 0}
+  secondaryColor: {r: 0.93962264, g: 0.92426866, b: 0.56554645, a: 0}
+  _Scale: 17.41
+  _Multiplier: 0.14
+  _NumLayers: 8
+  _Lacunarity: 1.11
+  _Persistence: 1
+  _VerticalShift: 0.22
+  _Offset: {x: 0, y: 0, z: 0}

@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7642f3fe1a50ab64ebf16bcb2c6400c4, type: 3}
-  m_Name: MountainsBaseTexBuilder
+  m_Script: {fileID: 11500000, guid: 0353e866268c4b3469595d872ae0fd96, type: 3}
+  m_Name: BeachTexBuilders
   m_EditorClassIdentifier: 
-  BuildingPass:
-  - {fileID: 11400000, guid: 81dea72715871c3419a3bd041a501cca, type: 2}
+  baseTexture: {fileID: 11400000, guid: 2083f8389225ac14b862ece1c0350eef, type: 2}

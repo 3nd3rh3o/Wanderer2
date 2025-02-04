@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetTopoCS: {fileID: 7200000, guid: fa0ea49c96f4fd04db8d7ab6d30278e4, type: 3}
   surfaceMaterial: {fileID: 2100000, guid: 81b198c87a0911848b04dde1e0fd0e10, type: 2}
-  Scale: 0.952
-  Offset: {x: 12.05, y: 4.4, z: 4.22}
+  Scale: 0.835
+  Offset: {x: 3.4, y: 4.4, z: 4.22}
   MaxLOD: 4
   biomes:
   - {fileID: 11400000, guid: 6124226acb4b6b14b8886577fd913085, type: 2}
+  - {fileID: 11400000, guid: 9763957c844fae24399d321823cce0c3, type: 2}
   - {fileID: 11400000, guid: de0b2abf68946574fa7297854f46e373, type: 2}
   - {fileID: 11400000, guid: f5148135ac47d334aac1fa46fac0196d, type: 2}
