@@ -9,6 +9,7 @@ namespace Wanderer
     public class PlanetEditor : MonoBehaviour
     {
         public PlanetSettings settings;
+        public bool DynamicParams = true;
         private TeluricGenerator surfGenerator;
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
@@ -24,6 +25,7 @@ namespace Wanderer
 
         void OnEnable()
         {
+            if (settings == null) return;
             meshFilter = GetComponent<MeshFilter>();
             meshRenderer = GetComponent<MeshRenderer>();
             if (meshFilter.sharedMesh == null) meshFilter.sharedMesh = new();
@@ -33,7 +35,9 @@ namespace Wanderer
 
         void Update()
         {
-            surfGenerator?.Regen(transform.position, meshFilter, meshRenderer);
+            if (surfGenerator == null || settings == null) OnEnable();
+            if (DynamicParams) surfGenerator?.Regen(transform.position, meshFilter, meshRenderer);
+            else surfGenerator?.Update(transform.position, meshFilter, meshRenderer);
             surfGenerator?.Build(meshFilter, meshRenderer);
         }
         void OnDisable()

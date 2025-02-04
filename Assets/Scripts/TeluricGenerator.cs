@@ -277,6 +277,16 @@ namespace Wanderer
             Build(meshFilter, meshRenderer);
         }
 
+        public void Update(Vector3 planetPosition, MeshFilter meshFilter, MeshRenderer meshRenderer)
+        {
+            if (Camera.current == null || chunks == null || queue == null) return;
+            // check if we need a split or not.
+            chunks.ToList().ForEach(c => c.Update(Camera.current.transform.position - planetPosition, queue));
+            // execute a change in quadTree
+            if (queue.Count > 0) queue.Dequeue().Execute();
+            Build(meshFilter, meshRenderer);
+        }
+
         /// <summary>
         /// <typeparamref name="Chunk"/> class.
         /// <br/>

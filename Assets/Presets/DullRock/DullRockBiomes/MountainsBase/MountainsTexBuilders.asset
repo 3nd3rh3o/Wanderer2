@@ -9,14 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
-  m_Name: BeachNoise
+  m_Script: {fileID: 11500000, guid: 0353e866268c4b3469595d872ae0fd96, type: 3}
+  m_Name: MountainsTexBuilders
   m_EditorClassIdentifier: 
-  Scale: 0
-  Multiplier: 0
-  VerticalShift: 0
-  Offset: {x: 0, y: 0, z: 0}
-  NumLayers: 0
-  Lacunarity: 0
-  Persistence: 0
-  DebugColor: {r: 0.99718523, g: 1, b: 0, a: 0}
+  baseTexture: {fileID: 11400000, guid: cb02f1748f7d78d49b5f34497bd01ea9, type: 2}

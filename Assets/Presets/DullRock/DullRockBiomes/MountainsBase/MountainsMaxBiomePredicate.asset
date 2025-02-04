@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
-  m_Name: BeachNoise
+  m_Script: {fileID: 11500000, guid: 2e3a9b31d14bdf84292f74e6dc78a2a2, type: 3}
+  m_Name: MountainsMaxBiomePredicate
   m_EditorClassIdentifier: 
-  Scale: 0
-  Multiplier: 0
-  VerticalShift: 0
-  Offset: {x: 0, y: 0, z: 0}
-  NumLayers: 0
-  Lacunarity: 0
-  Persistence: 0
-  DebugColor: {r: 0.99718523, g: 1, b: 0, a: 0}
+  Altitude: 0.63
+  Temperature: 1
+  Humidity: 1
+  Latitude: 1
