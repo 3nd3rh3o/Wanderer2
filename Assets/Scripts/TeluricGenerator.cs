@@ -231,6 +231,8 @@ namespace Wanderer
                 meshRenderer.SetPropertyBlock(mpb, i);
             }
             mesh.CombineMeshes(combines.ToArray(), false, false, false);
+            mesh.RecalculateBounds();
+            mesh.RecalculateTangents();
         }
 
 

@@ -20,6 +20,8 @@ MonoBehaviour:
   biomes:
   - {fileID: 11400000, guid: 6124226acb4b6b14b8886577fd913085, type: 2}
   - {fileID: 11400000, guid: 9763957c844fae24399d321823cce0c3, type: 2}
+  - {fileID: 11400000, guid: b7c31e00bb6920b46b4350c910f1f66b, type: 2}
   - {fileID: 11400000, guid: de0b2abf68946574fa7297854f46e373, type: 2}
+  - {fileID: 11400000, guid: b5fd7d20c11327f4295ced3c94bbf6fc, type: 2}
   - {fileID: 11400000, guid: e3b53243cd6a45c4ba13ba5434fb2ca4, type: 2}
   - {fileID: 11400000, guid: f5148135ac47d334aac1fa46fac0196d, type: 2}

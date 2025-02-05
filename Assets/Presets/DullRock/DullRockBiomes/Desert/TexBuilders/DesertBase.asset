@@ -9,14 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
-  m_Name: OceanSurf
+  m_Script: {fileID: 11500000, guid: 7642f3fe1a50ab64ebf16bcb2c6400c4, type: 3}
+  m_Name: DesertBase
   m_EditorClassIdentifier: 
-  Scale: 0
-  Multiplier: 0
-  VerticalShift: -0.04
-  Offset: {x: 0.32, y: 0, z: 0}
-  NumLayers: 5
-  Lacunarity: 0.07
-  Persistence: 0.29
-  DebugColor: {r: 0, g: 0.50196075, b: 1, a: 1}
+  BuildingPass:
+  - {fileID: 11400000, guid: 1eb638463b46f1e4e97c7947c85b6e85, type: 2}

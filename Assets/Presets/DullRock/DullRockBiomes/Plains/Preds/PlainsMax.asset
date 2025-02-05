@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PlainsMax
   m_EditorClassIdentifier: 
   Altitude: 0.515
-  Temperature: 1
-  Humidity: 1
+  Temperature: 0
+  Humidity: 0
   Latitude: 1

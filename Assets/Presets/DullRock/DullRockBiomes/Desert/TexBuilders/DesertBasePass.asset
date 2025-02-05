@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5d9b03a03fd5e44a72826375940910, type: 3}
+  m_Name: DesertBasePass
+  m_EditorClassIdentifier: 
+  mainColor: {r: 0.90188676, g: 0.8237366, b: 0.4951868, a: 1}
+  secondaryColor: {r: 0.83396226, g: 0.74832684, b: 0.38865784, a: 1}
+  _Scale: 9.36
+  _Multiplier: 0.54
+  _NumLayers: 4
+  _Lacunarity: 2.68
+  _Persistence: 0.34
+  _VerticalShift: -1.34
+  _Offset: {x: 0, y: 0, z: 0}

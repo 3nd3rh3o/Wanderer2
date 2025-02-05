@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
-  m_Name: OceanSurf
+  m_Script: {fileID: 11500000, guid: 2e3a9b31d14bdf84292f74e6dc78a2a2, type: 3}
+  m_Name: min
   m_EditorClassIdentifier: 
-  Scale: 0
-  Multiplier: 0
-  VerticalShift: -0.04
-  Offset: {x: 0.32, y: 0, z: 0}
-  NumLayers: 5
-  Lacunarity: 0.07
-  Persistence: 0.29
-  DebugColor: {r: 0, g: 0.50196075, b: 1, a: 1}
+  Altitude: -0.05
+  Temperature: -1
+  Humidity: 0
+  Latitude: -1

@@ -15,6 +15,6 @@ MonoBehaviour:
   Name: Beach
   MinPredicate: {fileID: 11400000, guid: 6787501271758084b8cfa840ade621eb, type: 2}
   MaxPredicate: {fileID: 11400000, guid: 774f904020c738344a2767c221674548, type: 2}
-  BlendingFactor: 0.059
+  BlendingFactor: 0.019
   TopologySettings: {fileID: 11400000, guid: 091b14b24dd16224392d823dfb26f7c2, type: 2}
   terrainTextureBuilders: {fileID: 11400000, guid: 5b4001146d7409148a492bd378a908ae, type: 2}

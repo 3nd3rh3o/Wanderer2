@@ -112,29 +112,41 @@ float4 sampleHeight(float3 pos, float scale, float3 offset)
     float3 n = normalize(pos);
     float4 bChan = getBiomeChannels(n, scale, 0.75, offset);
     float4 res;
-    int bToUse = -1;
+    int exactBiome=-1;
     float blend;
     for (uint i = 0; i < _numBiomes; i++)
     {
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
         float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
-        int b = getBiome(n, bChan, mP, MP, i, _blendingFactor[i]);
-        if (b != -1)
+        if ((mP.x <= bChan.x && bChan.x <= MP.x) && (mP.y <= bChan.y && bChan.y <= MP.y) && ((mP.z <= bChan.z && bChan.z <= MP.z)) && (mP.w <= bChan.w && bChan.w <= MP.w))
         {
-            if (bToUse != -1)
-            {
-                float nRes = simpleNoise(n, _BiomeScale[i], _BiomeMul[i], _BiomeNL[i], _BiomeOffset[i], _BiomePersistence[i], _BiomeLacunarity[i], _BiomeVShift[i]);
-                res.x = lerp(res.x, nRes, blend);
-                res.yzw = lerp(res.gba, _BiomeCol[i], blend);
-            }
-            else
-            {
-                res.x = simpleNoise(n, _BiomeScale[i], _BiomeMul[i], _BiomeNL[i], _BiomeOffset[i], _BiomePersistence[i], _BiomeLacunarity[i], _BiomeVShift[i]);
-                res.yzw =  _BiomeCol[i];
-            }
-            blend = eucDist(n, bChan, MP, _blendingFactor[i]);
-            bToUse = b;
+            exactBiome = i;
+            res = simpleNoise(n, _BiomeScale[i], _BiomeMul[i], _BiomeNL[i], _BiomeOffset[i], _BiomePersistence[i], _BiomeLacunarity[i], _BiomeVShift[i]);
+            break;
         }
+    }
+    int matchCount = 0;
+    float4 buff;
+    float blendM;
+    for (uint j = 0; j < _numBiomes; j++)
+    {
+        float4 mP = float4(_minPredicates[j][0], _minPredicates[j][1], _minPredicates[j][2], _minPredicates[j][3]);
+        float4 MP = float4(_maxPredicates[j][0], _maxPredicates[j][1], _maxPredicates[j][2], _maxPredicates[j][3]);
+        int b = getBiome(n, bChan, mP, MP, j, _blendingFactor[j]);
+        if (b!=-1 && b != exactBiome)
+        {
+            blend = eucDist(n, bChan, MP, _blendingFactor[j]);
+            blendM += blend;
+            float nRes = simpleNoise(n, _BiomeScale[j], _BiomeMul[j], _BiomeNL[j], _BiomeOffset[j], _BiomePersistence[j], _BiomeLacunarity[j], _BiomeVShift[j]);
+            buff.x += lerp(res.x, nRes, blend);
+            buff.yzw += lerp(res.gba, _BiomeCol[j], blend);
+            matchCount++;
+        }
+    }
+    //TODO check me!
+    if (matchCount > 0)
+    {
+        res = buff / matchCount;
     }
     return res;
 }

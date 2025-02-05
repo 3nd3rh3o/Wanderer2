@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9bf00595acf19244902f053152e7772, type: 3}
-  m_Name: MountainsNoiseSettings
+  m_Name: NoiseSettings
   m_EditorClassIdentifier: 
-  Scale: 10
-  Multiplier: 0.053
-  VerticalShift: 0.05
-  Offset: {x: 0, y: 3.05, z: 0}
-  NumLayers: 10
-  Lacunarity: 0.129
-  Persistence: 0.084
-  DebugColor: {r: 0.3056603, g: 0.14107494, b: 0, a: 1}
+  Scale: 0
+  Multiplier: 0
+  VerticalShift: 0
+  Offset: {x: 0, y: 0, z: 0}
+  NumLayers: 0
+  Lacunarity: 0
+  Persistence: 0
+  DebugColor: {r: 1, g: 0.784, b: 0, a: 1}
