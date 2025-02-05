@@ -15,6 +15,6 @@ MonoBehaviour:
   Name: Plains
   MinPredicate: {fileID: 11400000, guid: 9cd9d705d4896524790f37a05ba78f0a, type: 2}
   MaxPredicate: {fileID: 11400000, guid: 799bbe245e5810e45871a1f16924c2ec, type: 2}
-  BlendingFactor: 0.049
+  BlendingFactor: 0.034
   TopologySettings: {fileID: 11400000, guid: ae8fe7af53f3e794dba881f70bd897a6, type: 2}
   terrainTextureBuilders: {fileID: 11400000, guid: 4a57c5cebd7284a46865666d542931d6, type: 2}

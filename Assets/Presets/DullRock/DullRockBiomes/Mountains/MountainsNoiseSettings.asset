@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: MountainsNoiseSettings
   m_EditorClassIdentifier: 
   Scale: 10
-  Multiplier: 0.045
-  VerticalShift: 0.19
+  Multiplier: 0.032
+  VerticalShift: 0.09
   Offset: {x: 0, y: 3.05, z: 0}
-  NumLayers: 10
+  NumLayers: 3
   Lacunarity: 0.129
   Persistence: 0.084
   DebugColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}

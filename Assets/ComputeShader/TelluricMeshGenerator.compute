@@ -89,8 +89,8 @@ float4 getBiomeChannels(float3 pos, float scale, float multiplier, float3 offset
     //NOTE 4 dim noise map
     return float4(
         clamp(simpleNoise(pos + offset, scale, multiplier), -1, 1),
-        clamp(simpleNoise(pos + offset + float3(2, 0, 0), scale, multiplier), -1, 1),
-        clamp(simpleNoise(pos + offset + float3(0, 0, 2), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset +float3(2, 0, 0), scale, multiplier), -1, 1),
+        clamp(simpleNoise(pos + offset +float3(0, 0, 2), scale, multiplier), -1, 1),
         dot(pos, float3(0, 1, 0))
     );
 }
@@ -106,7 +106,7 @@ float eucDist(float3 sPoint, float4 chann, float4 maxp, float tol)
     //is offshot? no => -1
     int numMatch = (chann.x > maxp.x ? 1 : 0) + (chann.y > maxp.y ? 1 : 0) + (chann.z > maxp.z ? 1 : 0) + (chann.w > maxp.w ? 1 : 0);
     
-    return numMatch == 0? 0 : ((chann.x > maxp.x ? (chann.x - maxp.x) / tol : 0) + (chann.y > maxp.y ? (chann.y - maxp.y) / tol : 0) + (chann.z > maxp.z ? (chann.z - maxp.z) / tol : 0) + (chann.w > maxp.w ? (chann.w - maxp.w) / tol : 0)) / numMatch;
+    return numMatch == 0 ? 0 : ((chann.x > maxp.x ? (chann.x - maxp.x) / tol : 0) + (chann.y > maxp.y ? (chann.y - maxp.y) / tol : 0) + (chann.z > maxp.z ? (chann.z - maxp.z) / tol : 0) + (chann.w > maxp.w ? (chann.w - maxp.w) / tol : 0)) / numMatch;
 }
 
 float4 sampleHeight(float3 pos, float scale, float3 offset)
@@ -114,7 +114,7 @@ float4 sampleHeight(float3 pos, float scale, float3 offset)
     float3 n = normalize(pos);
     float4 bChan = getBiomeChannels(n, scale, 0.75, offset);
     float4 res;
-    int exactBiome=-1;
+    int exactBiome = -1;
     float blend;
     for (uint i = 0; i < _numBiomes; i++)
     {
@@ -135,20 +135,15 @@ float4 sampleHeight(float3 pos, float scale, float3 offset)
         float4 mP = float4(_minPredicates[j][0], _minPredicates[j][1], _minPredicates[j][2], _minPredicates[j][3]);
         float4 MP = float4(_maxPredicates[j][0], _maxPredicates[j][1], _maxPredicates[j][2], _maxPredicates[j][3]);
         int b = getBiome(n, bChan, mP, MP, j, _blendingFactor[j]);
-        if (b!=-1 && b != exactBiome)
+        if (b != -1 && b != exactBiome)
         {
             blend = eucDist(n, bChan, MP, _blendingFactor[j]);
             blendM += blend;
             float nRes = simpleNoise(n, _BiomeScale[j], _BiomeMul[j], _BiomeNL[j], _BiomeOffset[j], _BiomePersistence[j], _BiomeLacunarity[j], _BiomeVShift[j]);
-            buff.x += lerp(res.x, nRes, blend);
-            buff.yzw += lerp(res.gba, _BiomeCol[j], blend);
-            matchCount++;
+            res.x += lerp(res.x, nRes, 1. - blend);
+            res.yzw += lerp(res.gba, _BiomeCol[j], 1. - blend);
+            break;
         }
-    }
-    //TODO check me!
-    if (matchCount > 0)
-    {
-        res = buff / matchCount;
     }
     return res;
 }
@@ -253,7 +248,7 @@ void NoisePass(RWTexture3D<float4> outTex, int3 uv, float3 pos, float scale, flo
 [numthreads(8, 8, 1)]
 void ExecuteBuildPass(uint2 id : SV_DISPATCHTHREADID)
 {
-    switch (_passType)
+    switch(_passType)
     {
         case 0:
             FillPass(_tex, _col, int3(id, _biomeID));
@@ -277,32 +272,40 @@ void GenTextures(uint2 id : SV_DispatchThreadID)
 {
     float3 dX = (_mx - _origin) / 256;
     float3 dY = (_my - _origin) / 256;
-    int bToUse = -1;
     float3 vPos = normalize(_origin + (dX * (id.x)) + (dY * (id.y)));
     float4 bChann = getBiomeChannels(vPos, _scale, 0.75, _offset);
     float3 col;
     float blend;
+    int exactBiome = -1;
     //TODO integrate tolerance here! and put color computation also here
     for (uint i = 0; i < _numBiomes; i++)
     {
         float4 mP = float4(_minPredicates[i][0], _minPredicates[i][1], _minPredicates[i][2], _minPredicates[i][3]);
         float4 MP = float4(_maxPredicates[i][0], _maxPredicates[i][1], _maxPredicates[i][2], _maxPredicates[i][3]);
-        int b = getBiome(vPos, bChann, mP, MP, i, _blendingFactor[i]);
-        if (b != -1)
+        if ((mP.x <= bChann.x && bChann.x < MP.x) && (mP.y <= bChann.y && bChann.y < MP.y) && ((mP.z < bChann.z && bChann.z < MP.z)) && (mP.w < bChann.w && bChann.w < MP.w))
         {
-            if (bToUse != -1)
-            {
-                float3 nCol = _source[int3(id.xy, i)].rgb;
-                col = lerp(col, nCol, blend);
-            }
-            else
-            {
-                blend = eucDist(vPos, bChann, MP, _blendingFactor[i]);
-                col = _source[int3(id.xy, i)].rgb;
-            }
-            bToUse = b;
+            exactBiome = i;
+            col = _source[int3(id.xy, i)].rgb;
+            break;
         }
     }
-    bToUse = bToUse == -1 ? 0 : bToUse;
+    int matchCount = 0;
+    float3 buff;
+    float blendM;
+    for (uint j = 0; j < _numBiomes; j++)
+    {
+        float4 mP = float4(_minPredicates[j][0], _minPredicates[j][1], _minPredicates[j][2], _minPredicates[j][3]);
+        float4 MP = float4(_maxPredicates[j][0], _maxPredicates[j][1], _maxPredicates[j][2], _maxPredicates[j][3]);
+        int b = getBiome(vPos, bChann, mP, MP, j, _blendingFactor[j]);
+        if (b != -1 && b != exactBiome)
+        {
+            blend = eucDist(vPos, bChann, MP, _blendingFactor[j]);
+            blendM += blend;
+            float3 nCol = _source[int3(id.xy, j)].rgb;
+            col = lerp(col, nCol, 1. - blend);
+            break;
+        }
+    }
+    
     _dest[id.xy] = float4(col, 1.);
 }

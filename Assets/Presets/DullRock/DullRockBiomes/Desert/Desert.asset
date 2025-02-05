@@ -15,6 +15,6 @@ MonoBehaviour:
   Name: 
   MinPredicate: {fileID: 11400000, guid: 13dcd8df0fc08364e9e293a7f53f2a2a, type: 2}
   MaxPredicate: {fileID: 11400000, guid: 37fa7b3e1768059489e5a87fd59a3ea7, type: 2}
-  BlendingFactor: 0.004
+  BlendingFactor: 0.034
   TopologySettings: {fileID: 11400000, guid: 638130992eb2534429fb84472b5fadff, type: 2}
   terrainTextureBuilders: {fileID: 11400000, guid: 61f847cb7f468c749af5be499dcd6895, type: 2}

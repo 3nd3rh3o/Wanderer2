@@ -15,6 +15,6 @@ MonoBehaviour:
   Name: Mountains
   MinPredicate: {fileID: 11400000, guid: 022b1628a02855b47ae19bc2be40bea4, type: 2}
   MaxPredicate: {fileID: 11400000, guid: cde1dcf821958274881c95bc3509f0be, type: 2}
-  BlendingFactor: 0.347
+  BlendingFactor: 0.011
   TopologySettings: {fileID: 11400000, guid: 429e9c51c4df6ad43bf898dbdac70224, type: 2}
   terrainTextureBuilders: {fileID: 11400000, guid: 45eefe28512fd2c478d42492bee66526, type: 2}

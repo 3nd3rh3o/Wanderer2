@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Altitude: -0.05
   Temperature: -1
-  Humidity: 0
+  Humidity: 0.005
   Latitude: -1
