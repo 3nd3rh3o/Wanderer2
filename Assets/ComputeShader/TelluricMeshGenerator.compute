@@ -40,7 +40,9 @@ StructuredBuffer<float3> _BiomeCol;
 
 
 
-
+float3 _origin; // origin vertex
+float3 _mx; // max U vertex
+float3 _my; // max V vertex
 
 
 
@@ -222,9 +224,7 @@ void VertexRecompute(uint id : SV_DISPATCHTHREADID)
 
 RWTexture3D<float4> _tex;
 
-float3 _origin; // origin vertex
-float3 _mx; // max U vertex
-float3 _my; // max V vertex
+
 
 uint _biomeID;
 int _passType;

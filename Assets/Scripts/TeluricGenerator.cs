@@ -92,6 +92,7 @@ namespace Wanderer
             ComputeBuffer biomesDebugColBuff = CBuffHelper.Vec3Buff(biomesDebugCol);
             cs.SetBuffer(0, "_BiomeCol", biomesDebugColBuff);
 
+
             cs.Dispatch(0, mesh.vertices.Length, 1, 1);
 
             //prep biome tex []
