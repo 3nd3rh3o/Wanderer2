@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: {x: 500, y: 0, z: 0}
   rotation: {x: 15, y: 0, z: 0}
-  linearVelocity: {x: 0, y: 0, z: 0}
-  angularVelocity: {x: 0.01, y: 0.05, z: 0}
+  linearVelocity: {x: -100, y: 0, z: 0}
+  angularVelocity: {x: 100, y: 200, z: 0}
   radius: 500
   mass: 10
   isKynematic: 0

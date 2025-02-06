@@ -15,6 +15,6 @@ MonoBehaviour:
   Name: Forest
   MinPredicate: {fileID: 11400000, guid: 8b19ad3ffa4ff994981ad773658d5418, type: 2}
   MaxPredicate: {fileID: 11400000, guid: c88f387e61131964ab7628a648d98e4c, type: 2}
-  BlendingFactor: 0.034
+  BlendingFactor: 0.105
   TopologySettings: {fileID: 11400000, guid: e9b0de5cc68fed841ad149e7fb299ef8, type: 2}
   terrainTextureBuilders: {fileID: 11400000, guid: 737491f038dc78545a0114764d8ba199, type: 2}

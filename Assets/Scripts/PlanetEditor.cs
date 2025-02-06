@@ -6,6 +6,7 @@ namespace Wanderer
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(MeshFilter))]
+    [RequireComponent(typeof(Rigidbody))]
     public class PlanetEditor : MonoBehaviour
     {
         public PlanetSettings settings;
@@ -61,8 +62,7 @@ namespace Wanderer
                 Color color = b.TopologySettings.DebugColor;
                 Gizmos.color = new(color.r, color.g, color.b, 0.5f);
                 Gizmos.DrawCube(basePos + pos, size);
-            }
-        
+            }        
         }
     }
 }
