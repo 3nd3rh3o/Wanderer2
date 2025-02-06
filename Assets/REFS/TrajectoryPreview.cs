@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Wanderer;
 
 public class TrajectoryPreview : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class TrajectoryPreview : MonoBehaviour
         Rigidbody originalRb = GetComponent<Rigidbody>();
 
         // Synchroniser les états (vitesse, vitesse angulaire, etc.)
-        simulatedRb.velocity = originalRb.velocity;
+        simulatedRb.linearVelocity = originalRb.linearVelocity;
         simulatedRb.angularVelocity = originalRb.angularVelocity;
 
         // Tracer la trajectoire
@@ -46,7 +47,6 @@ public class TrajectoryPreview : MonoBehaviour
         // Simuler la physique pas à pas
         for (int i = 0; i < simulationSteps; i++)
         {
-            // Simuler un pas de temps
             physicsScene.Simulate(simulationTimeStep);
             Vector3 currentPosition = simulatedObject.transform.position;
             Gizmos.DrawLine(previousPosition, currentPosition);

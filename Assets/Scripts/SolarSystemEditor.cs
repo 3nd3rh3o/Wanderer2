@@ -33,6 +33,7 @@ namespace Wanderer
                     Vector3 O = -g.transform.position.normalized * (p.mass * starMass) / Mathf.Pow((starPosition - g.transform.position).magnitude, 2);
                     r.AddForce(O, ForceMode.Impulse);
                     PlanetEditor e = g.AddComponent<PlanetEditor>();
+                    g.AddComponent<TrajectoryPreview>();
                     e.settings = p;
                     e.DynamicParams = false;
                     go.Add(g);
