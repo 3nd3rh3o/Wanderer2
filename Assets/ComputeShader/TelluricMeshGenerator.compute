@@ -104,9 +104,24 @@ int getBiome(float3 sPoint, float4 chann, float4 minp, float4 maxp, int id, floa
 float eucDist(float3 sPoint, float4 chann, float4 maxp, float tol)
 {
     //is offshot? no => -1
-    int numMatch = (chann.x > maxp.x ? 1 : 0) + (chann.y > maxp.y ? 1 : 0) + (chann.z > maxp.z ? 1 : 0) + (chann.w > maxp.w ? 1 : 0);
-    
-    return numMatch == 0 ? 0 : ((chann.x > maxp.x ? (chann.x - maxp.x) / tol : 0) + (chann.y > maxp.y ? (chann.y - maxp.y) / tol : 0) + (chann.z > maxp.z ? (chann.z - maxp.z) / tol : 0) + (chann.w > maxp.w ? (chann.w - maxp.w) / tol : 0)) / numMatch;
+    float4 r = chann - maxp;
+    if (r.x <= 0.)
+    {
+        r.x-=r.x;
+    }
+    if (r.y <= 0.)
+    {
+        r.y-=r.y;
+    }
+    if (r.z <= 0.)
+    {
+        r.z-=r.z;
+    }
+    if (r.w <= 0.)
+    {
+        r.w-=r.w;
+    }
+    return sqrt((r.x*r.x) + (r.y*r.y) + (r.z * r.z) + (r.w * r.w));
 }
 
 float4 sampleHeight(float3 pos, float scale, float3 offset)
@@ -137,13 +152,17 @@ float4 sampleHeight(float3 pos, float scale, float3 offset)
         int b = getBiome(n, bChan, mP, MP, j, _blendingFactor[j]);
         if (b != -1 && b != exactBiome)
         {
-            blend = eucDist(n, bChan, MP, _blendingFactor[j]);
+            blend = 1. - saturate(eucDist(n, bChan, MP, _blendingFactor[j]) / _blendingFactor[j]);
             blendM += blend;
+            matchCount++;
             float nRes = simpleNoise(n, _BiomeScale[j], _BiomeMul[j], _BiomeNL[j], _BiomeOffset[j], _BiomePersistence[j], _BiomeLacunarity[j], _BiomeVShift[j]);
-            res.x += lerp(res.x, nRes, 1. - blend);
-            res.yzw += lerp(res.gba, _BiomeCol[j], 1. - blend);
-            break;
+            buff.x += lerp(res.x, nRes, blend);
+            buff.yzw += lerp(res.gba, _BiomeCol[j], blend);
         }
+    }
+    if (matchCount > 0)
+    {
+        res = buff / matchCount;
     }
     return res;
 }
@@ -299,13 +318,16 @@ void GenTextures(uint2 id : SV_DispatchThreadID)
         int b = getBiome(vPos, bChann, mP, MP, j, _blendingFactor[j]);
         if (b != -1 && b != exactBiome)
         {
-            blend = eucDist(vPos, bChann, MP, _blendingFactor[j]);
+            blend = 1. - saturate(eucDist(vPos, bChann, MP, _blendingFactor[j]) / _blendingFactor[j]);
             blendM += blend;
+            matchCount++;
             float3 nCol = _source[int3(id.xy, j)].rgb;
-            col = lerp(col, nCol, 1. - blend);
-            break;
+            buff += lerp(col, nCol, blend);
         }
     }
-    
+    if (matchCount > 0)
+    {
+        col = buff / matchCount;
+    }
     _dest[id.xy] = float4(col, 1.);
 }
