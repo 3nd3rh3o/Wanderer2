@@ -6,7 +6,6 @@ namespace Wanderer
     public class SolarSystemEditor : MonoBehaviour
     {
         public Vector3 starPosition;
-        public float simSpeed = 1f;
         public float starMass;
         public float starRadius;
 
