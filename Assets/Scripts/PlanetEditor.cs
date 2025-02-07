@@ -6,7 +6,6 @@ namespace Wanderer
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(MeshFilter))]
-    [RequireComponent(typeof(Rigidbody))]
     public class PlanetEditor : MonoBehaviour
     {
         public PlanetSettings settings;
@@ -14,6 +13,7 @@ namespace Wanderer
         private TeluricGenerator surfGenerator;
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
+        public Vector3 lv = new();
 
         void Start()
         {

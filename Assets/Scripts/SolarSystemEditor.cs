@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Wanderer;
 
 namespace Wanderer
 {
     public class SolarSystemEditor : MonoBehaviour
     {
         public Vector3 starPosition;
+        public float simSpeed = 1f;
         public float starMass;
         public float starRadius;
+
+        public int PreviewSamples = 1000;
+
         public List<PlanetSettings> planets = new();
         private List<GameObject> go;
 
@@ -21,25 +24,15 @@ namespace Wanderer
                     GameObject g = new("planet");
                     g.AddComponent<MeshRenderer>();
                     g.AddComponent<MeshFilter>();
-
                     g.SetActive(false);
                     g.transform.parent = transform;
                     g.transform.position = p.position;
-                    Rigidbody r = g.AddComponent<Rigidbody>();
-                    r.useGravity = false;
-                    r.angularDamping = 0f;
-                    r.linearDamping = 0f;
-                    r.mass = p.mass;
-                    Vector3 O = -g.transform.position.normalized * (p.mass * starMass) / Mathf.Pow((starPosition - g.transform.position).magnitude, 2);
-                    r.AddForce(O, ForceMode.Impulse);
                     PlanetEditor e = g.AddComponent<PlanetEditor>();
-                    g.AddComponent<TrajectoryPreview>();
                     e.settings = p;
+                    e.lv = p.linearVelocity;
                     e.DynamicParams = false;
                     go.Add(g);
                     g.SetActive(true);
-                    r.AddTorque(p.angularVelocity * Time.fixedDeltaTime, ForceMode.VelocityChange);
-                    r.AddForce(p.linearVelocity * Time.fixedDeltaTime, ForceMode.VelocityChange);
                 });
         }
 
@@ -60,25 +53,63 @@ namespace Wanderer
 
         void FixedUpdate()
         {
+            PhysicUpdate();
+        }
+
+        public void PhysicUpdate()
+        {
             go.ForEach(g =>
             {
                 PlanetEditor p = g.GetComponent<PlanetEditor>();
-                Rigidbody pr = g.GetComponent<Rigidbody>();
-                Vector3 O = -p.transform.position.normalized * (p.settings.mass * starMass) / Mathf.Pow((starPosition - p.transform.position).magnitude, 2);
-                pr.AddForce(O * Time.fixedDeltaTime, ForceMode.Impulse);
+                Vector3 O = 100f * starMass / Mathf.Pow((starPosition - p.transform.position).magnitude, 2) * (starPosition - p.transform.position).normalized;
+
                 go.ForEach(g2 =>
                 {
                     if (g != g2)
                     {
                         PlanetEditor p2 = g2.GetComponent<PlanetEditor>();
-                        Rigidbody p2r = g.GetComponent<Rigidbody>();
-                        Vector3 F = (p.transform.position - p2.transform.position).normalized * (p.settings.mass * p2.settings.mass) / Mathf.Pow((p.transform.position - p.transform.position).magnitude, 2);
-                        p2r.AddForce(F * Time.fixedDeltaTime, ForceMode.Impulse);
+                        O += 100f * p2.settings.mass / Mathf.Pow(0.25f * (p2.transform.position - p.transform.position).magnitude, 2) * (p2.transform.position - p.transform.position).normalized;
+
                     }
 
                 });
+                p.lv += O * Time.deltaTime;
+                g.transform.position += p.lv;
             });
         }
-    }
+        void OnDrawGizmos()
+        {
+            PlanetEditor[] rbs = new PlanetEditor[transform.childCount];
+            Vector3[] pPos = new Vector3[rbs.Length];
+            Vector3[] previousForces = new Vector3[rbs.Length];
+            for (int i = 0; i < rbs.Length; i++)
+            {
+                rbs[i] = transform.GetChild(i).GetComponent<PlanetEditor>();
+                previousForces[i] = rbs[i].lv;
+                pPos[i] = rbs[i].transform.position;
+            }
 
+
+            Gizmos.color = Color.cyan;
+
+
+            for (int j = 0; j < PreviewSamples; j++)
+            {
+                for (int i = 0; i < rbs.Length; i++)
+                {
+                    Vector3 initialPos = pPos[i];
+                    PlanetEditor p = rbs[i];
+                    Vector3 O = 100f * starMass / Mathf.Pow((starPosition - initialPos).magnitude, 2) * (starPosition - initialPos).normalized;
+                    for (int k = 0; k < rbs.Length; k++)
+                    {
+                        if (k != i)
+                            O += 100f * rbs[k].settings.mass / Mathf.Pow(0.25f * (pPos[k] - pPos[i]).magnitude, 2) * (pPos[k] - pPos[i]).normalized;
+                    }
+                    previousForces[i] += O * Time.fixedDeltaTime;
+                    pPos[i] += previousForces[i];
+                    Gizmos.DrawLine(initialPos, pPos[i]);
+                }
+            }
+        }
+    }
 }

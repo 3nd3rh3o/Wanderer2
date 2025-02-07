@@ -149,10 +149,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   starPosition: {x: 0, y: 0, z: 0}
-  starMass: 10000
+  simSpeed: 1
+  starMass: 600000
   starRadius: 0
+  PreviewSamples: 10000
   planets:
   - {fileID: 11400000, guid: 2f3a76706f31e7248972899fbd09ab74, type: 2}
+  - {fileID: 11400000, guid: 3c0ffa408000f884f8843deb9423f22a, type: 2}
 --- !u!4 &937407761
 Transform:
   m_ObjectHideFlags: 0
@@ -162,7 +165,7 @@ Transform:
   m_GameObject: {fileID: 937407759}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.8315163, y: -6.411756, z: 148.7082}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
