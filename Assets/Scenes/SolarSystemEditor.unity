@@ -149,10 +149,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   starPosition: {x: 0, y: 0, z: 0}
-  simSpeed: 1
   starMass: 600000
   starRadius: 0
+  simSpeed: 4
   PreviewSamples: 10000
+  focus: 1
   planets:
   - {fileID: 11400000, guid: 2f3a76706f31e7248972899fbd09ab74, type: 2}
   - {fileID: 11400000, guid: 3c0ffa408000f884f8843deb9423f22a, type: 2}

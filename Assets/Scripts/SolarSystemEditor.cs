@@ -10,7 +10,7 @@ namespace Wanderer
         private Vector3 reelStarPos;
         public float starMass;
         public float starRadius;
-        public float simSpeed = 1;
+        [Range(0.01f, 4f)] public float simSpeed = 1;
 
         public int PreviewSamples = 1000;
         [Range(0, 10)] public int focus;
@@ -30,6 +30,7 @@ namespace Wanderer
                     g.SetActive(false);
                     g.transform.parent = transform;
                     g.transform.localPosition = p.position;
+                    g.transform.localRotation = Quaternion.Euler(p.rotation);
                     PlanetEditor e = g.AddComponent<PlanetEditor>();
                     e.settings = p;
                     e.lv = p.linearVelocity;
@@ -79,6 +80,7 @@ namespace Wanderer
             {
                 PlanetEditor p = g.GetComponent<PlanetEditor>();
                 Vector3 O = (simSpeed * 100f) * starMass / Mathf.Pow(((starPosition) - p.transform.localPosition).magnitude, 2) * ((starPosition) - p.transform.localPosition).normalized;
+                p.transform.localRotation = (Quaternion.Euler(p.settings.rotation) *Quaternion.Euler(simSpeed * Time.fixedDeltaTime * p.settings.angularVelocity) * Quaternion.Inverse(Quaternion.Euler(p.settings.rotation)) * p.transform.localRotation).normalized;
 
                 go.ForEach(g2 =>
                 {

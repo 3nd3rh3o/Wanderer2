@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b8c6c5c6bf439148975faf310662e5b, type: 3}
   m_Name: DullRock 1
   m_EditorClassIdentifier: 
-  position: {x: 21000, y: 0, z: 0}
-  rotation: {x: 15, y: 0, z: 0}
-  linearVelocity: {x: 0, y: 0, z: 18}
-  angularVelocity: {x: 1, y: 2, z: 0}
+  position: {x: 22000, y: 0, z: 0}
+  rotation: {x: 0, y: 0, z: 0}
+  linearVelocity: {x: 0, y: 0, z: 15.2}
+  angularVelocity: {x: 0, y: -9.4, z: 0}
   radius: 100
-  mass: -8.8
+  mass: 7.52
   isKynematic: 1
   atmosphereSettings: {fileID: 11400000, guid: c68874f769983d544bb90cde42cf79c5, type: 2}
   biomes: {fileID: 11400000, guid: aec5ebdb43dd06047bb412be58c839f1, type: 2}
