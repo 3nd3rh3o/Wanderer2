@@ -151,7 +151,7 @@ MonoBehaviour:
   starPosition: {x: 0, y: 0, z: 0}
   starMass: 600000
   starRadius: 0
-  simSpeed: 4
+  simSpeed: 2.15
   PreviewSamples: 10000
   focus: 1
   planets:
