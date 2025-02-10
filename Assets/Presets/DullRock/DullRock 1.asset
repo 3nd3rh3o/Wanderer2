@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: {x: 21000, y: 0, z: 0}
   rotation: {x: 15, y: 0, z: 0}
-  linearVelocity: {x: 0, y: 0, z: 20}
+  linearVelocity: {x: 0, y: 0, z: 18}
   angularVelocity: {x: 1, y: 2, z: 0}
   radius: 100
   mass: -8.8
