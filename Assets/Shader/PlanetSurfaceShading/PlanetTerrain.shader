@@ -1,7 +1,10 @@
-Shader "Universal Render Pipeline/Lit_CustomDirectional"
+Shader "Wanderer/PlanetSurface"
 {
     Properties
     {
+        
+        _CustomLightDirection ("Custom Light Direction", Vector) = (0, 0, 0, 0)
+        _UseCustomLightDirection ("Use Custom Light Direction", Float) = 1
         // Specular vs Metallic workflow
         _WorkflowMode ("WorkflowMode", Float) = 1.0
 
@@ -73,9 +76,7 @@ Shader "Universal Render Pipeline/Lit_CustomDirectional"
         [HideInInspector][NoScaleOffset]unity_LightmapsInd ("unity_LightmapsInd", 2DArray) = "" { }
         [HideInInspector][NoScaleOffset]unity_ShadowMasks ("unity_ShadowMasks", 2DArray) = "" { }
 
-        // **** Propriétés pour la lumière directionnelle par objet ****
-        _CustomLightDirection ("Custom Light Direction", Vector) = (0, -1, 0, 0)
-        _UseCustomLightDirection ("Use Custom Light Direction", Float) = 0
+        
     }
 
     SubShader
@@ -159,7 +160,7 @@ Shader "Universal Render Pipeline/Lit_CustomDirectional"
                     // Si l'usage d'une direction custom est activé, on remplace la direction
                     if (_UseCustomLightDirection > 0.5)
                     {
-                        mainLight.direction = normalize(float3(1, 0, 0));
+                        mainLight.direction = normalize(_CustomLightDirection);
                     }
                 }
             #else
@@ -193,7 +194,47 @@ Shader "Universal Render Pipeline/Lit_CustomDirectional"
             #pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+            #include_with_pragmas "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl"
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
+            float4 _CustomLightDirection;
+            float _UseCustomLightDirection;
+
+            // ----
+            // Pour utiliser notre lumière par objet, nous allons « intercepter » la fonction SetupMainLight
+            // du LitForwardPass d'URP.
+            //
+            // On renomme d'abord la version d'origine en OriginalSetupMainLight en incluant le fichier
+            // sous un alias temporaire.
+            #ifndef OVERRIDE_SETUP_MAIN_LIGHT
+                #define OVERRIDE_SETUP_MAIN_LIGHT 1
+
+                // Renommer SetupMainLight => OriginalSetupMainLight
+                #define GetShadowPositionHClip OriginalGetShadowPositionHClip
+                #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+                #undef GetShadowPositionHClip
+
+                // Surcharge de SetupMainLight en utilisant le type MainLight
+                float4 GetShadowPositionHClip(Attributes input)
+                {
+                    float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                    float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+                    float3 lightDirectionWS;
+                    #if _CASTING_PUNCTUAL_LIGHT_SHADOW
+                        if (_UseCustomLightDirection > 0.5) lightDirectionWS = _CustomLightDirection;
+                        else lightDirectionWS = normalize(_LightPosition - positionWS);
+                    #else
+                        if (_UseCustomLightDirection > 0.5) lightDirectionWS = _CustomLightDirection;
+                        else lightDirectionWS = _LightDirection;
+                    #endif
+
+                    float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDirectionWS));
+                    positionCS = ApplyShadowClamping(positionCS);
+                    return positionCS;
+                }
+            #else
+                // Si déjà défini, on inclut directement la version par défaut.
+                #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+            #endif
             ENDHLSL
         }
 
