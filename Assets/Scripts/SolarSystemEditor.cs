@@ -14,6 +14,7 @@ namespace Wanderer
 
         public int PreviewSamples = 1000;
         [Range(0, 10)] public int focus;
+        public Material shadowMat;
 
         public List<PlanetSettings> planets = new();
         private List<GameObject> go;
@@ -21,29 +22,24 @@ namespace Wanderer
         void OnEnable()
         {
             go = new(planets.Count);
-            planets.ForEach(
-                p =>
-                {
-                    GameObject g = new("planet");
-                    g.AddComponent<MeshRenderer>();
-                    g.AddComponent<MeshFilter>();
-                    g.SetActive(false);
-                    g.transform.parent = transform;
-                    g.transform.localPosition = p.position;
-                    g.transform.localRotation = Quaternion.Euler(p.rotation);
-                    PlanetEditor e = g.AddComponent<PlanetEditor>();
-                    e.settings = p;
-                    e.lv = p.linearVelocity;
-                    e.DynamicParams = false;
-                    go.Add(g);
-                    g.SetActive(true);
-                });
+            for (int i = 0; i < planets.Count; i++)
+            {
+                PlanetSettings p = planets[i];
+                GameObject g = new("planet");
+                StaticPlanetInstantier.SpawnPlanet(g, p, transform, i + 1, shadowMat);
+                go.Add(g);
+            }
         }
 
         void OnDisable()
         {
 #if UNITY_ENGINE
-            go?.ForEach(g => MonoBehaviour.DestroyImmediate(g));
+            
+            go?.ForEach(g => {
+                while(g.transform.childCount > 0) MonoBehaviour.DestroyImmediate(g.transform.GetChild(0));
+            });
+            while(transform.childCount > 0) MonoBehaviour.DestroyImmediate(transform.GetChild(0));
+            go = new();
 #else
             go?.ForEach(g => MonoBehaviour.Destroy(g));
 #endif
@@ -52,7 +48,7 @@ namespace Wanderer
         // Update is called once per frame
         void Update()
         {
-            
+
         }
 
         void FixedUpdate()
@@ -80,7 +76,7 @@ namespace Wanderer
             {
                 PlanetEditor p = g.GetComponent<PlanetEditor>();
                 Vector3 O = (simSpeed * 100f) * starMass / Mathf.Pow(((starPosition) - p.transform.localPosition).magnitude, 2) * ((starPosition) - p.transform.localPosition).normalized;
-                p.transform.localRotation = (Quaternion.Euler(p.settings.rotation) *Quaternion.Euler(simSpeed * Time.fixedDeltaTime * p.settings.angularVelocity) * Quaternion.Inverse(Quaternion.Euler(p.settings.rotation)) * p.transform.localRotation).normalized;
+                p.transform.localRotation = (Quaternion.Euler(p.settings.rotation) * Quaternion.Euler(simSpeed * Time.fixedDeltaTime * p.settings.angularVelocity) * Quaternion.Inverse(Quaternion.Euler(p.settings.rotation)) * p.transform.localRotation).normalized;
 
                 go.ForEach(g2 =>
                 {
@@ -98,12 +94,13 @@ namespace Wanderer
         }
         void OnDrawGizmos()
         {
-            PlanetEditor[] rbs = new PlanetEditor[transform.childCount];
+            if (!Application.isPlaying) return;
+            PlanetEditor[] rbs = new PlanetEditor[go.Count];
             Vector3[] pPos = new Vector3[rbs.Length];
             Vector3[] previousForces = new Vector3[rbs.Length];
             for (int i = 0; i < rbs.Length; i++)
             {
-                rbs[i] = transform.GetChild(i).GetComponent<PlanetEditor>();
+                rbs[i] = go[i].GetComponent<PlanetEditor>();
                 previousForces[i] = rbs[i].lv;
                 pPos[i] = rbs[i].transform.position;
             }
@@ -129,12 +126,12 @@ namespace Wanderer
                     if (focus == 0)
                     {
                         Gizmos.DrawLine(initialPos, pPos[i]);
-                    } 
-                    else 
-                    {
-                        Gizmos.DrawLine(initialPos - pPos[focus-1], pPos[i] - pPos[focus-1]);
                     }
-                    
+                    else
+                    {
+                        Gizmos.DrawLine(initialPos - pPos[focus - 1], pPos[i] - pPos[focus - 1]);
+                    }
+
                 }
             }
         }
