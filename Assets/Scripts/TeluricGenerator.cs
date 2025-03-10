@@ -222,11 +222,13 @@ namespace Wanderer
                 mpb.SetTexture("_BaseMap", chunkData[i].Item2.albedo);
                 if (SceneView.lastActiveSceneView && SceneView.lastActiveSceneView.sceneLighting && SceneView.lastActiveSceneView.cameraMode.drawMode != DrawCameraMode.TexturedWire)
                 {
-                    mpb.SetVector("_LightDirection", Vector3.forward);
+                    mpb.SetVector("_CustomLightDirection", Vector3.forward);
+                    mpb.SetFloat("_UseCustomLightDirection", 1f);
                 }
                 else
                 {
-                    mpb.SetVector("_LightDirection", Vector3.zero);
+                    mpb.SetVector("_CustomLightDirection", Vector3.zero);
+                    mpb.SetFloat("_UseCustomLightDirection", 1f);
                 }
                 mpb.SetVector("_LightColor", new(1f, 1f, 1f));
                 meshRenderer.SetPropertyBlock(mpb, i);
